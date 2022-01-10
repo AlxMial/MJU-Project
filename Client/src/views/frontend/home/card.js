@@ -6,9 +6,6 @@ export default class card extends Component {
         return (
             <>
                 <Link to={this.props.value[0]}>
-                    {/* <div className="container px-3 mx-auto"> */}
-                    {/* <div className="flex flex-wrap items-center"> */}
-                    {/* <div className="w-10/12 md:w-4/12 lg:w-3/12 px-12 md:px-4 mr-auto ml-auto -mt-32"> */}
                     <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-green-mju">
                         <div className='bg-white rounded-lg card-home-top'>
                             {/* <i class="far fa-calendar-alt"></i> */}
@@ -30,9 +27,6 @@ export default class card extends Component {
                             </h4>
                         </blockquote>
                     </div>
-                    {/* </div> */}
-                    {/* </div> */}
-                    {/* </div> */}
                 </Link>
             </>
         )
