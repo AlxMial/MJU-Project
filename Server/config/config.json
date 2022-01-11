@@ -2,22 +2,17 @@
   "development": {
     "username": "root",
     "password": null,
-    "database": "database_development",
+    "database": "mjuproject",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "usedatabase":"database1"
   },
-  "test": {
+  "development2": {
     "username": "root",
     "password": null,
-    "database": "database_test",
+    "database": "mjuproject",
     "host": "127.0.0.1",
-    "dialect": "mysql"
-  },
-  "production": {
-    "username": "root",
-    "password": null,
-    "database": "database_production",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "usedatabase":"database2"
   }
 }

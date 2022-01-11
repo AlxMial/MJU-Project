@@ -43,7 +43,7 @@ export default  function Learning() {
                     <div className="relative w-full mb-3">
                       <label
                         className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
-                        htmlFor="grid-password"
+                        
                       >
                         รหัสเส้นทางการเรียนรู้
                       </label>
@@ -60,7 +60,7 @@ export default  function Learning() {
                     <div className="relative w-full mb-3">
                       <label
                         className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
-                        htmlFor="grid-password"
+                        
                       >
                         ชื่อเส้นทางการเรียนรู้ (ไทย)
                       </label>
@@ -75,7 +75,7 @@ export default  function Learning() {
                     <div className="relative w-full mb-3">
                       <label
                         className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
-                        htmlFor="grid-password"
+                        
                       >
                         ชื้่อเส้นทางการเรียนรู้ (ENG)
                       </label>
@@ -93,7 +93,7 @@ export default  function Learning() {
                     <div className="relative w-full mb-3">
                       <label
                         className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
-                        htmlFor="grid-password"
+                        
                       >
                         รายละเอียดเส้นทางการเรียนรู้ (ไทย)
                       </label>
@@ -130,7 +130,7 @@ export default  function Learning() {
                     <div className="relative w-full mb-3">
                       <label
                         className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
-                        htmlFor="grid-password"
+                        
                       >
                         รายละเอียดเส้นทางการเรียนรู้ (ENG)
                       </label>

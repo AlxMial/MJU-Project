@@ -1,10 +1,17 @@
 import React,{useState} from "react";
 import Switch from "components/Toggles/Switch";
+import FilesService from '../../services/files'
 // components
 
 export default function Members() {
 
   const [value, setValue] = useState(true);
+  const [postImage, setPostImage] = useState("");
+
+  const handleFileUpload = async (e) => {
+    const base64 = await FilesService.convertToBase64(e.target.files[0]);
+    setPostImage(base64);
+  }
 
   return (
     <>
@@ -26,25 +33,25 @@ export default function Members() {
             <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
               <form>
                 <div className="flex flex-wrap  mt-6">
-                  <div className="w-full lg:w-2/12 px-4 pt-3">
+                  <div className="w-full lg:w-2/12 px-4">
                     <div className="relative w-full mb-3">
-                      <span className="w-30 h-30 text-sm text-white bg-blueGray-200 inline-flex items-center justify-center rounded-full">
-                        <img
-                          alt="..."
-                          className="w-full rounded-full align-middle border-none shadow-lg"
-                          src={require("assets/img/team-1-800x800.jpg").default}
-                        />
-                      </span>
+                      <div className="image-upload">
+                        <label htmlFor="file-input" className="cursor-pointer">
+                          <img
+                            alt="..."
+                            className="w-full rounded-full align-middle border-none shadow-lg"
+                            src={  ((postImage) ? postImage  :  require("assets/img/noimg.png").default) }
+                          />
+                        </label>
+                        <input id="file-input" type="file" accept="image/jpg, image/jpeg, image/png" onChange={(e) => handleFileUpload(e)} />
+                      </div>
                     </div>
                   </div>
                   <div className="w-full lg:w-10/12">
                     <div className="flex flex-wrap">
                       <div className="w-full lg:w-6/12 px-4">
                         <div className="relative lg:w-6/12  mb-3">
-                          <label
-                            className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
-                            htmlFor="grid-password"
-                          >
+                          <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
                             รหัสบัญชีผู้ใช้
                           </label>
                           <input
@@ -74,7 +81,7 @@ export default function Members() {
                         <div className="relative w-full mb-3">
                           <label
                             className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
-                            htmlFor="grid-password"
+                 
                           >
                             คำนำหน้า
                           </label>
@@ -89,7 +96,7 @@ export default function Members() {
                         <div className="relative w-full mb-3">
                           <label
                             className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
-                            htmlFor="grid-password"
+                   
                           >
                             ชื่อ
                           </label>
@@ -104,7 +111,7 @@ export default function Members() {
                         <div className="relative w-full mb-3">
                           <label
                             className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
-                            htmlFor="grid-password"
+             
                           >
                             นามสกุล
                           </label>
@@ -128,7 +135,7 @@ export default function Members() {
                     <div className="relative w-full mb-3">
                       <label
                         className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
-                        htmlFor="grid-password"
+                        
                       >
                         อีเมล
                       </label>
@@ -143,7 +150,7 @@ export default function Members() {
                     <div className="relative w-full mb-3">
                       <label
                         className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
-                        htmlFor="grid-password"
+                        
                       >
                         เบอร์โทร
                       </label>
@@ -158,7 +165,7 @@ export default function Members() {
                     <div className="relative w-full mb-3">
                       <label
                         className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
-                        htmlFor="grid-password"
+                        
                       >
                         บทบาท
                       </label>
@@ -173,7 +180,7 @@ export default function Members() {
                     <div className="relative w-full mb-3">
                       <label
                         className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
-                        htmlFor="grid-password"
+                        
                       >
                         เส้นทางการเรียนรู้ที่สนใจ
                       </label>
@@ -188,7 +195,7 @@ export default function Members() {
                     <div className="relative w-full mb-3">
                       <label
                         className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
-                        htmlFor="grid-password"
+                        
                       >
                         รหัสผ่าน
                       </label>
@@ -203,7 +210,7 @@ export default function Members() {
                     <div className="relative w-full mb-3">
                       <label
                         className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
-                        htmlFor="grid-password"
+                        
                       >
                         ยืนยันรหัสผ่าน
                       </label>
@@ -218,7 +225,7 @@ export default function Members() {
                     <div className="relative w-full mb-3">
                       <label
                         className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
-                        htmlFor="grid-password"
+                        
                       >
                         รหัสผ่าน
                       </label>
@@ -233,7 +240,7 @@ export default function Members() {
                     <div className="relative w-full mb-3">
                       <label
                         className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
-                        htmlFor="grid-password"
+                        
                       >
                         ยืนยันรหัสผ่าน
                       </label>
@@ -248,7 +255,7 @@ export default function Members() {
                     <div className="relative w-full mb-3">
                       <label
                         className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
-                        htmlFor="grid-password"
+                        
                       >
                         ที่อยู่
                       </label>
@@ -264,7 +271,7 @@ export default function Members() {
                     <div className="relative w-full mb-3">
                       <label
                         className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
-                        htmlFor="grid-password"
+                        
                       >
                         รายละเอียด
                       </label>

@@ -1095,6 +1095,12 @@ select {
   background-color: #6366f1;
 }
 
+.bg-blue-mju {
+  --tw-text-opacity: 1;
+  background-color: rgba(14, 174, 239, var(--tw-text-opacity));
+}
+
+
 
 .bg-darkgreen-mju {
   --tw-bg-opacity: 1;
@@ -3398,4 +3404,8 @@ select {
   background-color: #b9e6fd !important;
   font-size: 1.25rem;
   font-weight: bold;
+}
+
+.image-upload>input {
+  display: none;
 }

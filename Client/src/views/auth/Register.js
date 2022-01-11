@@ -44,7 +44,7 @@ export default function Register() {
                       <div className="relative w-full mb-3 px-2">
                         <label
                           className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
-                          htmlFor="grid-password"
+                          
                         >
                           First Name
                         </label>
@@ -59,7 +59,7 @@ export default function Register() {
                       <div className="relative w-full mb-3 px-2">
                         <label
                           className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
-                          htmlFor="grid-password"
+                          
                         >
                           Last Name
                         </label>
@@ -74,7 +74,7 @@ export default function Register() {
                 <div className="relative w-full px-2 mt-2">
                     <label
                       className="block text-blueGray-600 text-sm font-bold mb-2"
-                      htmlFor="grid-password"
+                      
                     >
                       Role
                     </label>
@@ -89,7 +89,7 @@ export default function Register() {
                 <div className="relative w-full px-2 mt-4">
                   <label
                     className="block text-blueGray-600 text-sm font-bold mb-2"
-                    htmlFor="grid-password"
+                    
                   >
                     Your Email
                   </label>
@@ -102,7 +102,7 @@ export default function Register() {
                 <div className="relative w-full px-2 mt-4">
                   <label
                     className="block text-blueGray-600 text-sm font-bold mb-2"
-                    htmlFor="grid-password"
+                    
                   >
                     Interesting Learning Path
                   </label>
@@ -118,7 +118,7 @@ export default function Register() {
                     <div className="relative w-full mb-3 px-2">
                       <label
                         className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
-                        htmlFor="grid-password"
+                        
                       >
                         Password
                       </label>
@@ -133,7 +133,7 @@ export default function Register() {
                     <div className="relative w-full mb-3 px-2">
                       <label
                         className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
-                        htmlFor="grid-password"
+                        
                       >Confirm Password
                       </label>
                       <input

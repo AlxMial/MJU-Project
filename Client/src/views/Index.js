@@ -667,6 +667,7 @@ export default function Index() {
         </div>
       </section>
       <Footer />
+      
     </>
   );
 }
