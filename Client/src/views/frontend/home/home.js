@@ -9,8 +9,20 @@ export default function home() {
     return (
         <div>
             <AdminTopNavBar fixed />
-            <HeaderStats />
-            <div className="container px-4 mx-auto -mt-32">
+            {/* <HeaderStats /> */}
+            <div className="relative pt-20 pb-32 flex min-h-screen-35 bg-darkgreen-mju">
+                <div className="container px-4 relative mx-auto">
+                    <div className="w-full x-4 ml-auto mr-auto px-4">
+                        <h1 className="text-white font-semibold text-5xl">
+                            สวัสดี...
+                        </h1>
+                        <p className="mt-4 text-lg text-blueGray-200">
+                            ยินดีต้อนรับสู่ห้องเรียนออแกนิค
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div className="container px-4 mx-auto -mt-24">
                 <div className="flex flex-wrap">
                     <div className="w-full px-4 flex-1">
                         <Card value={['./', 'ปฏิทิน']}></Card>

@@ -1994,6 +1994,10 @@ select {
   min-height: 75vh;
 }
 
+.min-h-screen-35 {
+  min-height: 35vh;
+}
+
 .min-w-0 {
   min-width: 0px;
 }
