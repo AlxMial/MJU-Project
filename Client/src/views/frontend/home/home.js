@@ -3,6 +3,17 @@ import './home.css'
 
 import Card from './card';
 
+const items = [
+    { id: "01", path: "./Curriculum", name: "ปฏิทิน" },
+    { id: "02", path: "./Curriculum", name: "การปลูก" },
+    { id: "03", path: "./Curriculum", name: "การแปรรูป" }
+];
+
+const itemList = items.map((item) => (
+    <div key={item.id} className="w-full px-4 flex-1">
+        <Card value={[item.path, item.name]}></Card>
+    </div>
+));
 
 export default function home() {
     return (
@@ -21,15 +32,7 @@ export default function home() {
             </div>
             <div className="container px-4 mx-auto -mt-24 w-10/12">
                 <div className="flex flex-wrap">
-                    <div className="w-full px-4 flex-1">
-                        <Card value={['./Curriculum', 'ปฏิทิน']}></Card>
-                    </div>
-                    <div className="w-full px-4 flex-1">
-                        <Card value={['./Curriculum', 'การปลูก']}></Card>
-                    </div>
-                    <div className="w-full px-4 flex-1">
-                        <Card value={['./Curriculum', 'การแปรรูป']}></Card>
-                    </div>
+                    {itemList}
                 </div>
             </div>
         </ >
