@@ -1918,6 +1918,10 @@ select {
   margin-left: -1rem;
 }
 
+.-mt-16 {
+  margin-top: -3rem;
+}
+
 .-mt-20 {
   margin-top: -5rem;
 }
@@ -1952,6 +1956,10 @@ select {
 
 .max-h-860-px {
   max-height: 860px;
+}
+
+.max-h-screen-35 {
+  max-height: 35vh;
 }
 
 .max-w-full {
