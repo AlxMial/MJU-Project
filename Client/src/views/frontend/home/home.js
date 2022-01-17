@@ -18,7 +18,7 @@ const itemList = items.map((item) => (
 export default function home() {
     return (
         <>
-            <div className="relative pt-20 pb-32 flex max-h-screen-35 bg-darkgreen-mju">
+            <div className="relative pt-20 pb-32 flex max-h-screen-37 bg-darkgreen-mju">
                 <div className="container px-4 relative mx-auto w-10/12">
                     <div className="w-full x-4 ml-auto mr-auto px-4">
                         <h1 className="text-white font-semibold text-5xl">

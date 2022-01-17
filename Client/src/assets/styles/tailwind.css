@@ -1381,6 +1381,10 @@ select {
   border-top-right-radius: 0.5rem;
 }
 
+.rounded-b-lg {
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+}
 
 .rounded-t-l-lg {
   border-top-left-radius: 0.5rem;
@@ -1958,8 +1962,16 @@ select {
   max-height: 860px;
 }
 
+.max-h-200-px {
+  max-height: 200px;
+}
+
 .max-h-screen-35 {
   max-height: 35vh;
+}
+
+.max-h-screen-37 {
+  max-height: 37vh;
 }
 
 .max-w-full {
