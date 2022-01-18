@@ -443,8 +443,9 @@ export default function Members() {
                         className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="confirmPassword"
                         name="confirmPassword"
-                        onChange={e=>{ validateConfirm(e.target.value); setValueConfirm(e); }}
+                        onChange={e=>{ validateConfirm(e.target.value); setValueConfirm(e.target.value); }}
                         disabled={enableControl}
+                        value={valueConfirm}
                       />
                       {confirmPassword ? (
                               <div className="text-sm py-2 px-2 text-red-500">* รหัสผ่านไม่ตรงกัน</div>

@@ -14,6 +14,7 @@ import Auth from "layouts/Auth.js";
 import Landing from "views/Landing.js";
 import Profile from "views/Profile.js";
 import Index from "views/Index.js";
+import frontend from "views/frontend/Frontend.js"
 
 ReactDOM.render(
   <BrowserRouter>
@@ -25,7 +26,7 @@ ReactDOM.render(
         {/* add routes without layouts */}
         <Route path="/landing" exact component={Landing} />
         <Route path="/profile" exact component={Profile} />
-        <Route path="/" exact component={Index} />
+        <Route path="/" exact component={frontend} />
         {/* add redirect for first page */}
         <Redirect from="*" to="/" />
       </Switch>

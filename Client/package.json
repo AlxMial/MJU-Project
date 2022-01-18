@@ -28,8 +28,8 @@
     "react-loading": "^2.0.3",
     "react-lottie": "^1.2.3",
     "react-modal": "^3.14.4",
-    "react-paginate": "^8.1.0",
     "react-native-timeago": "^0.5.0",
+    "react-paginate": "^8.1.0",
     "react-quill": "^2.0.0-beta.4",
     "react-router": "5.2.0",
     "react-router-dom": "5.2.0",
@@ -39,10 +39,12 @@
     "react-tag-input": "^6.7.3",
     "react-tag-input-component": "^1.0.7",
     "react-tagsinput": "^3.19.0",
+    "react-timeago": "^6.2.1",
     "react-toast-notifications": "^2.5.1",
+    "styled-jsx": "^4.0.1",
     "tailwindcss": "2.0.4",
-    "yup": "^0.32.11",
-    "styled-jsx": "^4.0.1"
+    "timeago-react": "^3.0.4",
+    "yup": "^0.32.11"
   },
   "scripts": {
     "start": "react-scripts start",

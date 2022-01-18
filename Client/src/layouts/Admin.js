@@ -58,7 +58,7 @@ export default function Admin() {
     <>
       <AdminTopNavBar fixed />
       <Sidebar />
-      <div className="relative md:ml-64 bg-blueGray-100"  ref={box}>
+      <div className="relative md:ml-64"  ref={box}>
         <AdminNavbar title={todos}/>
         {/* Header */}
         <HeaderStats />
@@ -75,7 +75,6 @@ export default function Admin() {
             <Route path="/admin/courseslist" exact component={CoursesList} />
             <Redirect from="/admin" to="/admin/memberslist" />
           </Switch>
-          <FooterAdmin />
         </div>
       </div>
     </>
