@@ -1406,6 +1406,10 @@ select {
   border-top-left-radius: 0.75rem;
   border-top-right-radius: 0.75rem;
 }
+.rounded-b-lg {
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+}
 
 .rounded-t-l-lg {
   border-top-left-radius: 0.5rem;
@@ -1948,6 +1952,10 @@ select {
   margin-left: -1rem;
 }
 
+.-mt-16 {
+  margin-top: -3rem;
+}
+
 .-mt-20 {
   margin-top: -5rem;
 }
@@ -1982,6 +1990,18 @@ select {
 
 .max-h-860-px {
   max-height: 860px;
+}
+
+.max-h-200-px {
+  max-height: 200px;
+}
+
+.max-h-screen-35 {
+  max-height: 35vh;
+}
+
+.max-h-screen-37 {
+  max-height: 37vh;
 }
 
 .max-w-full {
@@ -2022,6 +2042,10 @@ select {
 
 .min-h-screen-75 {
   min-height: 75vh;
+}
+
+.min-h-screen-35 {
+  min-height: 35vh;
 }
 
 .min-w-0 {
