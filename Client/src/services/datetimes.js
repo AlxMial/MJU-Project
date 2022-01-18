@@ -3,12 +3,11 @@ import moment from 'moment';
 class DateTimesService {
 
     formatDate(string){
-    
-
-        var options = { year: 'numeric', month: 'numeric', day: 'numeric' };
-        return moment(new Date(string)).format("DD/MM/YYYY HH:mm")
-
-
+        if(string){
+            return moment(new Date(string)).format("DD/MM/YYYY HH:mm");
+        }else { 
+            return moment(new Date()).format("DD/MM/YYYY HH:mm");
+        }
     }
 }
 

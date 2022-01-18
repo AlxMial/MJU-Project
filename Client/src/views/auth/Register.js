@@ -44,7 +44,6 @@ export default function Register() {
                       <div className="relative w-full mb-3 px-2">
                         <label
                           className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
-                          
                         >
                           First Name
                         </label>

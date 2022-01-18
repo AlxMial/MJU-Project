@@ -556,7 +556,7 @@ video {
   --tw-ring-color: #2563eb;
   --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
   --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+  /* box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000); */
   border-color: #2563eb;
 }
 
@@ -1090,6 +1090,12 @@ select {
   background-color: rgba(105, 172, 43, var(--tw-bg-opacity));
 }
 
+.bg-rose-mju {
+  --tw-bg-opacity: 1;
+  background-color: #f77170;
+}
+
+
 
 .bg-purple-mju {
   background-color: #6366f1;
@@ -1101,15 +1107,30 @@ select {
 }
 
 
+.bg-blue-save-mju {
+  background-color: #0aa7e5;
+}
+
 
 .bg-darkgreen-mju {
   --tw-bg-opacity: 1;
   background-color: #46721B;
 }
 
+.active\:bg-rose-mju:active {
+  --tw-bg-opacity: 1;
+  background-color: #DDADAC;
+}
+
 .active\:bg-darkgreenactive-mju:active {
   --tw-bg-opacity: 1;
   background-color: #56941A;
+}
+
+
+.active\:bg-blueactive-mju:active {
+  --tw-bg-opacity: 1;
+  background-color: #8CC4DA;
 }
 
 
@@ -1381,6 +1402,10 @@ select {
   border-top-right-radius: 0.5rem;
 }
 
+.rounded-t-2xl {
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0.75rem;
+}
 
 .rounded-t-l-lg {
   border-top-left-radius: 0.5rem;
@@ -1637,6 +1662,11 @@ select {
 .text-sm {
   font-size: 1.5rem;
   line-height: 1.25rem;
+}
+
+.text-sm-select {
+  font-size: 1.5rem;
+  line-height: 2rem;
 }
 
 .text-base {
@@ -2472,6 +2502,10 @@ select {
   color: rgba(14, 174, 239, var(--tw-text-opacity));
 }
 
+.text-yellow-mju{
+  color: #ffea00 ;
+}
+
 
 .text-black {
   --tw-text-opacity: 1;
@@ -3293,7 +3327,7 @@ select {
 
 
 /*React - Select */
-#react-select-2-input , #react-select-3-input{
+#react-select-2-input , #react-select-3-input  , #react-select-4-input{
   box-shadow: none !important;
 }
 
@@ -3392,6 +3426,10 @@ select {
   border-style: none;
 }
 
+.ql-snow .ql-tooltip {
+  left:0px !important;
+}
+
 .go3450369076{
   width: 20%;
   border-radius: 0.25rem;
@@ -3409,3 +3447,232 @@ select {
 .image-upload>input {
   display: none;
 }
+
+input[type=text]:disabled,input[type=password]:disabled,textarea:disabled {
+  background: #F2F2F2;
+}
+
+.css-18gu508-Content{
+  font-size: 1.5rem !important;
+}
+
+.css-80a6v4-Icon{
+  margin-top:6px;
+}
+
+.css-1klfh0r-Button{
+  margin-top:7px;
+}
+
+
+.paginationBttns {
+  margin-right: 20px;
+
+  list-style: none;
+  display: flex;
+  justify-content: right;
+}
+
+
+.paginationBttns a {
+  display: inline-block;
+  text-decoration: none;
+  padding: 5px 10px;
+  color: #000;
+
+  margin: 2px;
+  box-shadow: 0 0 2px 0 rgba(10, 10, 10, 0.29);
+  font-weight: bold;
+  font-size: 1rem;
+  
+}
+
+.paginationBttns li a {
+  border-radius: 5px;
+  -webkit-transition: background-color 0.3s;
+  transition: background-color 0.3s
+    
+}
+.paginationBttns li a.active {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.paginationBttns a:hover {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.paginationActive a {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.paginationDisabled a {
+  color: grey;
+}
+
+
+.btn-purple-mju-disable{
+  background-color:#c7d2ff;
+  pointer-events: none;
+}
+
+.go1186250972 button:hover{
+ color:black !important;
+ outline: none !important;
+ font-size: 1rem;
+}
+
+.go1186250972 button{
+  font-size: 1rem;
+ }
+
+/* React Tags*/
+
+ .react-tags {
+  position: relative;
+  padding: 6px 0 0 6px;
+  border: 1px solid #D1D1D1;
+  border-radius: 0.25rem;
+  /* shared font styles */
+  font-size: 1em;
+  line-height: 1.2;
+  /* clicking anywhere will focus the input */
+  cursor: text;
+}
+
+.react-tags.is-focused {
+  border-color: #B1B1B1;
+}
+
+.react-tags__selected {
+  display: inline;
+
+}
+
+.react-tags__selected-tag-name{
+  font-size: 1.25rem;
+  font-weight: bold;
+
+  color:white;
+}
+
+.react-tags__selected-tag {
+  display: inline-block;
+  box-sizing: border-box;
+  margin: 0 6px 6px 0;
+  padding: 6px 8px;
+  color:white;
+  border-radius: 0.25rem;
+  /* background: #F1F1F1; */
+  /* match the font styles */
+  font-size: inherit;
+  line-height: inherit;
+  background-color:#56941A ;
+}
+
+.react-tags__selected-tag:after {
+  content: '\2715';
+  /* color: #AAA; */
+  margin-left: 8px;
+}
+
+.react-tags__selected-tag:hover,
+.react-tags__selected-tag:focus {
+ outline: none;
+}
+
+.react-tags__search {
+  display: inline-block;
+  /* match tag layout */
+  /* padding: 7px 2px; */
+  margin-bottom: 6px;
+  /* prevent autoresize overflowing the container */
+  max-width: 100%;
+}
+
+@media screen and (min-width: 30em) {
+
+  .react-tags__search {
+    /* this will become the offsetParent for suggestions */
+    position: relative;
+  }
+
+}
+
+.react-tags__search-wrapper div{
+  padding:0.5rem;
+  border-radius: 0.25rem;
+}
+
+.react-tags__search-input  {
+  /* prevent autoresize overflowing the container */
+  max-width: 100%;
+  /* remove styles and layout from this element */
+  margin: 0;
+  border: 0;
+  padding:0.5rem;
+  outline: none;
+  border-radius: 0.25rem;
+  /* match the font styles */
+  font-size: inherit;
+  line-height: inherit;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.react-tags__search-input::-ms-clear {
+  display: none;
+}
+
+.react-tags__suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+}
+
+@media screen and (min-width: 30em) {
+
+  .react-tags__suggestions {
+    width: 240px;
+  }
+
+}
+
+.react-tags__suggestions ul {
+  margin: 4px -1px;
+  padding: 0;
+  list-style: none;
+  background: white;
+  border: 1px solid #D1D1D1;
+  border-radius: 2px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.react-tags__suggestions li {
+  border-bottom: 1px solid #ddd;
+  padding: 6px 8px;
+}
+
+.react-tags__suggestions li mark {
+  text-decoration: underline;
+  background: none;
+  font-weight: 600;
+}
+
+.react-tags__suggestions li:hover {
+  cursor: pointer;
+  background: #eee;
+}
+
+.react-tags__suggestions li.is-active {
+  background: #b7cfe0;
+}
+
+.react-tags__suggestions li.is-disabled {
+  opacity: 0.5;
+  cursor: auto;
+}
+

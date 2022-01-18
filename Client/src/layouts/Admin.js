@@ -28,9 +28,9 @@ export default function Admin() {
   const [todos, setTodos] = useState("");
 
   useEffect(() => {
-    if(window.location.pathname === "/admin/members" || window.location.pathname === "/admin/memberslist")
+    if(window.location.pathname.includes("members"))
     setTodos("จัดการบัญชีผู้ใช้")
-  else if(window.location.pathname === "/admin/learning" || window.location.pathname === "/admin/learninglist")
+  else if(window.location.pathname.includes("learning"))
     setTodos("จัดการเส้นทางการเรียนรู้")
   else 
     setTodos("จัดการหลักสูตร")
@@ -41,9 +41,9 @@ export default function Admin() {
       // Function for click event
       function handleOutsideClick(event) {
         if (ref.current && !ref.current.contains(event.target)) {
-          if(window.location.pathname === "/admin/members" || window.location.pathname === "/admin/memberslist")
+          if(window.location.pathname.includes("members"))
             setTodos("จัดการบัญชีผู้ใช้")
-          else if(window.location.pathname === "/admin/learning" || window.location.pathname === "/admin/learninglist")
+          else if(window.location.pathname.includes("learning"))
             setTodos("จัดการเส้นทางการเรียนรู้")
           else 
             setTodos("จัดการหลักสูตร")
@@ -65,10 +65,13 @@ export default function Admin() {
         <div className="px-4 md:px-10 mx-auto w-full -m-44" >
           <Switch>
             <Route path="/admin/members" exact component={Members} />
+            <Route path="/admin/members/:id" exact component={Members} />
             <Route path="/admin/memberslist" exact component={MembersList} />
             <Route path="/admin/learning" exact component={Learning} />
+            <Route path="/admin/learning/:id" exact component={Learning} />
             <Route path="/admin/learninglist" exact component={LearningList} />
             <Route path="/admin/courses" exact component={Courses} />
+            <Route path="/admin/courses/:id" exact component={Courses} />
             <Route path="/admin/courseslist" exact component={CoursesList} />
             <Redirect from="/admin" to="/admin/memberslist" />
           </Switch>

@@ -66,7 +66,7 @@ export default function Sidebar() {
                 <Link
                   className={
                     "text-sm uppercase py-3 font-bold block " +
-                    (window.location.href.indexOf("/admin/memberslist") !== -1 || window.location.href.indexOf("/admin/members") !== -1
+                    (window.location.href.includes("members") 
                       ? "text-lightBlue-500 hover:text-lightBlue-600"
                       : "text-blueGray-700 hover:text-blueGray-500")
                   }
@@ -75,7 +75,7 @@ export default function Sidebar() {
                   <i
                     className={
                       "fas fa-user mr-2 text-xs " +
-                      (window.location.href.indexOf("/admin/memberslist") !== -1 || window.location.href.indexOf("/admin/members") !== -1
+                      (window.location.href.includes("members") 
                         ? "opacity-75"
                         : "text-blueGray-300")
                     }
@@ -87,7 +87,7 @@ export default function Sidebar() {
                 <Link
                   className={
                     "text-sm uppercase py-3 font-bold block " +
-                    (window.location.href.indexOf("/admin/learninglist") !== -1 || window.location.href.indexOf("/admin/learning") !== -1
+                    (window.location.href.includes("learning")
                       ? "text-lightBlue-500 hover:text-lightBlue-600"
                       : "text-blueGray-700 hover:text-blueGray-500")
                   }
@@ -96,7 +96,7 @@ export default function Sidebar() {
                   <i
                     className={
                       "fas fa-book-open mr-2 text-xs " +
-                      (window.location.href.indexOf("/admin/learninglist") !== -1 || window.location.href.indexOf("/admin/learning") !== -1
+                      (window.location.href.includes("learning")
                         ? "opacity-75"
                         : "text-blueGray-300")
                     }
@@ -109,7 +109,7 @@ export default function Sidebar() {
                 <Link
                   className={
                     "text-sm uppercase py-3 font-bold block " +
-                    (window.location.href.indexOf("/admin/courseslist") !== -1 || window.location.href.indexOf("/admin/courses") !== -1
+                    (window.location.href.includes("courses")
                       ? "text-lightBlue-500 hover:text-lightBlue-600"
                       : "text-blueGray-700 hover:text-blueGray-500")
                   }
@@ -118,7 +118,7 @@ export default function Sidebar() {
                   <i
                     className={
                       "far fa-list-alt mr-2 text-xs " +
-                      (window.location.href.indexOf("/admin/courseslist") !== -1 || window.location.href.indexOf("/admin/courses") !== -1
+                      (window.location.href.includes("courses")
                         ? "opacity-75"
                         : "text-blueGray-300")
                     }

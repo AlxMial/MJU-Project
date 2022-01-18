@@ -11,7 +11,6 @@ router.post("/", async (req, res) => {
       password: password,
     });
     res.json("SUCCESS");
-
 });
 
 module.exports = router;

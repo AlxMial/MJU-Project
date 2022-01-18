@@ -1,18 +1,25 @@
 class FilesService {
+    
      buffer64 = (e) => {
         const base64ToText = Buffer.from(e, 'base64').toString('ascii')
         return base64ToText;
     }
+
+    buffer64UTF8 = (e) => {
+        const base64ToText = Buffer.from(e, 'base64').toString('utf8')
+        return base64ToText;
+    }
+
 
     convertToBase64 = (file) => {
         return new Promise((resolve, reject) => {
             const fileReader = new FileReader();
             fileReader.readAsDataURL(file);
             fileReader.onload = () => {
-            resolve(fileReader.result);
+                resolve(fileReader.result);
             };
             fileReader.onerror = (error) => {
-            reject(error);
+                reject(error);
             };
         });
     };

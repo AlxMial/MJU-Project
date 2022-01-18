@@ -7,7 +7,6 @@ class ValidateService {
         if (e === '' || re.test(e)) {
           return (e)
         } else {
-          console.log(e)
           return ""
         }
     };

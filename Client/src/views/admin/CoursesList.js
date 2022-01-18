@@ -1,51 +1,195 @@
-import React from "react";
+import React,{ useEffect,useState } from "react";
 import { Link } from "react-router-dom";
-// components
-import TableDropdown from 'components/Dropdowns/TableDropdown';
+import axios from "axios";
+import Modal from "react-modal";
+import ReactPaginate from 'react-paginate';
+
+Modal.setAppElement('#root');
+const customStyles = {
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    padding:'0%',
+    transform: 'translate(-50%, -50%)',
+    overflowY: 'auto',
+    overflowX: 'auto',
+    backgroundColor:"#F1F5F9"
+  },overlay: {zIndex: 100, backgroundColor: 'rgba(70, 70, 70, 0.5)',}
+};
 
 export default function CoursesList() {
+
+    const [modalIsOpen, setIsOpen] = useState(false);  
+    const [listCourses, setListCourses] = useState([]);
+    const [deleteNumber , setDeleteNumber] = useState(0);
+    const [pageNumber, setPageNumber] = useState(0);
+    const [listSearch, setListSerch] = useState([]);
+    const usersPerPage = 10;
+    const pagesVisited = pageNumber * usersPerPage;
+
+    function openModal(type) {
+        setIsOpen(true);
+    }
+
+    function afterOpenModal(type) {
+        // references are now sync'd and can be accessed.   
+    }
+
+    function closeModal() {
+        setIsOpen(false);
+    }
+
+    const handleChange = (e) => {
+        const { name, checked } = e.target;
+        if (name === "allSelect") {
+            let tempCourses = listCourses.map((Courses) => {
+            return { ...Courses, IsDeleted: checked };
+            });
+            setListCourses(tempCourses);
+            setDeleteNumber(tempCourses.filter(x => x.IsDeleted === true).length);
+            } 
+        else {
+            let tempCourses = listCourses.map((Courses) =>
+            Courses.id.toString() === name ? {
+                    ...Courses, IsDeleted: checked
+            } : Courses
+            );
+            setListCourses(tempCourses);
+        }
+    };
+
+    const deleteCourses = (e) => {
+        axios
+          .delete(`http://localhost:3001/courses/${e}`)
+          .then(() => {
+            setListCourses(
+              listCourses.filter((val) => {
+                return val.id !== e;
+              })
+            );
+            closeModal();
+        });
+    }
+
+    const pageCount = Math.ceil(listCourses.length / usersPerPage);
+
+    const changePage = ({ selected }) => {
+        setPageNumber(selected);
+    };
+
+    const displayUsers = listCourses
+    .slice(pagesVisited, pagesVisited + usersPerPage)
+    .map((value) => {
+      return (
+        <>
+            <tr key={value.id}>
+                <th className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap">
+                    <input
+                        type="checkbox"
+                        name={value.id}
+                        checked={value?.IsDeleted || false}
+                        onChange={handleChange}
+                        className="form-checkbox rounded text-green-200-mju w-5 h-5 ease-linear transition-all duration-150"
+                    />
+                </th>
+                <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap cursor-pointer">
+                    <Link to={`/admin/courses/${value.id}`}>{ value.CurriculumCode }</Link>
+                </td>
+                <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap  cursor-pointer">
+                    <Link to={`/admin/courses/${value.id}`} >{ value.CurriculumNameTH }</Link>
+                </td>
+                <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap cursor-pointer">
+                    <div className="flex">
+                        <Link to={`/admin/courses/${value.id}`} >{ value.CurriculumNameENG }</Link>
+                    </div>
+                </td>
+                <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap ">
+                    0
+                </td>
+                <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap ">
+                    0
+                </td>
+                <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-3">
+                    <label className="text-red-500 cursor-pointer" onClick={() => {openModal("delete")}}>  <i className="fas fa-trash"></i> ลบ</label>
+                    <Modal
+                        isOpen={modalIsOpen}
+                        onAfterOpen={afterOpenModal}
+                        onRequestClose={closeModal}
+                        style={customStyles}
+                        contentLabel="Example Modal"
+                        >
+                        <div className="flex flex-wrap">
+                            <div className="w-full ">
+                                <>
+                                <div className="relative flex flex-col min-w-0 break-words w-full  rounded-lg  border-0">
+                                <div className="rounded-t bg-white mb-0 px-4 py-4">
+                                    <div className="text-center flex justify-between">
+                                    <div className="">
+                                        <h6 className="text-blueGray-700 text-base  font-bold mt-2"><i className="fas fa-exclamation-triangle"></i>&nbsp; แจ้งเตือน</h6>
+                                    </div>
+                                    <div className="">
+                                    </div>
+                                    </div>
+                                </div>
+                                </div>
+                                <div className={"flex-auto "}>
+                                    <div className="w-full mt-2">
+                                        <div className="relative w-full mb-3">
+                                            <div className=" align-middle  mb-2">
+                                                <div  className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4">
+                                                    <label className="cursor-pointer">คุณต้องการทำการลบข้อมูลใช่หรือไม่</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="relative w-full mb-3">
+                                            <div className=" flex justify-between align-middle ">
+                                                <div>
+                                                </div>
+                                                <div  className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4">
+                                                    <label className="text-red-500 cursor-pointer" onClick={() => {openModal(deleteCourses(value.id))}}> <i className="fas fa-trash"></i> ลบ</label>
+                                                    <label className="font-bold">&nbsp;|&nbsp;</label>
+                                                    <label className="cursor-pointer" onClick={closeModal}> <i className="fas fa-times"></i> ยกเลิก</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </>
+                            </div>
+                        </div>
+                    </Modal>
+                </td>
+            </tr>
+            </>
+        );
+    });
+
+    const InputSearch = (e) => {
+        if(e === "") {
+            setListCourses(listSearch);
+        } else {
+            setListCourses(listCourses.filter(x => x.CurriculumCode.includes(e) 
+            || x.CurriculumNameTH.includes(e) || x.CurriculumNameENG.includes(e) 
+            ));
+        }
+    }
+
+    useEffect( ()=>  {
+        axios.get("http://localhost:3001/courses").then((response) =>   {
+            setListCourses(response.data.listOfCourses);
+            setListSerch(response.data.listOfCourses);
+        });
+      },[]);
+
   return (
     <>
-      <div className="flex flex-wrap mt-4">
+      <div className="flex flex-wrap mt-4 md:min-h-full ">
         <div className="w-full mb-12 px-4">
             <div className={"relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-2xl bg-white"}>
                 <div className="rounded-t mb-0 px-4 py-3 border-0">
-                    {/* <div className="flex flex-wrap items-center">
-                        <div className="relative w-full px-4 max-w-full flex-grow flex-1">
-                            <h3 className={"font-semibold text-lg text-blueGray-700"}>
-                                จัดการข้อมูลผู้ใช้
-                            </h3>
-                        </div>
-                        <div className="relative w-full px-4 max-w-full flex-grow flex-1">
-                            <h3 className={"font-semibold text-lg text-blueGray-700"}>
-                            |
-                            </h3>
-                        </div>
-                        <div className="relative w-full px-4 max-w-full flex-grow flex-1">
-                            <h3 className={"font-semibold text-sm text-blueGray-700"}>
-                            0 รายการ
-                            </h3>
-                        </div>
- 
-                        <form className="md:flex hidden flex-row flex-wrap items-center lg:ml-auto mr-3">
-                            <div className="relative flex w-full flex-wrap items-stretch">
-                            <span className="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3  py-3">
-                                <i className="fas fa-search"></i>
-                            </span>
-                            <input
-                                type="text"
-                                placeholder="Search here..."
-                                className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm shadow outline-none focus:outline-none focus:ring w-full pl-12"
-                            />
-                            </div>
-                        </form>
-                        <button
-                        className="bg-white text-black active:bg-lightBlue-600 font-bold uppercase text-sm px-4 py-4 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
-                        type="button"
-                        >
-                        <i class="fas fa-plus text-green-mju"></i> เพิ่ม
-                        </button>
-                    </div> */}
                     <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">
                         {/* Brand */}
                             <h3 className={"font-semibold text-lg text-blueGray-700"}>
@@ -55,19 +199,20 @@ export default function CoursesList() {
                                 |
                             </h3>
                             <h3 className={"font-semibold text-sm text-blueGray-700"}>
-                                0 จำนวนรายการ
+                                {deleteNumber} จำนวนรายการ
                             </h3>
                         {/* Form */}
                         <form className="md:flex hidden flex-row flex-wrap items-center lg:ml-auto mr-3">
                             <div className="relative flex w-full flex-wrap items-stretch">
-                            <span className="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
-                                <i className="fas fa-search"></i>
-                            </span>
-                            <input
-                                type="text"
-                                placeholder="Search here..."
-                                className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm shadow outline-none focus:outline-none focus:ring w-full pl-10"
-                            />
+                                <span className="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center pl-3 py-2">
+                                    <i className="fas fa-search"></i>
+                                </span>
+                                <input
+                                    type="text"
+                                    placeholder="Search here..."
+                                    className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm shadow outline-none focus:outline-none focus:ring w-full pl-12"
+                                    onChange={(e)=>{InputSearch(e.target.value)}}
+                                />
                             </div>
                         </form>
                         {/* User */}
@@ -84,95 +229,85 @@ export default function CoursesList() {
                 </div>
                 <div className="block w-full overflow-x-auto">
                 {/* Projects table */}
-                <table className="items-center w-full bg-transparent border-collapse">
+                <table className="w-full bg-transparent border-collapse">
                     <thead>
                     <tr>
                         <th
                         className={"text-center px-6 align-middle border border-solid py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"}
                         >
                         <input
-                            id="customCheckLogin"
                             type="checkbox"
+                            name="allSelect"
+                            checked={!listCourses.some((Courses) => Courses?.IsDeleted !== true)}
+                            onChange={handleChange}
                             className="form-checkbox rounded text-green-200-mju w-5 h-5 ease-linear transition-all duration-150"
                         />
                         </th>
                         <th
                         className={
-                            "px-6 align-middle border border-solid py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"
+                            "px-2 align-middle border border-solid py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"
                         }
                         >
-                        ชื่อ
+                        รหัสหลักสูตร
                         </th>
                         <th
                         className={
-                            "px-6 align-middle border border-solid py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"
+                            "px-2  border border-solid py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"
                         }
                         >
-                        อีเมล
+                        ชื่อหลักสูตร (ไทย)
                         </th>
                         <th
                         className={
-                            "px-6 align-middle border border-solid py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"
+                            "px-2 align-middle border border-solid py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"
                         }
                         >
-                        บทบาท
+                        ชื่อหลักสูตร (ENG)
                         </th>
                         <th
                         className={
-                            "px-6 align-middle border border-solid py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"
+                            "px-2 align-middle border border-solid py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"
                         }
                         >
-                        เส้นทางการเรียนรู้
+                        จำนวนหัวข้อการเรียนรู้
                         </th>
                         <th
                         className={
-                            "px-6 align-middle border border-solid py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"
+                            "px-2 align-middle border border-solid py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"
                         }
                         >
-                        สถานะ
+                        เวลา (นาที)
                         </th>
                         <th
                         className={
-                            "px-6 align-middle border border-solid py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"
+                            "px-2 align-middle border border-solid py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"
                         }
                         ></th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4 ">
-                        <input
-                            id="customCheckLogin"
-                            type="checkbox"
-                            className="form-checkbox rounded text-green-200-mju w-5 h-5 ease-linear transition-all duration-150"
-                        />
-                        </th>
-                        <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4">
-                            <Link to="/admin/courses" >ผู้เยี่ยมชม</Link>
-                        </td>
-                        <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4">
-                            <Link to="/admin/courses" >guest@undefined.co.th</Link>
-                        </td>
-                        <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4">
-                        <div className="flex">
-                            ผู้เยี่ยมชม
-                        </div>
-                        </td>
-                        <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4">
-                            ข้าว
-                        </td>
-                        <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4">
-                            <i className="fas fa-circle text-red-500 mr-2"></i> ปิดการใช้งาน
-                        </td>
-                        <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4">
-                        <TableDropdown />
-                        </td>
-                    </tr>
+                        {displayUsers}  
                     </tbody>
                 </table>
                 </div>
+                <div className="py-4">
+                    <ReactPaginate
+                        previousLabel={" < "}
+                        nextLabel={" > "}
+                        pageCount={pageCount}
+                        onPageChange={changePage}
+                        containerClassName={"paginationBttns"}
+                        previousLinkClassName={"previousBttn"}
+                        nextLinkClassName={"nextBttn"}
+                        disabledClassName={"paginationDisabled"}
+                        activeClassName={"paginationActive"}
+                    />
+                </div>
+                
             </div>
+        
         </div>
+
       </div>
     </>
   );
