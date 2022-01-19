@@ -1,6 +1,6 @@
 import React,{useRef,useState,useEffect} from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
-
+import { AuthContext } from "../services/AuthContext";
 // components
 
 import AdminNavbar from "components/Navbars/AdminNavbar.js";
@@ -20,7 +20,11 @@ import CoursesList from "views/admin/CoursesList";
 
 
 export default function Admin() {
-
+  const [authState, setAuthState] = useState({
+    username: "",
+    id: 0,
+    status: false,
+  });
 
   const box = useRef(null);
   useOutsideAlerter(box);
@@ -56,6 +60,7 @@ export default function Admin() {
 
   return (
     <>
+    <AuthContext.Provider value={{ authState, setAuthState }}>
       <AdminTopNavBar fixed />
       <Sidebar />
       <div className="relative md:ml-64"  ref={box}>
@@ -77,6 +82,7 @@ export default function Admin() {
           </Switch>
         </div>
       </div>
+      </AuthContext.Provider>
     </>
   );
 }

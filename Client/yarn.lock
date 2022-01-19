@@ -10140,6 +10140,11 @@ react-app-polyfill@^2.0.0:
     regenerator-runtime "^0.13.7"
     whatwg-fetch "^3.4.1"
 
+react-detect-click-outside@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/react-detect-click-outside/-/react-detect-click-outside-1.1.2.tgz#e47e5b850412380d8b3f504dea544ed97ec8c972"
+  integrity sha512-BYavS0DoZ7JzTgCDQiYnh3F8jWr6FONBNWLzpFICbupW3rE4IgPOzeqPn4zO0s1C10kXF8X8xiHe0C+mYSJz5g==
+
 react-dev-utils@^11.0.3:
   version "11.0.4"
   resolved "https://registry.npmjs.org/react-dev-utils/-/react-dev-utils-11.0.4.tgz"
@@ -10260,6 +10265,11 @@ react-native-timeago@^0.5.0:
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/react-native-timeago/-/react-native-timeago-0.5.0.tgz#1b08057e3473dbb5b6720ee5cde4e544a7c250f0"
   integrity sha512-GYrV36FK8ttkl7BIAdh77OlYLYGIKLGNviJqzPUtKaO8ANEtI8ph7UkSTRv9oMKfvDnA5VKV9hVX7GtYoAztRg==
+
+react-onclickoutside@^6.12.1:
+  version "6.12.1"
+  resolved "https://registry.yarnpkg.com/react-onclickoutside/-/react-onclickoutside-6.12.1.tgz#92dddd28f55e483a1838c5c2930e051168c1e96b"
+  integrity sha512-a5Q7CkWznBRUWPmocCvE8b6lEYw1s6+opp/60dCunhO+G6E4tDTO2Sd2jKE+leEnnrLAE2Wj5DlDHNqj5wPv1Q==
 
 react-paginate@^8.1.0:
   version "8.1.0"
