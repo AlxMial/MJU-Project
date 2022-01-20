@@ -6,7 +6,7 @@ export default class card extends Component {
         return (
             <>
                 <Link to={this.props.value[0]}>
-                    <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-green-mju">
+                    <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-green-mju headCard">
                         <div className='bg-white rounded-lg card-home-top'>
                             {/* <i class="far fa-calendar-alt"></i> */}
                         </div>

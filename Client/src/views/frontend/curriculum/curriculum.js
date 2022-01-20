@@ -1,6 +1,6 @@
 import TimeAgo from 'timeago-react';
 import React from 'react'
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 import { useState, useEffect } from 'react';
 
 import './curriculum.css'
@@ -66,35 +66,40 @@ export default function Curriculum() {
             title: "Top Notch Services 1",
             detail: "The Arctic Ocean freezes every winter.",
             timeStamp: "2022-01-17T06:24:44.124Z",
-            tag: 'ข้าว'
+            tag: 'ข้าว',
+            url: '/Subject'
         },
         {
             id: "02", cardImage: "https://picsum.photos/id/2/200/150",
             title: "Top Notch Services 2",
             detail: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel, assumenda ratione. Tenetur, facilis suscipit a magnam veniam laudantium commodi libero distinctio doloribus cum quam iusto illum consequuntur, dolorum et nesciunt!"
             , timeStamp: "2021-06-21T06:24:44.124Z",
-            tag: 'ข้าว'
+            tag: 'ข้าว',
+            url: '/Subject'
         },
         {
             id: "03", cardImage: "https://picsum.photos/id/3/200/150",
             title: "Top Notch Services 3",
             detail: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel, assumenda ratione. Tenetur, facilis suscipit a magnam veniam laudantium commodi libero distinctio doloribus cum quam iusto illum consequuntur, dolorum et nesciunt!"
             , timeStamp: "2021-06-21T06:24:44.124Z",
-            tag: 'ข้าว'
+            tag: 'ข้าว',
+            url: '/Subject'
         },
         {
             id: "04", cardImage: "https://picsum.photos/id/444/200/150",
             title: "Top Notch Services 4",
             detail: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel, assumenda ratione. Tenetur, facilis suscipit a magnam veniam laudantium commodi libero distinctio doloribus cum quam iusto illum consequuntur, dolorum et nesciunt!"
             , timeStamp: "2021-06-21T06:24:44.124Z",
-            tag: 'ข้าว'
+            tag: 'ข้าว',
+            url: './Subject'
         },
         {
             id: "05", cardImage: "https://picsum.photos/id/555/200/150",
             title: "Top Notch Services 5",
             detail: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel, assumenda ratione. Tenetur, facilis suscipit a magnam veniam laudantium commodi libero distinctio doloribus cum quam iusto illum consequuntur, dolorum et nesciunt!"
             , timeStamp: "2021-06-21T06:24:44.124Z",
-            tag: 'ข้าว'
+            tag: 'ข้าว',
+            url: '/Subject'
         }
     ];
 
@@ -126,7 +131,7 @@ export default function Curriculum() {
                                 return true
                             }
                         }).map((item) =>
-                            <div key={item.id} className="card px-4 md:w-4/12 relative flex flex-col min-w-0 break-words bg-white w-full mb-6 rounded-lg">
+                            <Link to={item.url} key={item.id} className="card px-4 md:w-4/12 relative flex flex-col min-w-0 break-words bg-white w-full mb-6 rounded-lg">
                                 <img
                                     alt="..."
                                     src={item.cardImage}
@@ -152,7 +157,7 @@ export default function Curriculum() {
                                     </footer>
 
                                 </blockquote>
-                            </div>
+                            </Link>
                         )}
                     </div>
                 </div>
