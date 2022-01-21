@@ -97,7 +97,6 @@ export default function MembersList() {
     }
     
     const ChangeLearning = (value) =>{
-        console.log(optionsLearning)
         if(optionsLearning.length > 0)
             return  value = optionsLearning.filter(x => x.value === value.toString())[0].label;
     }

@@ -1685,6 +1685,11 @@ select {
   line-height: 2rem;
 }
 
+.text-sm-texteditor {
+  font-size: 1.2rem !important;
+  line-height: 1.5rem !important;
+}
+
 .text-base {
   font-size: 1.8rem;
   line-height: 1.5rem;
@@ -2548,6 +2553,9 @@ select {
 .text-blue-mju {
   --tw-text-opacity: 1;
   color: rgba(14, 174, 239, var(--tw-text-opacity));
+}
+text-blue-mju-home {
+  color:#1285c1 !important;
 }
 
 .text-yellow-mju{

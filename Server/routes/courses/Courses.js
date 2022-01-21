@@ -44,6 +44,12 @@ router.get('/byLearningId/:id', async (req,res) =>{
   res.json(Course);
 });
 
+router.post("/getCourseByTypeAndLearning", validateToken , async (req,res) =>{
+  const { learningPathId, Type } = req.body;
+  const Course = await Courses.findAll({ where : { LearningId: learningPathId,CurriculumType:Type }});
+  res.json(Course);
+});
+
 router.put("/" , async (req,res) =>{
   await Courses.update(req.body,{where : {id: req.body.id }})
   res.json("SUCCESS");

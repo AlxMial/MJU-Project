@@ -34,7 +34,6 @@ export default function Frontend() {
             if (response.data.error) {
               setAuthState({ ...authState, status: false });
             } else {
-                console.log(response.data.learningPathId)
               setAuthState({
                 email: response.data.email,
                 id: response.data.id,

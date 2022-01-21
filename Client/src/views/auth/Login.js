@@ -41,6 +41,7 @@ export default function Login() {
           localStorage.setItem("accessToken", response.data.token);
           localStorage.setItem("roleUser", response.data.role);
           localStorage.setItem("email", response.data.email);
+          localStorage.setItem("learningPathId", response.data.learningPathId);
           setAuthState({
               email : response.data.email,
               id: response.data.id,
@@ -51,7 +52,8 @@ export default function Login() {
             });
           if(response.data.role === "1")
             history.push("/admin");
-          else history.push("/home");
+          else 
+          history.push("/home");
         }else {
           addToast("ไม่สามารถเข้าสู่ระบบได้เนื่องจาก Email สำหรับเข้าใช้งานระบบถูกยกเลิกใช้งาน", { appearance: 'error', autoDismiss: true });
         }

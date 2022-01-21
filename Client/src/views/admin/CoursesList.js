@@ -25,7 +25,6 @@ export default function CoursesList() {
 
     const [modalIsOpen, setIsOpen] = useState(false);  
     const [listCourses, setListCourses] = useState([]);
-    const [listSubject, setListSubject] = useState([]);
     const [deleteNumber , setDeleteNumber] = useState(0);
     const [pageNumber, setPageNumber] = useState(0);
     const [listSearch, setListSerch] = useState([]);

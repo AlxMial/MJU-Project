@@ -49,6 +49,7 @@ const UserDropdown = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem('email');
     localStorage.removeItem('roleUser');
+    localStorage.removeItem("learningPathId");
     setAuthState({ email: "", id: 0, status: false,role:"",profilePicture:"",learningPathId:"" });
   }
 

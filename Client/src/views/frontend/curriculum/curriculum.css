@@ -41,6 +41,16 @@ footer {
 
 .tag {
     background-color: #93e4f4;
-    color: #063741;
+    color:#1285c1 !important;
+    font-weight: bold;
     border-radius: 3px;
+}
+
+
+.text-editor{
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    height: 90px !important;
+    width: 100%;
+    text-overflow: ellipsis !important;
 }
