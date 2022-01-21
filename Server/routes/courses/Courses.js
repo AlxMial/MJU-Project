@@ -38,6 +38,12 @@ router.get('/ByCurriculum/:code', validateToken , async (req,res) =>{
   res.json(course);
 });
 
+router.get('/byLearningId/:id', async (req,res) =>{
+  const id = req.params.id;
+  const Course = await Courses.findAll({ where : { LearningId: id}});
+  res.json(Course);
+});
+
 router.put("/" , async (req,res) =>{
   await Courses.update(req.body,{where : {id: req.body.id }})
   res.json("SUCCESS");

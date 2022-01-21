@@ -1,10 +1,10 @@
-import React,{useState} from "react";
+import React,{useState,useEffect} from "react";
 import { useHistory } from "react-router-dom";
 import { useFormik  } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { useToasts } from 'react-toast-notifications';
-
+import Select from 'react-select'
 export default function Register() {
 
   const [confirmPassword, setConfirmPassword] = useState(false);
@@ -12,6 +12,13 @@ export default function Register() {
   const [isTerm,setIsTerm] = useState("");
   const { addToast } = useToasts();
   let history = useHistory();
+  const [optionsLearning, setOptionsLearning] = useState([])
+  const optionsRole = [
+    { value: '3', label: 'วิทยากร' },
+    { value: '4', label: 'เกษตรกร' }
+  ];
+
+
   const formik = useFormik({
     initialValues : {
       accountCode:'',
@@ -42,15 +49,33 @@ export default function Register() {
       if(!confirmPassword && isTerm)
       {
         values.isActivated = true;
-        axios.post("http://localhost:3001/members",values).then((response)=>{
-          if(response.data.error) 
-          {
-            addToast(response.data.error, { appearance: 'error', autoDismiss: true });
-          } else {
-            addToast('ลงทะเบียนสำเร็จ', { appearance: 'success', autoDismiss: true });
-            history.push("/auth/login");
+        values.IsDeleted = false;
+        axios.get(`http://localhost:3001/members/getemail/${values.email}`).then((response) => {
+          console.log(response)
+          if(response.data === null) {
+              axios.post("http://localhost:3001/members",values).then((response)=>{
+                if(response.data.error) 
+                {
+                  addToast(response.data.error, { appearance: 'error', autoDismiss: true });
+                } else {
+                  addToast('ลงทะเบียนสำเร็จ', { appearance: 'success', autoDismiss: true });
+                  history.push("/auth/login");
+                }
+              });
+          }
+          else {
+            addToast('ไม่สามารถบันทึกข้อมูลได้ เนื่องจากอีเมลที่ใช้งานมีการลงทะเบียนเรียบร้อยแล้ว', { appearance: 'warning', autoDismiss: true });
           }
         });
+        // axios.post("http://localhost:3001/members",values).then((response)=>{
+        //   if(response.data.error) 
+        //   {
+        //     addToast(response.data.error, { appearance: 'error', autoDismiss: true });
+        //   } else {
+        //     addToast('ลงทะเบียนสำเร็จ', { appearance: 'success', autoDismiss: true });
+        //     history.push("/auth/login");
+        //   }
+        // });
       }
    },
   });
@@ -61,6 +86,27 @@ export default function Register() {
       setConfirmPassword(true)
     else setConfirmPassword(false);
   }
+
+  async function fetchLearning() {
+    const response = await axios("http://localhost:3001/learning");
+    const body = await response.data.listLearning;
+    var JsonLearning = [];
+    body.forEach(field => JsonLearning.push({value: field.id.toString(),label: field.LearningPathNameTH }))
+    setOptionsLearning(JsonLearning)
+  }
+
+  const defaultValue = (options, value) => {
+    if(value.toString() === "" && options[0] !== undefined)
+    { 
+        value = options[0].value;
+    }
+    return options ? options.find(option => option.value === value.toString()) : "";
+  };
+  
+  useEffect( ()=>  {
+    fetchLearning();
+  },[]);
+
 
   return (
     <>
@@ -149,8 +195,7 @@ export default function Register() {
                     >
                       Role
                     </label>
-                    {/* <Select   options={options} /> */}
-                    <select 
+                    {/* <select 
                         className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-xs shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="role"
                         name="role"
@@ -159,9 +204,19 @@ export default function Register() {
                         value={formik.values.role}
                         autoComplete="new-password"
                     >
-                      <option value={3}>Trainer</option>
-                      <option value={4}>Farmer</option>
-                    </select>
+                      <option value={3}>วิทยากร</option>
+                      <option value={4}>เกษตรกร</option>
+                    </select> */}
+
+                      <Select  
+                        id="role"
+                        name="role"
+                        onChange={value => {  formik.setFieldValue('role',value.value)}}
+                        //value={formik.values.title}
+                        className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm-select shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" 
+                        options={optionsRole} 
+                        value={defaultValue(optionsRole, formik.values.role)}
+                        />      
                 </div>
                 <div className="relative w-full px-2 mt-4">
                   <label
@@ -192,7 +247,7 @@ export default function Register() {
                   >
                     Interesting Learning Path
                   </label>
-                  <select className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-xs shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                  {/* <select className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-xs shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                     id="learningPathId"
                     name="learningPathId"
                     onChange={formik.handleChange}
@@ -201,7 +256,17 @@ export default function Register() {
                     autoComplete="new-password">
                     <option value={1}>Rice</option>
                     <option value={2}>Mangosteen</option>
-                  </select>
+                  </select> */}
+
+                    <Select
+                      id="learningPathId"
+                      name="learningPathId"
+                      onChange={value => {  formik.setFieldValue('learningPathId',value.value)}}
+                      //value={formik.values.title}
+                      className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm-select shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" 
+                      options={optionsLearning} 
+                      value={defaultValue(optionsLearning, formik.values.learningPathId)}
+                      />
                   {/* <Select  className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-xs shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" options={options} /> */}
 
                 </div>

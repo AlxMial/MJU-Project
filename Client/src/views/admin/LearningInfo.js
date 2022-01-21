@@ -94,6 +94,7 @@ export default  function Learning() {
 
   useEffect(()=>{
     fetchData();
+
   },[]);
 
   const EnableControl = (bool) => {

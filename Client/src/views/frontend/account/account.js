@@ -121,9 +121,7 @@ export default function Account() {
     });
   
     const insertAccount = (values) => {
-      axios.get(`http://localhost:3001/members/getemail/${values.email}`,{
-        headers: {accessToken : localStorage.getItem("accessToken")}
-      }).then((response) => {
+      axios.get(`http://localhost:3001/members/getemail/${values.email}`).then((response) => {
         if(response.data === null || (response.data && response.data.id === values.id)) {
           if(!confirmPassword)
           {
@@ -157,9 +155,7 @@ export default function Account() {
     async function fetchData() {
       const email = localStorage.getItem('email');
       let response = await axios(
-        `http://localhost:3001/members/getemail/${email}`,{
-          headers: {accessToken : localStorage.getItem("accessToken")}
-        }
+        `http://localhost:3001/members/getemail/${email}`
       );
       let user = await response.data;
       if(user !== null) {

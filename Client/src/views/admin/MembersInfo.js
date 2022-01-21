@@ -23,6 +23,7 @@ export default function Members() {
   const [isNew,setIsNew] = useState(false);
   const { addToast } = useToasts();
   let { id } = useParams();
+  const [optionsLearning, setOptionsLearning] = useState([])
 
   const handleFileUpload = async (e) => {
     const base64 = await FilesService.convertToBase64(e.target.files[0]);
@@ -41,14 +42,16 @@ export default function Members() {
     { value: '4', label: 'เกษตรกร' }
   ];
 
-  const optionsLearning = [
-    { value: '1', label: 'ข้าว' },
-    { value: '2', label: 'มังคุด' }
-  ];
+  // const optionsLearning = [
+  //   { value: '1', label: 'ข้าว' },
+  //   { value: '2', label: 'มังคุด' }
+  // ];
 
   const defaultValue = (options, value) => {
-    if(value === null) value = "1";
-    if(value.toString() === "") value = "1";
+    if(value.toString() === "" && options[0] !== undefined)
+    { 
+        value = options[0].value;
+    }
     return options ? options.find(option => option.value === value.toString()) : "";
   };
 
@@ -115,9 +118,7 @@ export default function Members() {
   });
 
   const insertAccount = (values) => {
-    axios.get(`http://localhost:3001/members/getemail/${values.email}`,{
-      headers: {accessToken : localStorage.getItem("accessToken")}
-    }).then((response) => {
+    axios.get(`http://localhost:3001/members/getemail/${values.email}`).then((response) => {
       if(response.data === null || (response.data && response.data.id === values.id)) {
         if(!confirmPassword)
         {
@@ -186,10 +187,19 @@ export default function Members() {
     }
   }
 
+  async function fetchLearning() {
+    const response = await axios("http://localhost:3001/learning");
+    const body = await response.data.listLearning;
+    var JsonLearning = [];
+    body.forEach(field => JsonLearning.push({value: field.id.toString(),label: field.LearningPathNameTH }))
+    setOptionsLearning(JsonLearning)
+  }
+
   
 
   useEffect(()=>{
       fetchData();
+      fetchLearning();
   },[]);
 
   const EnableControl = (bool) => {

@@ -78,7 +78,8 @@ export default function LearningList() {
     const deleteLearning = async (e) => {
 
         const response = await  axios.get(`http://localhost:3001/learning/getCourses/${e}`);
-        if(response.data === null){
+        const resMember = await  axios.get(`http://localhost:3001/learning/getMembers/${e}`);
+        if(response.data === null && resMember === null){
             axios
             .delete(`http://localhost:3001/learning/${e}`)
             .then(() => {
@@ -90,7 +91,7 @@ export default function LearningList() {
               closeModal();
             });
         }else{
-            addToast('ไม่สามารถบันทึกข้อมูลได้ เนื่องจากรหัสเส้นทางการเรียนรู้ ถูกนำไปใช้งานที่หน้าจอจัดการหลักสูตร', { appearance: 'warning', autoDismiss: true });
+            addToast('ไม่สามารถลบข้อมูลได้ เนื่องจากรหัสเส้นทางการเรียนรู้ ถูกนำไปใช้งานที่หน้าจอจัดการหลักสูตรหรือหน้าจอจัดการบัญชีผู้ใช้', { appearance: 'warning', autoDismiss: true });
             closeModal();
         }
     }
@@ -101,7 +102,8 @@ export default function LearningList() {
             var ArrayDeleted = [];
             for (const field of listLearning) {
                 const response = await  axios.get(`http://localhost:3001/learning/getCourses/${field.id}`);
-                if(field.IsDeleted && response.data === null) {
+                const resMember = await  axios.get(`http://localhost:3001/learning/getMembers/${field.id}`);
+                if(field.IsDeleted && response.data === null && resMember.data === null) {
                     ArrayDeleted.push(field.id)
                 }else  { field.IsDeleted = false}
             }
@@ -217,10 +219,16 @@ export default function LearningList() {
     }
 
     useEffect( ()=>  {
-        axios.get("http://localhost:3001/learning").then((response) =>   {
+        axios.get("http://localhost:3001/learning").then( async (response)   =>   {
+             for(const learning of response.data.listLearning ){
+                await axios.get(`http://localhost:3001/courses/byLearningId/${learning.id}`).then((res) =>   {
+                    learning.CoursesCount = res.data.length;
+                });
+            }
             setListLearning(response.data.listLearning);
             setListSerch(response.data.listLearning);
         });
+
       },[]);
 
   return (

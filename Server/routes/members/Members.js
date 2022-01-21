@@ -19,7 +19,7 @@ router.get("/" , validateToken , async (req, res) => {
     res.json({listMembers : listMembers});
 });
 
-router.get("/getemail/:email", validateToken ,async (req, res) => {
+router.get("/getemail/:email" ,async (req, res) => {
   const email = req.params.email;
   const member = await Members.findOne({
      where: {  email: email  },

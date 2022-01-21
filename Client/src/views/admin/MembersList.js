@@ -29,6 +29,7 @@ export default function MembersList() {
     const [pageNumber, setPageNumber] = useState(0);
     const [listSearch, setListSerch] = useState([]);
     const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
+    const [optionsLearning, setOptionsLearning] = useState([])
     const usersPerPage = 10;
     const pagesVisited = pageNumber * usersPerPage;
 
@@ -43,11 +44,6 @@ export default function MembersList() {
         { value: '2', label: 'ผู้เยี่ยมชม' },
         { value: '3', label: 'วิทยากร' },
         { value: '4', label: 'เกษตรกร' }
-    ];
-
-    const optionsLearning = [
-        { value: '1', label: 'ข้าว' },
-        { value: '2', label: 'มังคุด' }
     ];
 
     function openModal(type,email) {
@@ -94,12 +90,16 @@ export default function MembersList() {
 
     const ChangeSelect = (value,type) =>{
         if(type === "title"){
-            return  value = options[value-1].label;
+            return  value  = options.filter(x => x.value === value.toString())[0].label;
         } else if (type === "role") {
-            return value = optionsRole[value-1].label;
-        } else {
-            return  value = optionsLearning[value-1].label;
+            return  value  = optionsRole.filter(x => x.value === value.toString())[0].label;
         }
+    }
+    
+    const ChangeLearning = (value) =>{
+        console.log(optionsLearning)
+        if(optionsLearning.length > 0)
+            return  value = optionsLearning.filter(x => x.value === value.toString())[0].label;
     }
 
     const deleteMember = (e,email) => {
@@ -181,7 +181,7 @@ export default function MembersList() {
                     </div>
                 </td>
                 <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap ">
-                    { value.learningPathId }
+                    { ChangeLearning(value.learningPathId) }
                 </td>
                 <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap ">
                     { value.isActivated ? 
@@ -257,21 +257,36 @@ export default function MembersList() {
         }
     }
 
-    useEffect( ()=>  {
-        axios.get("http://localhost:3001/members",{
+    useEffect (  ()  =>  {
+        fetchLearning();
+        fetchMember();
+      },[]);
+
+      
+  async function fetchLearning() {
+    axios.get("http://localhost:3001/learning",{
+        headers: {accessToken : localStorage.getItem("accessToken")}
+      }).then((resLearning) =>   {
+        var JsonLearning = [];
+        resLearning.data.listLearning.forEach(field => JsonLearning.push({value: field.id.toString(),label: field.LearningPathNameTH }))
+        setOptionsLearning(JsonLearning);
+    });
+  }
+
+  async function fetchMember() {
+    axios.get("http://localhost:3001/members",{
             headers: {accessToken : localStorage.getItem("accessToken")}
           }).then((response) =>   {
             if(response){
                 response.data.listMembers.forEach(field => {
                     field.title = (field.title !== "") ? ChangeSelect(field.title,"title") : ChangeSelect(1,"title");
                     field.role = ChangeSelect(field.role,"role");
-                    field.learningPathId = ChangeSelect(field.learningPathId,"learningPathId");
                 });
                 setListMembers(response.data.listMembers);
                 setListSerch(response.data.listMembers);
             }
         });
-      },[]);
+  }
 
   return (
     <>

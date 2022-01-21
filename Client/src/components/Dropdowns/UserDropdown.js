@@ -26,9 +26,7 @@ const UserDropdown = () => {
 
   useEffect(() => {
     const email = localStorage.getItem('email');
-    axios.get(`http://localhost:3001/members/getemail/${email}`,{
-      headers: {accessToken : localStorage.getItem("accessToken")}
-    }).then((response) => {
+    axios.get(`http://localhost:3001/members/getemail/${email}`).then((response) => {
       if(response.data !== null)
         if(response.data.profilePicture !== undefined)
           setPictureProfile(FilesService.buffer64(response.data.profilePicture));

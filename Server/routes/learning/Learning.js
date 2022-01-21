@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { Learning,Courses } = require("../../models");
+const { Learning,Courses,Members } = require("../../models");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
@@ -11,15 +11,7 @@ router.post("/", async (req, res) => {
 });
 
 router.get("/", async (req, res) => {
-    const listLearning = await Learning.findAll({
-      attributes: { 
-        include: [[Sequelize.fn("COUNT", Sequelize.col("courses.id")), "CoursesCount"]] 
-      },
-      include: [{
-          model: Courses, attributes: []
-      }],
-      group: ['courses.id']
-    });
+    const listLearning = await Learning.findAll();
     res.json({listLearning : listLearning});
 });
 
@@ -32,12 +24,20 @@ router.get('/byId/:id', async (req,res) =>{
 
 router.get('/getCourses/:id', async (req,res) =>{
   const id = req.params.id;
-  console.log(id)
   const courses = await Courses.findOne({
     where: {  LearningId: id },
    });
   res.json(courses);
 });
+
+router.get('/getMembers/:id', async (req,res) =>{
+  const id = req.params.id;
+  const members = await Members.findOne({
+    where: {  learningPathId: id },
+   });
+  res.json(members);
+});
+
 
 router.get('/byLearningCode/:code', validateToken , async (req,res) =>{
   const id = req.params.code.toString("utf8");
