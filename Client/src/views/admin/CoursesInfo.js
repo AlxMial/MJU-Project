@@ -472,8 +472,10 @@ export default function Courses() {
 
   /* Default Value Option */
   const defaultValue = (options, value) => {
-    if(value.toString() === "")
-      value = "1";
+    if(value.toString() === "" && options[0] !== undefined)
+    { 
+        value = options[0].value;
+    }
     return options ? options.find(option => option.value === value.toString()) : "";
   };
   

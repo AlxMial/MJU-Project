@@ -1,6 +1,6 @@
 import React,{useEffect,useContext, useState} from "react";
 import { createPopper } from "@popperjs/core";
-import { Link } from "react-router-dom";
+import { Link,useHistory } from "react-router-dom";
 import { AuthContext } from '../../services/AuthContext';
 import axios from "axios";
 import FilesService from "../../services/files";
@@ -12,6 +12,8 @@ const UserDropdown = () => {
   const popoverDropdownRef = React.createRef();
   const { setAuthState } = useContext(AuthContext); 
   const [pictureProfile , setPictureProfile] = useState("");
+  const history = useHistory();
+
   const openDropdownPopover = () => {
     createPopper(btnDropdownRef.current, popoverDropdownRef.current, {
       placement: "bottom-start",
@@ -53,6 +55,11 @@ const UserDropdown = () => {
     setAuthState({ email: "", id: 0, status: false,role:"" });
   }
 
+  const linkAccount = () => {
+    history.push("/home/account");
+   // window.location.reload()
+  }
+
   return (
     <>
       <div
@@ -79,18 +86,18 @@ const UserDropdown = () => {
           "bg-white text-base z-50 float-left py-2 list-none text-left rounded shadow-lg min-w-48"
         }
       >
-        <Link to="">
+
         <div
           className={
-            "text-xs py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
+            "text-xs py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700 cursor-pointer"
           }
           id="accountx"
-          onClick={(e) => e.preventDefault()}
+          onClick={() => {linkAccount()}}
         >
           <i className="fas fa-user" id="accountx"></i> &nbsp;
-          <span className="text-sm" id="accountx">จัดการบัญชีผู้ใช้</span>
+          <span className="text-sm" id="accountx" >จัดการบัญชีผู้ใช้</span>
         </div>
-        </Link>
+
         <div className="h-0 my-2 border border-solid border-blueGray-100" />
         <Link to="/auth/login">
           <div

@@ -50,8 +50,10 @@ export default function MembersList() {
         { value: '2', label: 'มังคุด' }
     ];
 
-    function openModal(type) {
-        setIsOpen(true);
+    function openModal(type,email) {
+        if(email !== "guest@mju.ac.th" && email !== "admin@mju.ac.th"){
+            setIsOpen(true);
+        }
     }
 
     function afterOpenModal(type) {
@@ -100,40 +102,49 @@ export default function MembersList() {
         }
     }
 
-    const deleteMember = (e) => {
-        axios
-          .delete(`http://localhost:3001/members/${e}`,{
-            headers: {accessToken : localStorage.getItem("accessToken")}
-          })
-          .then(() => {
-            setListMembers(
-              listMembers.filter((val) => {
-                return val.id !== e;
-              })
-            );
-            closeModal();
-          });
+    const deleteMember = (e,email) => {
+        if(email !== "guest@mju.ac.th" && email !== "admin@mju.ac.th"){
+            axios
+            .delete(`http://localhost:3001/members/${e}`,{
+                headers: {accessToken : localStorage.getItem("accessToken")}
+            })
+            .then(() => {
+                setListMembers(
+                listMembers.filter((val) => {
+                    return val.id !== e;
+                })
+                );
+                closeModal();
+            });
+        }
     }
 
-    const deleteByList = () => {
+    const deleteByList = async () => {
         if(deleteNumber > 0)
         {
             var ArrayDeleted = [];
             const emailUser = localStorage.getItem('email');
-            listMembers.forEach(field => { if(field.IsDeleted === true && field.email !== emailUser) { ArrayDeleted.push(field.id)}});
-            axios
-            .delete(`http://localhost:3001/members/multidelete/${ArrayDeleted}`,{
-              headers: {accessToken : localStorage.getItem("accessToken")}
-            })
-            .then(() => {
-                setDeleteNumber(0);
-                closeModalSubject();
-                setListMembers(
-                    listMembers.filter((val) => {
-                      return val.IsDeleted !== true;
-                    })
-                  );
+            listMembers.forEach(field => { 
+                if(field.IsDeleted === true && field.email !== emailUser
+                    && field.email !== "admin@mju.ac.th" && field.email !== "guest@mju.ac.th" ) 
+                { ArrayDeleted.push(field.id) }
+                else field.IsDeleted = false;
             });
+            if(ArrayDeleted.length > 0){
+                axios
+                .delete(`http://localhost:3001/members/multidelete/${ArrayDeleted}`,{
+                headers: {accessToken : localStorage.getItem("accessToken")}
+                })
+                .then(() => {
+                    setDeleteNumber(0);
+                    setListMembers(
+                        listMembers.filter((val) => {
+                        return val.IsDeleted !== true;
+                        })
+                    );
+                });
+            }
+            closeModalSubject();
         }
     }
 
@@ -179,7 +190,7 @@ export default function MembersList() {
                     }
                 </td>
                 <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-3">
-                    <label className="text-red-500 cursor-pointer" onClick={() => {openModal("delete")}}>  <i className="fas fa-trash"></i> ลบ</label>
+                    <label className={"text-red-500 " + ((value.email === "admin@mju.ac.th" || value.email === "guest@mju.ac.th") ? "opacity-50" : "cursor-pointer")}  onClick={() => {openModal("delete",value.email)}}>  <i className="fas fa-trash"></i> ลบ</label>
                     <Modal
                         isOpen={modalIsOpen}
                         onAfterOpen={afterOpenModal}
@@ -215,7 +226,7 @@ export default function MembersList() {
                                                 <div>
                                                 </div>
                                                 <div  className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4">
-                                                    <label className="text-red-500 cursor-pointer" onClick={() => {openModal(deleteMember(value.id))}}> <i className="fas fa-trash"></i> ลบ</label>
+                                                    <label className="text-red-500 cursor-pointer" onClick={() => {openModal(deleteMember(value.id,value.email))}}> <i className="fas fa-trash"></i> ลบ</label>
                                                     <label className="font-bold">&nbsp;|&nbsp;</label>
                                                     <label className="cursor-pointer" onClick={closeModal}> <i className="fas fa-times"></i> ยกเลิก</label>
                                                 </div>

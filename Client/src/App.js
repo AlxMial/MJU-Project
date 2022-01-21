@@ -8,9 +8,9 @@ import axios from "axios";
 
 import Admin from "layouts/Admin.js";
 import Auth from "layouts/Auth.js";
+import Frontend from "layouts/Frontend.js"
 import { AuthContext } from "./services/AuthContext";
 // views without layouts
-import frontend from "views/frontend/Frontend.js"
 
 function App() {
     const [authState, setAuthState] = useState({
@@ -28,7 +28,6 @@ function App() {
               },
             })
             .then((response) => {
-            
               if (response.data.error) {
                 setAuthState({ ...authState, status: false });
               } else {
@@ -44,7 +43,7 @@ function App() {
     }, []);
 
     return (
-        <div className="App">
+      <div className="App">
         <AuthContext.Provider value={{ authState, setAuthState }}>
             <BrowserRouter>
                 <ToastProvider>
@@ -52,12 +51,13 @@ function App() {
                     {/* add routes with layouts */}
                     <Route path="/admin" component={Admin} />
                     <Route path="/auth" component={Auth} />
+                    <Route path="/home" component={Frontend} />
                     {/* add routes without layouts */}
                     {/* <Route path="/landing" exact component={Landing} />
                     <Route path="/profile" exact component={Profile} /> */}
-                    <Route path="/" exact component={frontend} />
+                    <Route path="/" exact component={Auth} />
                     {/* add redirect for first page */}
-                    <Redirect from="*" to="/" />
+                    <Redirect from="*" to="/auth/login" />
                 </Switch>
                 </ToastProvider>
             </BrowserRouter>

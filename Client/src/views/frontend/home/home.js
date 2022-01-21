@@ -4,9 +4,9 @@ import './home.css'
 import Card from './card';
 
 const items = [
-    { id: "01", path: "./Curriculum", name: "ปฏิทิน" },
-    { id: "02", path: "./Curriculum", name: "การปลูก" },
-    { id: "03", path: "./Curriculum", name: "การแปรรูป" }
+    { id: "01", path: "/home/Curriculum", name: "ปฏิทิน" },
+    { id: "02", path: "/home/Curriculum", name: "การปลูก" },
+    { id: "03", path: "/home/Curriculum", name: "การแปรรูป" }
 ];
 
 const itemList = items.map((item) => (

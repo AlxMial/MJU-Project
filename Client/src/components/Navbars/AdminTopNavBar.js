@@ -1,7 +1,7 @@
 /*eslint-disable*/
 import React ,{useEffect,useState}from "react";
 import { createPopper } from "@popperjs/core";
-
+import { Link,useHistory } from "react-router-dom";
 // components
 import UserDropdown from "components/Dropdowns/UserDropdown.js";
 
@@ -11,7 +11,7 @@ export default function Navbar(props) {
   const [isThai,setIsThai] = React.useState(true);
   const [windowWidth, setWindowWidth] = useState(0);
   const [windowHeight, setWindowHeight] = useState(0);
-
+  const history = useHistory();
   let resizeWindow = () => {
     setWindowWidth(window.innerWidth);
     setWindowHeight(window.innerHeight);
@@ -37,12 +37,13 @@ export default function Navbar(props) {
       setIsThai(true);
     else 
       setIsThai(false)
-    localStorage.setItem("translate",isThai);
+    localStorage.setItem("translate",(e.target.id === "thaix") ? true : false);
   }
   
   useEffect(() => {
     resizeWindow();
     const isValue = localStorage.getItem("translate")
+    console.log(isValue)
     var result = (isValue === 'true');
     setIsThai((result));
 
@@ -57,6 +58,16 @@ export default function Navbar(props) {
     window.addEventListener("resize", resizeWindow);
     return () => { window.removeEventListener("resize", resizeWindow); document.removeEventListener("mousedown", checkIfClickedOutside);};
   }, []);
+
+  const ClickHome = () =>{
+    if(window.location.href.includes("admin"))
+    {
+      history.push("/admin");
+    }else{
+      history.push("/home");
+      window.location.reload();
+    }
+  }
 
   return (
     <>
@@ -74,7 +85,7 @@ export default function Navbar(props) {
               <li className={"flex items-center text-lg font-bold text-white " +  (windowWidth < 1024 ? " hidden" : "block") }>
                 &nbsp;   | &nbsp;
               </li>
-              <li className="flex items-center text-lg font-bold text-white">
+              <li className="flex items-center text-lg font-bold text-white cursor-pointer" onClick={()=>{ClickHome()}}>
                 Organic Masterclass
               </li>
             </ul>

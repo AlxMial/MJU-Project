@@ -25,6 +25,7 @@ export default function Admin() {
   let history = useHistory();
 
   useEffect(() => {
+
     if(!localStorage.getItem("accessToken")){
       history.push("/auth/login");
     }

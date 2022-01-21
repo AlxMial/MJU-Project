@@ -2,7 +2,6 @@ import TimeAgo from 'timeago-react';
 import React from 'react'
 import { useHistory, Link } from "react-router-dom";
 import { useState, useEffect } from 'react';
-
 import './curriculum.css'
 
 export default function Curriculum() {
@@ -67,7 +66,7 @@ export default function Curriculum() {
             detail: "The Arctic Ocean freezes every winter.",
             timeStamp: "2022-01-17T06:24:44.124Z",
             tag: 'ข้าว',
-            url: '/Subject'
+            url: '/home/Subject'
         },
         {
             id: "02", cardImage: "https://picsum.photos/id/2/200/150",
@@ -75,7 +74,7 @@ export default function Curriculum() {
             detail: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel, assumenda ratione. Tenetur, facilis suscipit a magnam veniam laudantium commodi libero distinctio doloribus cum quam iusto illum consequuntur, dolorum et nesciunt!"
             , timeStamp: "2021-06-21T06:24:44.124Z",
             tag: 'ข้าว',
-            url: '/Subject'
+            url: '/home/Subject'
         },
         {
             id: "03", cardImage: "https://picsum.photos/id/3/200/150",
@@ -83,7 +82,7 @@ export default function Curriculum() {
             detail: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel, assumenda ratione. Tenetur, facilis suscipit a magnam veniam laudantium commodi libero distinctio doloribus cum quam iusto illum consequuntur, dolorum et nesciunt!"
             , timeStamp: "2021-06-21T06:24:44.124Z",
             tag: 'ข้าว',
-            url: '/Subject'
+            url: '/home/Subject'
         },
         {
             id: "04", cardImage: "https://picsum.photos/id/444/200/150",
@@ -91,7 +90,7 @@ export default function Curriculum() {
             detail: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel, assumenda ratione. Tenetur, facilis suscipit a magnam veniam laudantium commodi libero distinctio doloribus cum quam iusto illum consequuntur, dolorum et nesciunt!"
             , timeStamp: "2021-06-21T06:24:44.124Z",
             tag: 'ข้าว',
-            url: './Subject'
+            url: '/home/Subject'
         },
         {
             id: "05", cardImage: "https://picsum.photos/id/555/200/150",
@@ -99,7 +98,7 @@ export default function Curriculum() {
             detail: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel, assumenda ratione. Tenetur, facilis suscipit a magnam veniam laudantium commodi libero distinctio doloribus cum quam iusto illum consequuntur, dolorum et nesciunt!"
             , timeStamp: "2021-06-21T06:24:44.124Z",
             tag: 'ข้าว',
-            url: '/Subject'
+            url: '/home/Subject'
         }
     ];
 

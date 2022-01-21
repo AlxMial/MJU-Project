@@ -6,7 +6,7 @@ const { validateToken } = require("../../middlewares/AuthMiddleware");
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 
-router.post("/", validateToken , async (req, res) => {
+router.post("/",async (req, res) => {
     bcrypt.hash(req.body.password, 10).then((hash) => {
         req.body.password = hash;
         Members.create(req.body);

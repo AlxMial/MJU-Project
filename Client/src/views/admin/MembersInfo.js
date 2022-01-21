@@ -124,9 +124,7 @@ export default function Members() {
           values.isActivated = value;
           values.profilePicture = postImage;
           if(isNew){
-              axios.post("http://localhost:3001/members",values,{
-                headers: {accessToken : localStorage.getItem("accessToken")}
-              }).then((response)=>{
+              axios.post("http://localhost:3001/members",values).then((response)=>{
               if(response.data.error) 
               {
                 addToast(response.data.error, { appearance: 'error', autoDismiss: true });
