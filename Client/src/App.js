@@ -10,6 +10,7 @@ import Admin from "layouts/Admin.js";
 import Auth from "layouts/Auth.js";
 import Frontend from "layouts/Frontend.js"
 import { AuthContext } from "./services/AuthContext";
+import Landing from "views/Landing";
 // views without layouts
 
 function App() {
@@ -18,6 +19,8 @@ function App() {
       id: 0,
       status: false,
       role:"",
+      profilePicture:"",
+      learningPathId:""
     });
 
     useEffect(() => {
@@ -36,6 +39,8 @@ function App() {
                   id: response.data.id,
                   status: true,
                   role:response.data.role,
+                  profilePicture:response.data.profilePicture,
+                  learningPathId:response.data.learningPathId
                 });
               }
             });
@@ -47,18 +52,13 @@ function App() {
         <AuthContext.Provider value={{ authState, setAuthState }}>
             <BrowserRouter>
                 <ToastProvider>
-                <Switch>
-                    {/* add routes with layouts */}
-                    <Route path="/admin" component={Admin} />
-                    <Route path="/auth" component={Auth} />
-                    <Route path="/home" component={Frontend} />
-                    {/* add routes without layouts */}
-                    {/* <Route path="/landing" exact component={Landing} />
-                    <Route path="/profile" exact component={Profile} /> */}
-                    <Route path="/" exact component={Auth} />
-                    {/* add redirect for first page */}
-                    <Redirect from="*" to="/auth/login" />
-                </Switch>
+                  <Switch>
+                      <Route path="/admin" component={Admin} />
+                      <Route path="/auth" component={Auth} />
+                      <Route path="/home" component={Frontend} />
+                      <Route path="/landing" component={Landing} />
+                      <Redirect from="*/" to="/auth/login" />
+                  </Switch>
                 </ToastProvider>
             </BrowserRouter>
         </AuthContext.Provider>

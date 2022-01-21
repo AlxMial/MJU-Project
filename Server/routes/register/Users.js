@@ -19,10 +19,10 @@ router.post("/login", async (req, res) => {
       { res.json({ error: "Wrong email And Password Combination" }); 
       } else {
         const accessToken = sign(
-          { email: user.email, id: user.id , role:user.role },
+          { email: user.email, id: user.id , role:user.role,learningPathId:user.learningPathId },
           "MJUPROJECT"
         );
-        res.json({ token: accessToken, email: email , id: user.id , isActivated: user.isActivated,role:user.role });
+        res.json({ token: accessToken, email: email , id: user.id , isActivated: user.isActivated,role:user.role,profilePicture:user.profilePicture,learningPathId:user.learningPathId });
       }
     });
   }

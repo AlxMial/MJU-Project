@@ -8,6 +8,7 @@ import Select from 'react-select'
 import axios from "axios";
 import { useToasts } from 'react-toast-notifications';
 import ValidateService from '../../../services/validateValue'
+import Spinner from "components/Loadings/spinner/Spinner";
 
 export default function Account() {
 
@@ -23,7 +24,7 @@ export default function Account() {
     const { addToast } = useToasts();
     let { id } = useParams();
     const history = useHistory();
-
+    const [isLoading, setIsLoading] = useState(false);
     const handleFileUpload = async (e) => {
       const base64 = await FilesService.convertToBase64(e.target.files[0]);
       setPostImage(base64);
@@ -47,14 +48,14 @@ export default function Account() {
     ];
   
     const defaultValue = (options, value) => {
-        // if(value !== undefined)
-        // {
-        //     if(value.toString() === "" && options[0] !== undefined)
-        //     { 
-        //         value = options[0].value;
-        //     }
-        //     return options ? options.find(option => option.value === value.toString()) : "";
-        // }
+        if(value !== undefined)
+        {
+            if(value.toString() === "" && options[0] !== undefined)
+            { 
+                value = options[0].value;
+            }
+            return options ? options.find(option => option.value === value.toString()) : "";
+        }
     };
   
     /*จำนวนนาทีสำหรับหลักสูตร*/
@@ -128,25 +129,8 @@ export default function Account() {
           {
             values.isActivated = value;
             values.profilePicture = postImage;
-            if(isNew){
-                axios.post("http://localhost:3001/members",values).then((response)=>{
-                if(response.data.error) 
-                {
-                  addToast(response.data.error, { appearance: 'error', autoDismiss: true });
-                } else {
-                  addToast('บันทึกข้อมูลสำเร็จ', { appearance: 'success', autoDismiss: true });
-                  setIsEnableControl(true);
-                  setIsNew(false);
-                  axios.get("http://localhost:3001/members",{
-                    headers: {accessToken : localStorage.getItem("accessToken")}
-                  }).then((response) => {
-                    if(response){
-                        setListMembers(response.data.listMembers);
-                      }
-                    });
-                }
-              });
-            } else {
+            if(!isNew){
+                setIsLoading(true);
                 if(values.id === undefined)
                   values.id = listMembers.filter(x => x.accountCode === formik.values.accountCode )[0].id;
                 axios.put("http://localhost:3001/members",values,{
@@ -158,6 +142,7 @@ export default function Account() {
                 } else {
                   addToast('บันทึกข้อมูลสำเร็จ', { appearance: 'success', autoDismiss: true });
                   setIsEnableControl(true);
+                  setIsLoading(false);
                 }
               });
             }
@@ -180,8 +165,8 @@ export default function Account() {
       if(user !== null) {
         const fields = ['title', 'firstName', 'lastName', 'accountCode', 'email','phoneNumber','address','description','role','learningPathId','profilePicture','isActivated','IsDeleted','password','id'];
         fields.forEach(field => formik.setFieldValue(field, response.data[field], false));
-        // if(response.data.profilePicture !== null)
-        //   setPostImage(FilesService.buffer64(response.data.profilePicture));
+        if(response.data.profilePicture !== null)
+          setPostImage(FilesService.buffer64(response.data.profilePicture));
         setValue(response.data.isActivated);
         setValueConfirm(response.data.password)
         setListMembers(user);
@@ -206,6 +191,7 @@ export default function Account() {
 
     return (
         <>
+             {isLoading ? ( <> <Spinner  customText={"Loading"}/></>) : (<></>)}
              <div className="relative pt-20 flex max-h-screen-37 bg-darkgreen-mju">
                 <div className="container px-4 relative mx-auto lg:w-10/12 mt-2 flex flex-wrap">
                     <div className="w-full lg:w-3/12">

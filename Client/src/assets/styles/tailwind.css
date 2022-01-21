@@ -2336,6 +2336,10 @@ select {
   padding-bottom: 16rem;
 }
 
+.pb-68 {
+  padding-bottom: 20rem;
+}
+
 .placeholder-blueGray-300::-webkit-input-placeholder {
   --tw-placeholder-opacity: 1;
   color: rgba(203, 213, 225, var(--tw-placeholder-opacity));

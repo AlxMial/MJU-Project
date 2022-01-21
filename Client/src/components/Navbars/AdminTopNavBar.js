@@ -1,7 +1,7 @@
 /*eslint-disable*/
-import React ,{useEffect,useState}from "react";
+import React ,{ useEffect,useState }from "react";
 import { createPopper } from "@popperjs/core";
-import { Link,useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 // components
 import UserDropdown from "components/Dropdowns/UserDropdown.js";
 
@@ -12,13 +12,13 @@ export default function Navbar(props) {
   const [windowWidth, setWindowWidth] = useState(0);
   const [windowHeight, setWindowHeight] = useState(0);
   const history = useHistory();
+
   let resizeWindow = () => {
     setWindowWidth(window.innerWidth);
     setWindowHeight(window.innerHeight);
   };
 
-
-    // dropdown props
+  // dropdown props
   const [dropdownAdminPopUpShow, setDropDownAdminOverShow] = React.useState(false);
   const btnDropDownAdminRef = React.createRef();
   const popoverAdminRef = React.createRef();
@@ -43,10 +43,9 @@ export default function Navbar(props) {
   useEffect(() => {
     resizeWindow();
     const isValue = localStorage.getItem("translate")
-    console.log(isValue)
     var result = (isValue === 'true');
     setIsThai((result));
-
+  
     const checkIfClickedOutside = (e) => {
       if (dropdownAdminPopUpShow && e.toElement.id !== "thaix" && e.toElement.id !== "engx" && e.toElement.id !== "ham" ) {
         setDropDownAdminOverShow(false);
@@ -65,7 +64,6 @@ export default function Navbar(props) {
       history.push("/admin");
     }else{
       history.push("/home");
-      window.location.reload();
     }
   }
 

@@ -2,7 +2,6 @@
 import React,{useRef,useState,useEffect} from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 import { useHistory } from "react-router-dom";
-import axios from "axios";
 // Layout
 import AdminNavbar from "components/Navbars/AdminNavbar.js";
 import Sidebar from "components/Sidebar/Sidebar.js";

@@ -6,7 +6,7 @@ import { AuthContext } from '../../services/AuthContext';
 import { useToasts } from 'react-toast-notifications';
 import { useFormik  } from "formik";
 import * as Yup from "yup";
-import FilesService from "services/files"
+
 export default function Login() {
 
   const { setAuthState } = useContext(AuthContext); 
@@ -41,12 +41,13 @@ export default function Login() {
           localStorage.setItem("accessToken", response.data.token);
           localStorage.setItem("roleUser", response.data.role);
           localStorage.setItem("email", response.data.email);
-          
           setAuthState({
               email : response.data.email,
               id: response.data.id,
               status:true,
               role:response.data.role,
+              profilePicture:response.data.profilePicture,
+              learningPathId:response.data.learningPathId
             });
           if(response.data.role === "1")
             history.push("/admin");

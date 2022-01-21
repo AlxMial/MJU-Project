@@ -21,7 +21,6 @@ export default function Auth() {
             <Route path="/auth/register" exact component={Register} />
             <Redirect from="/" to="/auth/login" />
           </Switch>
-          {/* <FooterSmall absolute /> */}
         </section>
       </main>
     </>

@@ -1,15 +1,23 @@
 import TimeAgo from 'timeago-react';
 import React from 'react'
-import { useHistory, Link } from "react-router-dom";
-import { useState, useEffect } from 'react';
+import { useHistory, Link,useParams } from "react-router-dom";
+import { useState, useEffect,useContext } from 'react';
+import { AuthContext } from '../../../services/AuthContext';
 import './curriculum.css'
 
 export default function Curriculum() {
-
+    let { id } = useParams();
     const [searchText, setSearchText] = useState('');
     const [tagText, setTagText] = useState('');
     const [valueSearch, setValueSearch] = useState('');
+    const [learning,setLearning] = useState('');
     const history = useHistory();
+    const { authState } = useContext(AuthContext);
+
+    const optionsLearning = [
+        { value: '1', label: 'ข้าว' },
+        { value: '2', label: 'มังคุด' }
+    ];
 
     const clearSearch = () => {
         setSearchText('');
@@ -17,15 +25,23 @@ export default function Curriculum() {
         setValueSearch('');
     }
 
+      
+    useEffect(()=>{
+        if(authState.learningPathId)
+            setLearning(optionsLearning[authState.learningPathId].label);
+        else setLearning(optionsLearning[0].label);
+    },[]);
+
+
     const FrmSearch = () => {
         return (
             <>
-                <div className="px-4 w-full justify-center frmSearch">
+                <div className="px-4 w-full justify-center frmSearch ">
                     <div className="w-full ml-auto mr-auto">
-                        <h1 className="text-white font-semibold text-sm">
+                        <h1 className="text-white mt-4 font-semibold text-2xl">
                             ค้นหาหลักสูตร
                         </h1>
-                        <div className='flex mt-2'>
+                        <div className='flex mt-4'>
                             <label className="block uppercase text-white text-sm font-bold mb-2 label-form"> ค้นหา </label >
                             <input className='text-form border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150'
                                 type="text"
@@ -35,7 +51,7 @@ export default function Curriculum() {
                         </div>
                         <div className='flex mt-2'>
                             <label className="block uppercase text-white text-sm font-bold mb-2 label-form"> แท็ก </label >
-                            <textarea value={tagText} onChange={e => setTagText(e.target.value)}
+                            <textarea value={tagText}        rows="4" onChange={e => setTagText(e.target.value)}
                                 className='text-form border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150' />
                         </div>
 
@@ -104,7 +120,7 @@ export default function Curriculum() {
 
     return (
         <>
-            <div className="relative pt-20 pb-32 flex max-h-screen-37 bg-darkgreen-mju">
+            <div className="relative pt-20 pb-68 flex max-h-screen-37 bg-darkgreen-mju">
                 <div className="container px-4 relative mx-auto lg:w-10/12 mt-2 flex flex-wrap">
                     <div className="w-full lg:w-3/12">
                         <i className="fas fa-arrow-left text-white text-sm cursor-pointer " onClick={() => history.goBack()}>
@@ -116,9 +132,9 @@ export default function Curriculum() {
                     </div>
                 </div>
             </div>
-            <div className="container relative mx-auto lg:w-10/12 mt-2 px-4">
-                <div className='title text-sm font-bold px-4'>
-                    ข้าว
+            <div className="container relative mx-auto lg:w-10/12 mt-2 px-4 py-4">
+                <div className='title text-xl font-bold px-4'>
+                    {learning}
                 </div>
             </div>
             <div className="container relative mx-auto lg:w-10/12 mt-2">

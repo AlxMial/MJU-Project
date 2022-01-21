@@ -62,7 +62,7 @@ export default function Courses() {
     const [optionsLearning, setOptionsLearning] = useState([])
     const options = [
       { value: '1', label: 'ปฏิทิน' },
-      { value: '2', label: 'การผลิต' },
+      { value: '2', label: 'การปลูก' },
       { value: '3', label: 'การแปรรูป' }
     ];
   //#endregion

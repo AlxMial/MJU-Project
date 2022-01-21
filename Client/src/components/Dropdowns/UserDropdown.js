@@ -11,9 +11,9 @@ const UserDropdown = () => {
   const btnDropdownRef = React.createRef();
   const popoverDropdownRef = React.createRef();
   const { setAuthState } = useContext(AuthContext); 
+  const { authState } = useContext(AuthContext);
   const [pictureProfile , setPictureProfile] = useState("");
   const history = useHistory();
-
   const openDropdownPopover = () => {
     createPopper(btnDropdownRef.current, popoverDropdownRef.current, {
       placement: "bottom-start",
@@ -25,7 +25,6 @@ const UserDropdown = () => {
   };
 
   useEffect(() => {
-
     const email = localStorage.getItem('email');
     axios.get(`http://localhost:3001/members/getemail/${email}`,{
       headers: {accessToken : localStorage.getItem("accessToken")}
@@ -52,12 +51,12 @@ const UserDropdown = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem('email');
     localStorage.removeItem('roleUser');
-    setAuthState({ email: "", id: 0, status: false,role:"" });
+    setAuthState({ email: "", id: 0, status: false,role:"",profilePicture:"",learningPathId:"" });
   }
 
   const linkAccount = () => {
     history.push("/home/account");
-   // window.location.reload()
+    //window.location.reload()
   }
 
   return (
