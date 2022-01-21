@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { Attachs } = require('../../models');
+const { validateToken } = require("../../middlewares/AuthMiddleware");
 
 
 router.get('/bySubjectsId/:id', async (req,res) => {

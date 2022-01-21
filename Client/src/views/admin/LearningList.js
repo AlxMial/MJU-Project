@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import Modal from "react-modal";
 import ReactPaginate from 'react-paginate';
+import ConfirmDialog from '../../components/ConfirmDialog/ConfirmDialog'
+import { useToasts } from 'react-toast-notifications';
 
 Modal.setAppElement('#root');
 const customStyles = {
@@ -27,9 +29,10 @@ export default function LearningList() {
     const [deleteNumber , setDeleteNumber] = useState(0);
     const [pageNumber, setPageNumber] = useState(0);
     const [listSearch, setListSerch] = useState([]);
+    const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
     const usersPerPage = 10;
     const pagesVisited = pageNumber * usersPerPage;
-
+    const { addToast } = useToasts();
     function openModal(type) {
         setIsOpen(true);
     }
@@ -41,6 +44,16 @@ export default function LearningList() {
     function closeModal() {
         setIsOpen(false);
     }
+
+    
+    function openModalSubject() {
+        setIsOpenSubject(true);
+    }
+    
+    function closeModalSubject() {
+        setIsOpenSubject(false);
+    }
+    
 
     const handleChange = (e) => {
         const { name, checked } = e.target;
@@ -55,23 +68,58 @@ export default function LearningList() {
             let tempLearning = listLearning.map((Learning) =>
             Learning.id.toString() === name ? {
                     ...Learning, IsDeleted: checked
-            } : Learning
+                } : Learning
             );
             setListLearning(tempLearning);
+            setDeleteNumber(tempLearning.filter(x => x.IsDeleted === true).length);
         }
     };
 
-    const deleteLearning = (e) => {
-        axios
-          .delete(`http://localhost:3001/learning/${e}`)
-          .then(() => {
-            setListLearning(
-              listLearning.filter((val) => {
-                return val.id !== e;
-              })
-            );
+    const deleteLearning = async (e) => {
+
+        const response = await  axios.get(`http://localhost:3001/learning/getCourses/${e}`);
+        if(response.data === null){
+            axios
+            .delete(`http://localhost:3001/learning/${e}`)
+            .then(() => {
+              setListLearning(
+                listLearning.filter((val) => {
+                  return val.id !== e;
+                })
+              );
+              closeModal();
+            });
+        }else{
+            addToast('ไม่สามารถบันทึกข้อมูลได้ เนื่องจากรหัสเส้นทางการเรียนรู้ ถูกนำไปใช้งานที่หน้าจอจัดการหลักสูตร', { appearance: 'warning', autoDismiss: true });
             closeModal();
-          });
+        }
+    }
+
+    const deleteByList = async () => {
+        if(deleteNumber > 0)
+        {
+            var ArrayDeleted = [];
+            for (const field of listLearning) {
+                const response = await  axios.get(`http://localhost:3001/learning/getCourses/${field.id}`);
+                if(field.IsDeleted && response.data === null) {
+                    ArrayDeleted.push(field.id)
+                }else  { field.IsDeleted = false}
+            }
+          
+            axios
+            .delete(`http://localhost:3001/learning/multidelete/${ArrayDeleted}`,{
+              headers: {accessToken : localStorage.getItem("accessToken")}
+            })
+            .then(() => {
+                setDeleteNumber(0);
+                closeModalSubject();
+                setListLearning(
+                    listLearning.filter((val) => {
+                      return val.IsDeleted !== true;
+                    })
+                  );
+            });
+        }
     }
 
     const pageCount = Math.ceil(listLearning.length / usersPerPage);
@@ -102,7 +150,7 @@ export default function LearningList() {
                     <Link to={`/admin/learning/${value.id}`} >{value.LearningPathNameENG}</Link>
                 </td>
                 <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap cursor-pointer">
-                    0
+                    {value.CoursesCount}
                 </td>
                 <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-3">
                     <label className="text-red-500 cursor-pointer" onClick={() => {openModal("delete")}}>  <i className="fas fa-trash"></i> ลบ</label>
@@ -190,7 +238,12 @@ export default function LearningList() {
                                 |
                             </h3>
                             <h3 className={"font-semibold text-sm text-blueGray-700"}>
-                                {deleteNumber} จำนวนรายการ
+                                {listLearning.length} รายการ
+                            </h3>
+                            <h3 className={"font-semibold text-sm text-blueGray-700 leading-2"}>
+                            &nbsp; <i className="fas fa-trash text-red-500 cursor-pointer" onClick={()=>{openModalSubject()}}></i> &nbsp;
+                                <span>ลบ {deleteNumber} รายการที่เลือก</span>
+                                <ConfirmDialog  showModal={modalIsOpenSubject} message={"จัดการเส้นทางการเรียนรู้"} hideModal={()=>{closeModalSubject()}} confirmModal={() => {deleteByList()}}/>
                             </h3>
                         {/* Form */}
                         <form className="md:flex hidden flex-row flex-wrap items-center lg:ml-auto mr-3">

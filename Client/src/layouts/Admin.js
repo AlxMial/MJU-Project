@@ -1,15 +1,15 @@
+// components
 import React,{useRef,useState,useEffect} from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
-import { AuthContext } from "../services/AuthContext";
-// components
-
+import { useHistory } from "react-router-dom";
+import axios from "axios";
+// Layout
 import AdminNavbar from "components/Navbars/AdminNavbar.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
 import HeaderStats from "components/Headers/HeaderStats.js";
-import FooterAdmin from "components/Footers/FooterAdmin.js";
 import AdminTopNavBar from "components/Navbars/AdminTopNavBar.js";
-// views
 
+// views
 import Members from "views/admin/MembersInfo";
 import MembersList from "views/admin/MembersList";
 import Learning from "views/admin/LearningInfo";
@@ -17,27 +17,29 @@ import LearningList from "views/admin/LearningList";
 import Courses from "views/admin/CoursesInfo";
 import CoursesList from "views/admin/CoursesList";
 
-
-
 export default function Admin() {
-  const [authState, setAuthState] = useState({
-    username: "",
-    id: 0,
-    status: false,
-  });
-
   const box = useRef(null);
   useOutsideAlerter(box);
 
   const [todos, setTodos] = useState("");
+  let history = useHistory();
 
   useEffect(() => {
+    if(!localStorage.getItem("accessToken")){
+      history.push("/auth/login");
+    }
+
+    const roleUser = localStorage.getItem("roleUser");
+    if(roleUser !== "1")
+      history.push("/home");
+
     if(window.location.pathname.includes("members"))
-    setTodos("จัดการบัญชีผู้ใช้")
-  else if(window.location.pathname.includes("learning"))
-    setTodos("จัดการเส้นทางการเรียนรู้")
-  else 
-    setTodos("จัดการหลักสูตร")
+      setTodos("จัดการบัญชีผู้ใช้")
+    else if(window.location.pathname.includes("learning"))
+      setTodos("จัดการเส้นทางการเรียนรู้")
+    else 
+      setTodos("จัดการหลักสูตร")
+     
   });
 
   function useOutsideAlerter(ref) {
@@ -60,7 +62,6 @@ export default function Admin() {
 
   return (
     <>
-    <AuthContext.Provider value={{ authState, setAuthState }}>
       <AdminTopNavBar fixed />
       <Sidebar />
       <div className="relative md:ml-64"  ref={box}>
@@ -82,7 +83,6 @@ export default function Admin() {
           </Switch>
         </div>
       </div>
-      </AuthContext.Provider>
     </>
   );
 }

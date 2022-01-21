@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from 'axios'
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { Formik, Form, Field, ErrorMessage,useFormik  } from "formik";
+import {useFormik  } from "formik";
 import * as Yup from "yup";
 import { useToasts } from 'react-toast-notifications';
 import FilesService from '../../services/files';
@@ -16,7 +16,6 @@ export default  function Learning() {
   const [enableControl,setIsEnableControl] = useState(true);
   const [isNew,setIsNew] = useState(false);
   const [listLearning, setListLearning] = useState([]);
-
 
   const formik = useFormik({
     initialValues : {
@@ -33,28 +32,44 @@ export default  function Learning() {
     DescriptionTH: Yup.string().required('* กรุณากรอก รายละเอียดเส้นทางการเรียนรู้ (ไทย)'),
    }),
    onSubmit: values => {
-      if(isNew){
-        axios.post("http://localhost:3001/learning",values).then((response)=>{
-        if(response.data.error) 
-        {
-          addToast(response.data.error, { appearance: 'error', autoDismiss: true });
+    axios.get(`http://localhost:3001/learning/byLearningCode/${values.LearningPathCode}`,{
+      headers: { 
+        'Content-Type': 'application/json; charset=utf-8',
+        accessToken : localStorage.getItem("accessToken"),
+     },
+    },{ }).then((response) => {
+      if(response.data === null || response.data.id === values.id) {
+        if(isNew){
+          axios.post("http://localhost:3001/learning",values).then((response)=>{
+          if(response.data.error) 
+          {
+            addToast(response.data.error, { appearance: 'error', autoDismiss: true });
+          } else {
+            addToast('บันทึกข้อมูลสำเร็จ', { appearance: 'success', autoDismiss: true });
+            setIsEnableControl(true);
+            setIsNew(false)
+            axios.get("http://localhost:3001/learning").then((response) =>   {
+              setListLearning(response.data.listLearning);
+            });
+          }
+          });
         } else {
-          addToast('Saved Successfully', { appearance: 'success', autoDismiss: true });
-          setIsEnableControl(true);
-          setIsNew(false)
+            if(values.id === undefined)
+              values.id = listLearning.filter(x => x.LearningPathCode === formik.values.LearningPathCode )[0].id;
+            axios.put("http://localhost:3001/learning",values).then((response) => {
+            if(response.data.error) 
+            {
+              addToast(response.data.error, { appearance: 'error', autoDismiss: true });
+            } else {
+              addToast('บันทึกข้อมูลสำเร็จ', { appearance: 'success', autoDismiss: true });
+              setIsEnableControl(true);
+            }
+          });
         }
-      });
-    } else {
-        axios.put("http://localhost:3001/learning",values).then((response) => {
-        if(response.data.error) 
-        {
-          addToast(response.data.error, { appearance: 'error', autoDismiss: true });
-        } else {
-          addToast('Saved Successfully', { appearance: 'success', autoDismiss: true });
-          setIsEnableControl(true);
-        }
-      });
-    }
+      } else {
+        addToast('ไม่สามารถบันทึกข้อมูลได้ เนื่องจากรหัสเส้นทางการเรียนรู้ซ้ำ กรุณากรอกรหัสเส้นทางการเรียนรู้ใหม่', { appearance: 'warning', autoDismiss: true });
+      }
+    });
    },
  });
 

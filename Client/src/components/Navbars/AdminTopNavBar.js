@@ -8,7 +8,7 @@ import UserDropdown from "components/Dropdowns/UserDropdown.js";
 export default function Navbar(props) {
 
   const [navbarOpen, setNavbarOpen] = React.useState(false);
-
+  const [isThai,setIsThai] = React.useState(true);
   const [windowWidth, setWindowWidth] = useState(0);
   const [windowHeight, setWindowHeight] = useState(0);
 
@@ -17,12 +17,6 @@ export default function Navbar(props) {
     setWindowHeight(window.innerHeight);
   };
 
-  useEffect(() => {
-    resizeWindow();
-    
-    window.addEventListener("resize", resizeWindow);
-    return () => {window.removeEventListener("resize", resizeWindow);};
-  }, []);
 
     // dropdown props
   const [dropdownAdminPopUpShow, setDropDownAdminOverShow] = React.useState(false);
@@ -37,6 +31,32 @@ export default function Navbar(props) {
   const closeDropDownPopUp = () => {
     setDropDownAdminOverShow(false);
   };
+
+  const ChangeTranslate = (e) => {
+    if(e.target.id === "thaix")
+      setIsThai(true);
+    else 
+      setIsThai(false)
+    localStorage.setItem("translate",isThai);
+  }
+  
+  useEffect(() => {
+    resizeWindow();
+    const isValue = localStorage.getItem("translate")
+    var result = (isValue === 'true');
+    setIsThai((result));
+
+    const checkIfClickedOutside = (e) => {
+      if (dropdownAdminPopUpShow && e.toElement.id !== "thaix" && e.toElement.id !== "engx" && e.toElement.id !== "ham" ) {
+        setDropDownAdminOverShow(false);
+      }else if (e.toElement.id === "")
+        setDropDownAdminOverShow(false);
+    };
+
+    document.addEventListener("mousedown", checkIfClickedOutside);
+    window.addEventListener("resize", resizeWindow);
+    return () => { window.removeEventListener("resize", resizeWindow); document.removeEventListener("mousedown", checkIfClickedOutside);};
+  }, []);
 
   return (
     <>
@@ -66,6 +86,7 @@ export default function Navbar(props) {
                 className="text-blueGray-500"
                 href="#pablo"
                 ref={btnDropDownAdminRef}
+                id="ham"
                 onClick={(e) => {
                   e.preventDefault();
                   dropdownAdminPopUpShow ? closeDropDownPopUp() : openDropDownPopUp();
@@ -78,7 +99,7 @@ export default function Navbar(props) {
                 </div>
               </a>
               <span className={"w-12 h-12 text-sm bg-blueGray-200 inline-flex ml-3 items-center justify-center rounded-lg" + (windowWidth < 1024 ? " block" : " hidden")}>
-                <UserDropdown />
+                <UserDropdown /> 
               </span>
 
               <div
@@ -90,19 +111,25 @@ export default function Navbar(props) {
               >
                 <a
                   href="#pablo"
+                  id="thaix"
                   className={
-                    "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
-                  }
-                  onClick={(e) => e.preventDefault()}
+                    "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700 "
+                    + (!isThai
+                      ? "opacity-75"
+                      : "textUnderline")}
+                      onClick={(e) => {ChangeTranslate(e)}}
                 >
                   ภาษาไทย
                 </a>
                 <a
                   href="#pablo"
+                  id="engx"
                   className={
-                    "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
-                  }
-                  onClick={(e) => e.preventDefault()}
+                    "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700 "
+                   + (isThai
+                      ? "opacity-75"
+                      : "textUnderline")}
+                      onClick={(e) => {ChangeTranslate(e)}}
                 >
                   English
                 </a>
@@ -120,17 +147,26 @@ export default function Navbar(props) {
                 <li className="flex items-center text-sm font-bold text-white cursor-pointer">
                   <i className="fas fa-globe"></i>&nbsp;&nbsp;
                 </li>
-                <li className="flex items-center text-sm font-bold text-white cursor-pointer">
+                <li className={"flex items-center text-sm font-bold text-white cursor-pointer "+ (!isThai
+                        ? "opacity-75"
+                        : "textUnderline")}
+                    id="thaix"
+                    onClick={(e) => {ChangeTranslate(e)}}>
                   ภาษาไทย
                 </li>
                 <li className="flex items-center text-lg font-bold text-white">
                 &nbsp;|&nbsp;
                 </li>
-                <li className="flex items-center text-sm font-bold text-white cursor-pointer">
-                  English&nbsp;&nbsp;&nbsp;
+                <li className={"flex items-center text-sm font-bold text-white cursor-pointer " + (isThai
+                        ? "opacity-75"
+                        : "textUnderline") }
+                    id="engx" 
+                    onClick={(e) => {ChangeTranslate(e)}}>
+                  English
                 </li>
 
                 <li className="flex items-center">
+                  &nbsp;&nbsp;&nbsp;
                   <UserDropdown />
                 </li>
               </ul>

@@ -1,14 +1,17 @@
-import React,{useEffect,useContext} from "react";
+import React,{useEffect,useContext, useState} from "react";
 import { createPopper } from "@popperjs/core";
 import { Link } from "react-router-dom";
 import { AuthContext } from '../../services/AuthContext';
+import axios from "axios";
+import FilesService from "../../services/files";
+
 const UserDropdown = () => {
   // dropdown props
   const [dropdownPopoverShow, setDropdownPopoverShow] = React.useState(false);
   const btnDropdownRef = React.createRef();
   const popoverDropdownRef = React.createRef();
   const { setAuthState } = useContext(AuthContext); 
-
+  const [pictureProfile , setPictureProfile] = useState("");
   const openDropdownPopover = () => {
     createPopper(btnDropdownRef.current, popoverDropdownRef.current, {
       placement: "bottom-start",
@@ -20,9 +23,19 @@ const UserDropdown = () => {
   };
 
   useEffect(() => {
+
+    const email = localStorage.getItem('email');
+    axios.get(`http://localhost:3001/members/getemail/${email}`,{
+      headers: {accessToken : localStorage.getItem("accessToken")}
+    }).then((response) => {
+      if(response.data !== null)
+      if(response.data.profilePicture !== null)
+        setPictureProfile(FilesService.buffer64(response.data.profilePicture));
+    });
+
     const checkIfClickedOutside = (e) => {
-      if (dropdownPopoverShow && btnDropdownRef.current && !btnDropdownRef.current.contains(e.target)) {
-        setDropdownPopoverShow(false);
+      if (dropdownPopoverShow && e.toElement.id !== "accountx" && e.toElement.id !== "logoutx"  &&  btnDropdownRef.current && e.toElement.name !== "picture") {
+          setDropdownPopoverShow(false);
       }
     };
 
@@ -35,7 +48,9 @@ const UserDropdown = () => {
 
   const logout = () => {
     localStorage.removeItem("accessToken");
-    setAuthState({ username: "", id: 0, status: false });
+    localStorage.removeItem('email');
+    localStorage.removeItem('roleUser');
+    setAuthState({ email: "", id: 0, status: false,role:"" });
   }
 
   return (
@@ -43,7 +58,6 @@ const UserDropdown = () => {
       <div
         className="text-blueGray-500 block"
         ref={btnDropdownRef}
-       
       >
         <div className="items-center flex cursor-pointer"
          onClick={(e) => {
@@ -53,7 +67,8 @@ const UserDropdown = () => {
             <img
               alt="..."
               className="w-full rounded-full align-middle border-none shadow-lg"
-              src={require("assets/img/team-1-800x800.jpg").default}
+              name="picture"
+              src={  ((pictureProfile) ? pictureProfile  :  require("assets/img/noimg.png").default) }
             />
           </span>
         </div>
@@ -65,28 +80,30 @@ const UserDropdown = () => {
         }
       >
         <Link to="">
-        <a
-          href="#pablo"
+        <div
           className={
-            "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
+            "text-xs py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
           }
+          id="accountx"
           onClick={(e) => e.preventDefault()}
         >
-          จัดการบัญชีผู้ใช้
-        </a>
+          <i className="fas fa-user" id="accountx"></i> &nbsp;
+          <span className="text-sm" id="accountx">จัดการบัญชีผู้ใช้</span>
+        </div>
         </Link>
         <div className="h-0 my-2 border border-solid border-blueGray-100" />
         <Link to="/auth/login">
-          <a
+          <div
             href="#pablo"
             className={
-              "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
+              "text-xs py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700 logoutx"
             }
+            id="logoutx"
             onClick={logout}
           >
-
-            ออกจากระบบ
-          </a>
+            <i className="fas fa-sign-out-alt text-red-500"  id="logoutx"></i> &nbsp;
+            <span className="text-sm"  id="logoutx" >ออกจากระบบ</span>
+          </div>
         </Link>
       </div>
       </div>

@@ -33,5 +33,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
     });
+
+    Learning.associate = (models) => {
+      Learning.hasMany(models.Courses, {
+        onDelete: "cascade",
+      });
+    };
     return Learning;
   };

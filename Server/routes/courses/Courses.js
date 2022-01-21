@@ -1,10 +1,20 @@
 const express = require('express');
 const router = express.Router();
-const { Courses } = require('../../models');
-
+const { Courses,Subjects } = require('../../models');
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
+const { validateToken } = require("../../middlewares/AuthMiddleware");
 
 router.get("/", async (req, res) => {
-  const listOfCourses = await Courses.findAll();
+  const listOfCourses = await Courses.findAll({
+    attributes: { 
+      include: [[Sequelize.fn("COUNT", Sequelize.col("subjects.id")), "SubjectsCount"]] 
+    },
+    include: [{
+        model: Subjects, attributes: []
+    }],
+    group: ['courses.id']
+  });
   res.json({listOfCourses : listOfCourses});
 });
 
@@ -20,6 +30,13 @@ router.get('/byId/:id', async (req,res) =>{
   res.json(Course);
 });
 
+router.get('/ByCurriculum/:code', validateToken , async (req,res) =>{
+  const id = req.params.code.toString("utf8");
+  const course = await Courses.findOne({
+    where: {  CurriculumCode: id },
+   });
+  res.json(course);
+});
 
 router.put("/" , async (req,res) =>{
   await Courses.update(req.body,{where : {id: req.body.id }})
@@ -36,6 +53,19 @@ router.delete("/:CoursesId", async (req, res) => {
   res.json("DELETED SUCCESSFULLY");
 });
 
+
+router.delete("/multidelete/:coursesId", validateToken , (req, res) => {
+  const CoursesId = req.params.coursesId;
+  const words = CoursesId.split(',');
+  for (const type of words) { 
+    Courses.destroy({
+      where: {
+        id: type,
+      },
+    });
+  }
+  res.json("DELETED SUCCESSFULLY");
+});
 
 // router.post("/", async (req, res) => {
 //     const { title, type,fileSize,filebase64 } = req.body;

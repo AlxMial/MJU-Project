@@ -2,11 +2,11 @@ module.exports = (sequelize, DataTypes) => {
     const Members = sequelize.define("Members", {
       accountCode: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       title: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       firstName: {
         type: DataTypes.STRING,

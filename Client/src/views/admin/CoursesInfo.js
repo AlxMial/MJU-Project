@@ -39,6 +39,7 @@ export default function Courses() {
     const [listCourse, setListCourse] = useState([]);
     const [listSubject, setListsubject] = useState([]);
     const [listAttach, setListAttach] = useState([]);
+    const [listLearning,setListLearning] = useState([]);
     const [numberHour, setNumberHour] = useState("0");
     const [headName , setHeadName] = useState("หลักสูตร");
     const [modalIsOpen, setIsOpen] = useState(false);
@@ -58,7 +59,7 @@ export default function Courses() {
     const attachPerPage = 10;
     const pagesVisited = pageNumber * usersPerPage;
     const pagesAttach = attachNumber * attachPerPage;
-
+    const [optionsLearning, setOptionsLearning] = useState([])
     const options = [
       { value: '1', label: 'ปฏิทิน' },
       { value: '2', label: 'การผลิต' },
@@ -110,7 +111,7 @@ export default function Courses() {
         <>
         <tr key={value.id}>
           <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4 cursor-pointer">
-            <span onClick={() => {fetchDetailSubject(value.id);  openModal(); } }> {value.SubjectOfHour} นาที</span>
+            <span onClick={() => {fetchDetailSubject(value.id);  openModal(); } }> {value.SubjectOfHour} ชั่วโมง</span>
           </th>
           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4 font-bold cursor-pointer">
             <span onClick={() => {fetchDetailSubject(value.id);  openModal(); } }> {value.SubjectNameTH} </span>
@@ -170,7 +171,9 @@ export default function Courses() {
     {
       addToast('Size file over 25 MB', { appearance: 'error', autoDismiss: true });
     } else { 
-      var SubId = listSubject[0].id;
+      var SubId = listSubject.filter((val) => {
+        return val.SubjectCode === formikSubject.values.SubjectCode;
+      })[0].id;
       const data = {FileName:e.target.files[0].name,FileType:e.target.files[0].type,FileData:base64,IsDeleted:false,SubjectId:SubId}
       UploadFile(data);
     }
@@ -181,7 +184,7 @@ export default function Courses() {
       if(response.data.error) {
         console.log(response.data.error);
       } else {
-        addToast('Saved Successfully', { appearance: 'success', autoDismiss: true });
+        addToast('บันทึกข้อมูลสำเร็จ', { appearance: 'success', autoDismiss: true });
         setListAttach([...listAttach, data]);
       }
     });
@@ -260,8 +263,8 @@ export default function Courses() {
             formikSubject.setFieldValue(columns, response.data[columns], false)
         }
         setListsubject(response.data);
-        setIsNewSubject(true);
-        setIsEnableSubjectControl(false);
+        // setIsNewSubject(true);
+        // setIsEnableSubjectControl(false);
       } 
     }
 
@@ -297,6 +300,14 @@ export default function Courses() {
       } 
     }
 
+    async function fetchLearning() {
+      const response = await axios("http://localhost:3001/learning");
+      const body = await response.data.listLearning;
+      var JsonLearning = [];
+      body.forEach(field => JsonLearning.push({value: field.id.toString(),label: field.LearningPathNameTH }))
+      setOptionsLearning(JsonLearning)
+    }
+
   //#endregion 
   
   //#region formik
@@ -317,7 +328,8 @@ export default function Courses() {
       IsOtherMat:false,
       IsDocMedia:false,
       IsOtherMedia:false,
-      IsDeleted:false
+      IsDeleted:false,
+      LearningId:''
    },
    validationSchema: Yup.object({
       CurriculumCode:Yup.string().required('* กรุณากรอก รหัสหลักสูตร'),
@@ -327,29 +339,45 @@ export default function Courses() {
    }),
    onSubmit: values => {
     formik.values.CurriculumType = (formik.values.CurriculumType === "") ? "1" : formik.values.CurriculumType ;
+    formik.values.LearningId = (formik.values.LearningId === "") ? "1" : formik.values.LearningId ;
     formik.values.CurriculumTag = tags;
-    if(isNew){
-        axios.post("http://localhost:3001/courses",values).then((response)=>{
-        if(response.data.error) 
-        {
-          addToast(response.data.error, { appearance: 'error', autoDismiss: true });
-        } else {
-          addToast('Saved Successfully', { appearance: 'success', autoDismiss: true });
-          setIsEnableControl(true);
-          setIsNew(false)
-        }
-      });
-    } else {
-        axios.put("http://localhost:3001/courses",values).then((response) => {
-        if(response.data.error) 
-        {
-          addToast(response.data.error, { appearance: 'error', autoDismiss: true });
-        } else {
-          addToast('Saved Successfully', { appearance: 'success', autoDismiss: true });
-          setIsEnableControl(true);
-        }
-      });
-    }
+
+
+            axios.get(`http://localhost:3001/courses/ByCurriculum/${values.CurriculumCode}`,{
+              headers: {accessToken : localStorage.getItem("accessToken")}
+            }).then((response) => {
+              if(response.data === null || response.data.id === values.id) {
+                if(isNew) {
+                  axios.post("http://localhost:3001/courses",values).then((response)=>{
+                  if(response.data.error) 
+                  {
+                    addToast(response.data.error, { appearance: 'error', autoDismiss: true });
+                  } else {
+                    addToast('บันทึกข้อมูลสำเร็จ', { appearance: 'success', autoDismiss: true });
+                    setIsEnableControl(true);
+                    setIsNew(false)
+                    axios.get("http://localhost:3001/courses").then((response) =>   {
+                      setListCourse(response.data.listOfCourses);
+                    });
+                  }
+                });
+              } else {
+                  if(values.id === undefined)
+                    values.id = listCourse.filter(x => x.CurriculumCode === formik.values.CurriculumCode )[0].id;
+                  axios.put("http://localhost:3001/courses",values).then((response) => {
+                  if(response.data.error) 
+                  {
+                    addToast(response.data.error, { appearance: 'error', autoDismiss: true });
+                  } else {
+                    addToast('บันทึกข้อมูลสำเร็จ', { appearance: 'success', autoDismiss: true });
+                    setIsEnableControl(true);
+                  }
+                });
+              }
+              } else {
+                addToast('ไม่สามารถบันทึกข้อมูลได้ เนื่องจากรหัสหลักสูตรซ้ำ กรุณากรอกรหัสหลักสูตรใหม่', { appearance: 'warning', autoDismiss: true });
+              }
+            });
    },
  });
 
@@ -378,22 +406,26 @@ export default function Courses() {
           {
             addToast(response.data.error, { appearance: 'error', autoDismiss: true });
           } else {
-            addToast('Saved Successfully', { appearance: 'success', autoDismiss: true });
+            addToast('บันทึกข้อมูลสำเร็จ', { appearance: 'success', autoDismiss: true });
             setIsNewSubject(false)
             setIsEnableSubjectControl(true);
-            setListsubject([...listSubject, values]);
+            axios.get(`http://localhost:3001/subjects/bySubjectCode/${formikSubject.values.SubjectCode}`).then((response) =>   {
+              setListsubject(response.data);
+            });
           }
         });
       } else {
+          if(values.id === undefined)
+            values.id = listSubject.filter(x => x.SubjectCode === formikSubject.values.SubjectCode )[0].id;
           axios.put("http://localhost:3001/subjects",values).then((response) => {
-          if(response.data.error) 
-          {
-            addToast(response.data.error, { appearance: 'error', autoDismiss: true });
-          } else {
-            addToast('Saved Successfully', { appearance: 'success', autoDismiss: true });
-            setIsEnableSubjectControl(true);
-          }
-        });
+            if(response.data.error) 
+            {
+              addToast(response.data.error, { appearance: 'error', autoDismiss: true });
+            } else {
+              addToast('บันทึกข้อมูลสำเร็จ', { appearance: 'success', autoDismiss: true });
+              setIsEnableSubjectControl(true);
+            }
+          });
       }
     },
   });
@@ -474,6 +506,8 @@ export default function Courses() {
   useEffect(()=>{
     fetchData();
     fetchDataSubject();
+    fetchLearning();
+
   },[]);
 
   return (
@@ -568,28 +602,49 @@ export default function Courses() {
             <div className={"flex-auto px-4 lg:px-10 py-10 pt-4 " + ((headName === "หลักสูตร") ? "block" : "hidden") }>
                 <div className="flex flex-wrap">
                   <div className="w-full lg:w-6/12 px-4 py-1">
-                    <div className="relative w-full mb-3">
-                      <label
-                        className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
-                      >
-                        รหัสหลักสูตร
-                      </label>
-                      <input
-                        type="text"
-                        className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                        id="CurriculumCode"
-                        name="CurriculumCode"
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.CurriculumCode}
-                        disabled={enableControl}
-                      />
-                      {formik.touched.CurriculumCode && formik.errors.CurriculumCode ? (
-                              <div className="text-sm py-2 px-2 text-red-500">{formik.errors.CurriculumCode}</div>
-                            ) : null}
+                  <div className="flex flex-wrap">
+                      <div className="w-full lg:w-6/12">
+                        <div className="relative w-full mb-3">
+                          <label
+                            className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
+                          >
+                            รหัสหลักสูตร
+                          </label>
+                          <input
+                            type="text"
+                            className="border-0 w-90 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                            id="CurriculumCode"
+                            name="CurriculumCode"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.CurriculumCode}
+                            disabled={enableControl}
+                          />
+                          {formik.touched.CurriculumCode && formik.errors.CurriculumCode ? (
+                                  <div className="text-sm py-2 px-2 text-red-500">{formik.errors.CurriculumCode}</div>
+                                ) : null}
+                        </div>
+                      </div>
+                      <div className="w-full lg:w-6/12">
+                        <div className="relative w-full mb-3">
+                          <label
+                            className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
+                          >
+                            เส้นทางการเรียนรู้
+                          </label>
+                          <Select
+                              id="LearningId"
+                              name="LearningId"
+                              onChange={value => {formik.setFieldValue('LearningId',value.value)}}
+                              className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-90 text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" 
+                              options={optionsLearning}
+                              value={defaultValue(optionsLearning, formik.values.LearningId)}
+                              isDisabled={enableControl}
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
-
                   <div className="w-full lg:w-6/12 px-4 py-1">
                     <div className="flex flex-wrap">
                       <div className="w-full lg:w-6/12">

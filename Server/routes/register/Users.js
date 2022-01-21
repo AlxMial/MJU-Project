@@ -7,9 +7,7 @@ const { validateToken } = require("../../middlewares/AuthMiddleware");
 
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
-
   const user = await Members.findOne({ where: { email: email } });
-
   if (!user) 
   { 
     res.json({ error: "User Doesn't Exist" });
@@ -21,13 +19,12 @@ router.post("/login", async (req, res) => {
       { res.json({ error: "Wrong email And Password Combination" }); 
       } else {
         const accessToken = sign(
-          { email: user.email, id: user.id },
+          { email: user.email, id: user.id , role:user.role },
           "MJUPROJECT"
         );
-        res.json({ token: accessToken, email: email, id: user.id });
+        res.json({ token: accessToken, email: email , id: user.id , isActivated: user.isActivated,role:user.role });
       }
     });
-
   }
 });
 

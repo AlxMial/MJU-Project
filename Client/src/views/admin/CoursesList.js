@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import Modal from "react-modal";
 import ReactPaginate from 'react-paginate';
+import ConfirmDialog from '../../components/ConfirmDialog/ConfirmDialog'
 
 Modal.setAppElement('#root');
 const customStyles = {
@@ -24,12 +25,13 @@ export default function CoursesList() {
 
     const [modalIsOpen, setIsOpen] = useState(false);  
     const [listCourses, setListCourses] = useState([]);
+    const [listSubject, setListSubject] = useState([]);
     const [deleteNumber , setDeleteNumber] = useState(0);
     const [pageNumber, setPageNumber] = useState(0);
     const [listSearch, setListSerch] = useState([]);
     const usersPerPage = 10;
     const pagesVisited = pageNumber * usersPerPage;
-
+    const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
     function openModal(type) {
         setIsOpen(true);
     }
@@ -41,6 +43,15 @@ export default function CoursesList() {
     function closeModal() {
         setIsOpen(false);
     }
+
+    function openModalSubject() {
+        setIsOpenSubject(true);
+    }
+    
+    function closeModalSubject() {
+        setIsOpenSubject(false);
+    }
+    
 
     const handleChange = (e) => {
         const { name, checked } = e.target;
@@ -58,6 +69,7 @@ export default function CoursesList() {
             } : Courses
             );
             setListCourses(tempCourses);
+            setDeleteNumber(tempCourses.filter(x => x.IsDeleted === true).length);
         }
     };
 
@@ -72,6 +84,27 @@ export default function CoursesList() {
             );
             closeModal();
         });
+    }
+
+    const deleteByList = () => {
+        if(deleteNumber > 0)
+        {
+            var ArrayDeleted = [];
+            listCourses.forEach(field => { if(field.IsDeleted === true) { ArrayDeleted.push(field.id)}});
+            axios
+            .delete(`http://localhost:3001/courses/multidelete/${ArrayDeleted}`,{
+              headers: {accessToken : localStorage.getItem("accessToken")}
+            })
+            .then(() => {
+                setDeleteNumber(0);
+                closeModalSubject();
+                setListCourses(
+                    listCourses.filter((val) => {
+                      return val.IsDeleted !== true;
+                    })
+                  );
+            });
+        }
     }
 
     const pageCount = Math.ceil(listCourses.length / usersPerPage);
@@ -102,15 +135,13 @@ export default function CoursesList() {
                     <Link to={`/admin/courses/${value.id}`} >{ value.CurriculumNameTH }</Link>
                 </td>
                 <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap cursor-pointer">
-                    <div className="flex">
-                        <Link to={`/admin/courses/${value.id}`} >{ value.CurriculumNameENG }</Link>
-                    </div>
+                    <Link to={`/admin/courses/${value.id}`} >{ value.CurriculumNameENG }</Link>
                 </td>
                 <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap ">
-                    0
+                    <>{ value.SubjectsCount }</>
                 </td>
                 <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap ">
-                    0
+                    { (value.NumOfHours*60)+value.NumOfMin }
                 </td>
                 <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-3">
                     <label className="text-red-500 cursor-pointer" onClick={() => {openModal("delete")}}>  <i className="fas fa-trash"></i> ลบ</label>
@@ -183,6 +214,7 @@ export default function CoursesList() {
             setListSerch(response.data.listOfCourses);
         });
       },[]);
+      
 
   return (
     <>
@@ -199,7 +231,12 @@ export default function CoursesList() {
                                 |
                             </h3>
                             <h3 className={"font-semibold text-sm text-blueGray-700"}>
-                                {deleteNumber} จำนวนรายการ
+                                {listCourses.length} รายการ
+                            </h3>
+                            <h3 className={"font-semibold text-sm text-blueGray-700 leading-2"}>
+                            &nbsp; <i className="fas fa-trash text-red-500 cursor-pointer" onClick={()=>{openModalSubject()}}></i> &nbsp;
+                                <span>ลบ {deleteNumber} รายการที่เลือก</span>
+                                <ConfirmDialog  showModal={modalIsOpenSubject} message={"จัดการบัญชีผู้ใช้"} hideModal={()=>{closeModalSubject()}} confirmModal={() => {deleteByList()}}/>
                             </h3>
                         {/* Form */}
                         <form className="md:flex hidden flex-row flex-wrap items-center lg:ml-auto mr-3">

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import Modal from "react-modal";
 import ReactPaginate from 'react-paginate';
+import ConfirmDialog from '../../components/ConfirmDialog/ConfirmDialog'
 
 Modal.setAppElement('#root');
 const customStyles = {
@@ -27,6 +28,7 @@ export default function MembersList() {
     const [deleteNumber , setDeleteNumber] = useState(0);
     const [pageNumber, setPageNumber] = useState(0);
     const [listSearch, setListSerch] = useState([]);
+    const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
     const usersPerPage = 10;
     const pagesVisited = pageNumber * usersPerPage;
 
@@ -37,9 +39,10 @@ export default function MembersList() {
     ];
 
     const optionsRole = [
-        { value: '1', label: 'ผู้เยี่ยมชม' },
-        { value: '2', label: 'นักศึกษา' },
-        { value: '3', label: 'เกษตรกร' }
+        { value: '1', label: 'ผู้ดูแลระบบ'},
+        { value: '2', label: 'ผู้เยี่ยมชม' },
+        { value: '3', label: 'วิทยากร' },
+        { value: '4', label: 'เกษตรกร' }
     ];
 
     const optionsLearning = [
@@ -59,6 +62,14 @@ export default function MembersList() {
         setIsOpen(false);
     }
 
+    function openModalSubject() {
+        setIsOpenSubject(true);
+    }
+    
+    function closeModalSubject() {
+        setIsOpenSubject(false);
+    }
+    
     const handleChange = (e) => {
         const { name, checked } = e.target;
         if (name === "allSelect") {
@@ -70,11 +81,12 @@ export default function MembersList() {
             } 
         else {
             let tempMember = listMembers.map((member) =>
-            member.id.toString() === name ? {
+                member.id.toString() === name ? {
                     ...member, IsDeleted: checked
-            } : member
+                } : member
             );
             setListMembers(tempMember);
+            setDeleteNumber(tempMember.filter(x => x.IsDeleted === true).length);
         }
     };
 
@@ -90,7 +102,9 @@ export default function MembersList() {
 
     const deleteMember = (e) => {
         axios
-          .delete(`http://localhost:3001/members/${e}`)
+          .delete(`http://localhost:3001/members/${e}`,{
+            headers: {accessToken : localStorage.getItem("accessToken")}
+          })
           .then(() => {
             setListMembers(
               listMembers.filter((val) => {
@@ -101,6 +115,28 @@ export default function MembersList() {
           });
     }
 
+    const deleteByList = () => {
+        if(deleteNumber > 0)
+        {
+            var ArrayDeleted = [];
+            const emailUser = localStorage.getItem('email');
+            listMembers.forEach(field => { if(field.IsDeleted === true && field.email !== emailUser) { ArrayDeleted.push(field.id)}});
+            axios
+            .delete(`http://localhost:3001/members/multidelete/${ArrayDeleted}`,{
+              headers: {accessToken : localStorage.getItem("accessToken")}
+            })
+            .then(() => {
+                setDeleteNumber(0);
+                closeModalSubject();
+                setListMembers(
+                    listMembers.filter((val) => {
+                      return val.IsDeleted !== true;
+                    })
+                  );
+            });
+        }
+    }
+
     const pageCount = Math.ceil(listMembers.length / usersPerPage);
 
     const changePage = ({ selected }) => {
@@ -109,10 +145,10 @@ export default function MembersList() {
 
     const displayUsers = listMembers
     .slice(pagesVisited, pagesVisited + usersPerPage)
-    .map((value) => {
+    .map(function(value, key){
       return (
         <>
-            <tr key={value.id}>
+            <tr role="row" key={value.id}>
                 <th className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap">
                     <input
                         type="checkbox"
@@ -120,7 +156,6 @@ export default function MembersList() {
                         checked={value?.IsDeleted || false}
                         onChange={handleChange}
                         className="form-checkbox rounded text-green-200-mju w-5 h-5 ease-linear transition-all duration-150"
-                
                     />
                 </th>
                 <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap cursor-pointer">
@@ -212,10 +247,12 @@ export default function MembersList() {
     }
 
     useEffect( ()=>  {
-        axios.get("http://localhost:3001/members").then((response) =>   {
+        axios.get("http://localhost:3001/members",{
+            headers: {accessToken : localStorage.getItem("accessToken")}
+          }).then((response) =>   {
             if(response){
                 response.data.listMembers.forEach(field => {
-                    field.title = ChangeSelect(field.title,"title");
+                    field.title = (field.title !== "") ? ChangeSelect(field.title,"title") : ChangeSelect(1,"title");
                     field.role = ChangeSelect(field.role,"role");
                     field.learningPathId = ChangeSelect(field.learningPathId,"learningPathId");
                 });
@@ -240,7 +277,12 @@ export default function MembersList() {
                                 |
                             </h3>
                             <h3 className={"font-semibold text-sm text-blueGray-700"}>
-                                {deleteNumber} จำนวนรายการ
+                                {listMembers.length} รายการ
+                            </h3>
+                            <h3 className={"font-semibold text-sm text-blueGray-700 leading-2"}>
+                            &nbsp; <i className="fas fa-trash text-red-500 cursor-pointer" onClick={()=>{openModalSubject()}}></i> &nbsp;
+                                <span>ลบ {deleteNumber} รายการที่เลือก</span>
+                                <ConfirmDialog  showModal={modalIsOpenSubject} message={"จัดการบัญชีผู้ใช้"} hideModal={()=>{closeModalSubject()}} confirmModal={() => {deleteByList()}}/>
                             </h3>
                         {/* Form */}
                         <form className="md:flex hidden flex-row flex-wrap items-center lg:ml-auto mr-3">

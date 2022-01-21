@@ -1,6 +1,4 @@
 import React,{useState,useEffect} from "react";
-import ReactDOM from "react-dom";
-import { Link,useHistory } from "react-router-dom";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 import { ToastProvider } from 'react-toast-notifications';
 import "@fortawesome/fontawesome-free/css/all.min.css";
@@ -12,22 +10,17 @@ import Admin from "layouts/Admin.js";
 import Auth from "layouts/Auth.js";
 import { AuthContext } from "./services/AuthContext";
 // views without layouts
-import Landing from "views/Landing.js";
-import Profile from "views/Profile.js";
-import Index from "views/Index.js";
 import frontend from "views/frontend/Frontend.js"
 
 function App() {
-
     const [authState, setAuthState] = useState({
       email: "",
       id: 0,
       status: false,
+      role:"",
     });
 
-    let history = useHistory();
     useEffect(() => {
-  
           axios
             .get("http://localhost:3001/users/auth", {
               headers: {
@@ -35,7 +28,7 @@ function App() {
               },
             })
             .then((response) => {
-              console.log(response.data.email);
+            
               if (response.data.error) {
                 setAuthState({ ...authState, status: false });
               } else {
@@ -43,12 +36,12 @@ function App() {
                   email: response.data.email,
                   id: response.data.id,
                   status: true,
+                  role:response.data.role,
                 });
               }
             });
       
     }, []);
-
 
     return (
         <div className="App">
@@ -60,8 +53,8 @@ function App() {
                     <Route path="/admin" component={Admin} />
                     <Route path="/auth" component={Auth} />
                     {/* add routes without layouts */}
-                    <Route path="/landing" exact component={Landing} />
-                    <Route path="/profile" exact component={Profile} />
+                    {/* <Route path="/landing" exact component={Landing} />
+                    <Route path="/profile" exact component={Profile} /> */}
                     <Route path="/" exact component={frontend} />
                     {/* add redirect for first page */}
                     <Redirect from="*" to="/" />

@@ -20,10 +20,16 @@ router.get('/byId/:id', async (req,res) =>{
 });
 
 router.get('/byCoursesId/:id', async (req,res) =>{
-    const id = req.params.id;
-    const Course = await Subjects.findAll({ where : { CourseId: id}});
-    res.json(Course);
-  });
+  const id = req.params.id;
+  const Course = await Subjects.findAll({ where : { CourseId: id}});
+  res.json(Course);
+});
+
+router.get('/bySubjectCode/:code', async (req,res) =>{
+  const id = req.params.code;
+  const Course = await Subjects.findAll({ where : { SubjectCode: id}});
+  res.json(Course);
+});
 
 
 router.put("/" , async (req,res) =>{

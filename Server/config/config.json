@@ -1,18 +1,18 @@
 {
   "development": {
-    "username": "root",
-    "password": null,
+    "username": "mjuundefined",
+    "password": "undefined@090421",
     "database": "mjuproject",
-    "host": "127.0.0.1",
+    "host": "184.82.24.148",
     "dialect": "mysql",
     "usedatabase":"database1"
   },
   "development2": {
-    "username": "root",
-    "password": null,
+    "username": "mjuundefined",
+    "password": "undefined@090421",
     "database": "mjuproject",
-    "host": "127.0.0.1",
+    "host": "184.82.24.148",
     "dialect": "mysql",
-    "usedatabase":"database2"
+    "usedatabase":"database1"
   }
 }

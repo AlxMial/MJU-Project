@@ -2,7 +2,7 @@ import React,{useState,useEffect} from "react";
 import Switch from "components/Toggles/Switch";
 import { useParams, useHistory } from "react-router-dom";
 import FilesService from '../../services/files'
-import { Formik, Form, Field, ErrorMessage,useFormik, setNestedObjectValues  } from "formik";
+import { useFormik  } from "formik";
 import * as Yup from "yup";
 import Select, { NonceProvider } from 'react-select'
 import axios from "axios";
@@ -35,9 +35,10 @@ export default function Members() {
   ];
 
   const optionsRole = [
-    { value: '1', label: 'ผู้เยี่ยมชม' },
-    { value: '2', label: 'นักศึกษา' },
-    { value: '3', label: 'เกษตรกร' }
+    { value: '1', label: 'ผู้ดูแลระบบ'},
+    { value: '2', label: 'ผู้เยี่ยมชม' },
+    { value: '3', label: 'วิทยากร' },
+    { value: '4', label: 'เกษตรกร' }
   ];
 
   const optionsLearning = [
@@ -46,8 +47,8 @@ export default function Members() {
   ];
 
   const defaultValue = (options, value) => {
-    if(value.toString() === "")
-      value = "1";
+    if(value === null) value = "1";
+    if(value.toString() === "") value = "1";
     return options ? options.find(option => option.value === value.toString()) : "";
   };
 
@@ -96,46 +97,87 @@ export default function Members() {
     onSubmit: values => {
       formik.values.title = (formik.values.title === "") ? "1" : formik.values.title ;
       formik.values.role = (formik.values.role === "") ? "1" : formik.values.role ;
-      formik.values.learningPathId = (formik.values.learningPathId === "") ? "1" : formik.values.learningPathId ;
-      if(!confirmPassword)
-      {
-        values.isActivated = value;
-        values.profilePicture = postImage;
-        if(isNew){
-            axios.post("http://localhost:3001/members",values).then((response)=>{
-            if(response.data.error) 
-            {
-              addToast(response.data.error, { appearance: 'error', autoDismiss: true });
-            } else {
-              addToast('Saved Successfully', { appearance: 'success', autoDismiss: true });
-              setIsEnableControl(true);
-              setIsNew(false);
-            }
-          });
+      formik.values.learningPathId = (formik.values.learningPathId === "") ? "1" : formik.values.learningPathId;
+      if(!isNew)
+        if(values.id === undefined)
+          values.id = listMembers.filter(x => x.accountCode === formik.values.accountCode )[0].id;
+      axios.get(`http://localhost:3001/members/getAccountCode/${values.accountCode}`,{
+        headers: {accessToken : localStorage.getItem("accessToken")}
+      }).then((response) => {
+        if(response.data === null || response.data.id === values.id) {
+          insertAccount(values);
         } else {
-            axios.put("http://localhost:3001/members",values).then((response) => {
-            if(response.data.error) 
-            {
-              addToast(response.data.error, { appearance: 'error', autoDismiss: true });
-            } else {
-              addToast('Saved Successfully', { appearance: 'success', autoDismiss: true });
-              setIsEnableControl(true);
-            }
-          });
+          addToast('ไม่สามารถบันทึกข้อมูลได้ เนื่องจากรหัสบัญชีผู้ใช้ซ้ำ กรุณากรอกรหัสบัญชีผู้ใช้ใหม่', { appearance: 'warning', autoDismiss: true });
         }
-      }
+
+      });
     },
   });
 
+  const insertAccount = (values) => {
+    axios.get(`http://localhost:3001/members/getemail/${values.email}`,{
+      headers: {accessToken : localStorage.getItem("accessToken")}
+    }).then((response) => {
+      if(response.data === null || (response.data && response.data.id === values.id)) {
+        if(!confirmPassword)
+        {
+          values.isActivated = value;
+          values.profilePicture = postImage;
+          if(isNew){
+              axios.post("http://localhost:3001/members",values,{
+                headers: {accessToken : localStorage.getItem("accessToken")}
+              }).then((response)=>{
+              if(response.data.error) 
+              {
+                addToast(response.data.error, { appearance: 'error', autoDismiss: true });
+              } else {
+                addToast('บันทึกข้อมูลสำเร็จ', { appearance: 'success', autoDismiss: true });
+                setIsEnableControl(true);
+                setIsNew(false);
+                axios.get("http://localhost:3001/members",{
+                  headers: {accessToken : localStorage.getItem("accessToken")}
+                }).then((response) => {
+                  if(response){
+                      setListMembers(response.data.listMembers);
+                    }
+                  });
+              }
+            });
+          } else {
+              if(values.id === undefined)
+                values.id = listMembers.filter(x => x.accountCode === formik.values.accountCode )[0].id;
+              axios.put("http://localhost:3001/members",values,{
+                headers: {accessToken : localStorage.getItem("accessToken")}
+              }).then((response) => {
+              if(response.data.error) 
+              {
+                addToast(response.data.error, { appearance: 'error', autoDismiss: true });
+              } else {
+                addToast('บันทึกข้อมูลสำเร็จ', { appearance: 'success', autoDismiss: true });
+                setIsEnableControl(true);
+              }
+            });
+          }
+        }
+      }
+      else {
+        addToast('ไม่สามารถบันทึกข้อมูลได้ เนื่องจากอีเมลที่ใช้งานมีการลงทะเบียนเรียบร้อยแล้ว', { appearance: 'warning', autoDismiss: true });
+      }
+    });
+  }
+
   async function fetchData() {
     let response = await axios(
-      `http://localhost:3001/members/byId/${id}`
+      `http://localhost:3001/members/byId/${id}`,{
+        headers: {accessToken : localStorage.getItem("accessToken")}
+      }
     );
     let user = await response.data;
     if(user !== null) {
       const fields = ['title', 'firstName', 'lastName', 'accountCode', 'email','phoneNumber','address','description','role','learningPathId','profilePicture','isActivated','IsDeleted','password','id'];
       fields.forEach(field => formik.setFieldValue(field, response.data[field], false));
-      setPostImage(FilesService.buffer64(response.data.profilePicture));
+      if(response.data.profilePicture !== null)
+        setPostImage(FilesService.buffer64(response.data.profilePicture));
       setValue(response.data.isActivated);
       setValueConfirm(response.data.password)
       setListMembers(user);
@@ -145,6 +187,8 @@ export default function Members() {
       setIsEnableControl(false);
     }
   }
+
+  
 
   useEffect(()=>{
       fetchData();
@@ -170,7 +214,6 @@ export default function Members() {
                   <h3 className="text-blueGray-700 text-lg font-bold mt-2">จัดการบัญชีผู้ใช้</h3>
                 </div>
                 <div>
-                  
                   {(enableControl && !isNew) ? <button
                     className="bg-green-mju text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                     type="button"
