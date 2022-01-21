@@ -427,7 +427,7 @@ export default function Account() {
                                             className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm-select shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" 
                                             options={optionsRole} 
                                             value={defaultValue(optionsRole, formik.values.role)}
-                                            isDisabled={enableControl}/>
+                                            isDisabled={true}/>
                                         </div>
                                     </div>
                                     <div className="w-full lg:w-6/12 px-4 py-1">
@@ -443,7 +443,7 @@ export default function Account() {
                                             className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm-select shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" 
                                             options={optionsLearning} 
                                             value={defaultValue(optionsLearning, formik.values.learningPathId)}
-                                            isDisabled={enableControl}/>
+                                            isDisabled={true}/>
                                         </div>
                                     </div>
                                     <div className="w-full lg:w-6/12 px-4 py-1">
