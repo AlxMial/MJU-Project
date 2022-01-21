@@ -29,8 +29,8 @@ const UserDropdown = () => {
       headers: {accessToken : localStorage.getItem("accessToken")}
     }).then((response) => {
       if(response.data !== null)
-      if(response.data.profilePicture !== null)
-        setPictureProfile(FilesService.buffer64(response.data.profilePicture));
+        if(response.data.profilePicture !== undefined)
+          setPictureProfile(FilesService.buffer64(response.data.profilePicture));
     });
 
     const checkIfClickedOutside = (e) => {
