@@ -134,7 +134,7 @@ export default function Curriculum() {
                                 return true
                             }
                         }).map((item) =>
-                            <Link key={item.id} className="card px-4 md:w-4/12 relative flex flex-col min-w-0 break-words bg-white w-full mb-6 rounded-lg">
+                            <Link to={`/home/subject/${item.id}`} key={item.id} className="card px-4 md:w-4/12 relative flex flex-col min-w-0 break-words bg-white w-full mb-6 rounded-lg">
                                 {/* <img
                                     alt="..."
                                    
@@ -144,9 +144,9 @@ export default function Curriculum() {
                                     <h4 className="text-xl font-bold ">
                                         {item.CurriculumNameTH}
                                     </h4>
-                                    <p className="text-md font-light mt-2 ">
-                                        <div className='text-editor THSarabunBold text-sm-texteditor' dangerouslySetInnerHTML={{__html: FilesServices.buffer64UTF8(item.DescriptionTH)}}></div>
-                                    </p>
+                                    <div className='mt-2 text-editor THSarabunBold text-sm-texteditor'>
+                                        <div dangerouslySetInnerHTML={{__html: FilesServices.buffer64UTF8(item.DescriptionTH)}}></div>
+                                    </div>
                                     <footer>
                                         <div>
                                             <TimeAgo datetime={item.createdAt} />

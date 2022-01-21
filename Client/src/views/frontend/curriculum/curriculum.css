@@ -30,8 +30,8 @@ img {
     display: -webkit-box;
     -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
-    overflow: hidden;
-    line-height: 1;
+     overflow: hidden;
+       /*line-height: 1; */
 }
 
 footer {

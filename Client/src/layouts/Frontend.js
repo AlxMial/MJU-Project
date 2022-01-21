@@ -54,7 +54,7 @@ export default function Frontend() {
                 <Switch>
                     <Route path="/home/index" exact component={home} />
                     <Route path="/home/curriculum/:id" exact component={Curriculum} />
-                    <Route path="/home/subject" exact component={subject} />
+                    <Route path="/home/subject/:id" exact component={subject} />
                     <Route path="/home/account" exact component={Account} />
                     <Redirect from="/home" to="/home/index" />
                 </Switch>
