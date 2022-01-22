@@ -4,6 +4,22 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      UserName:{
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      UserImage:{
+        type: DataTypes.BLOB('long'),
+        allowNull: true,
+      },
+      RelatedTable:{
+        type: DataTypes.STRING,
+        allowNull:false,
+      },
+      RelatedId:{
+        type: DataTypes.STRING,
+        allowNull:false,
+      },
       IsDeleted: {
         type: DataTypes.BOOLEAN,
         allowNull: false,

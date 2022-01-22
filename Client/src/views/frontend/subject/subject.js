@@ -1,57 +1,47 @@
-import React, { useState, useEffect } from 'react'
-import { useHistory, Link } from "react-router-dom";
+
+
+import React,{useEffect, useState} from 'react'
+import { useHistory,Link,useParams } from "react-router-dom";
 import CommentBox from './CommentBox';
-import axios from "axios";
-import { useParams } from "react-router-dom";
+import ReactQuill from 'react-quill';
+import urlPath from 'services/urlServer';
+import FilesService from 'services/files'
+import axios from 'axios';
 
 import './subject.css'
 
 export default function Subject() {
+
+    const [listCourse,setListCourse] = useState([])
+    const [listSubject,setListSubject] = useState([])
     let { id } = useParams();
-    const [courseData, setCourseData] = useState([]);
-    const [subjectData, setSubjectData] = useState([]);
+
     const history = useHistory();
 
-    async function fetchCourse() {
+    async function fetchData() {
         let response = await axios(
-            `http://localhost:3001/courses/byId/${id}`
+          urlPath+`/courses/byId/${id}`
         );
-        let data = await response.data;
-        if (data !== null) {
-            //   for(var columns in response.data) {
-            //     if(columns === "DescriptionTH" || columns === "DescriptionENG")
-            //     formik.setFieldValue(columns,FilesService.buffer64UTF8(response.data[columns]), false)
-            //     else formik.setFieldValue(columns, response.data[columns], false)
-            //   }
-            setCourseData(response.data);
-            console.log(courseData);
+        let user = await response.data;
+        if(user !== null) {
+          response.data.DescriptionTH = FilesService.buffer64UTF8(response.data.DescriptionTH)
+          response.data.DescriptionENG = FilesService.buffer64UTF8(response.data.DescriptionENG)
+          setListCourse(response.data);
         }
-        else { console.log('No Data') }
     }
-
-    async function fetchSubject() {
-        let response = await axios(`http://localhost:3001/subjects/byCoursesId/${id}`);
+    
+    async function fetchDataSubject() {
+        let response = await axios(urlPath+`/subjects/byCoursesId/${id}`);
         let subjects = await response.data;
-        if (subjects !== null) {
-            //   for(var columns in response.data) {
-            //     if(columns === "ContentTH" || columns === "ContentENG")
-            //     {  
-            //       formikSubject.setFieldValue(columns,FilesService.buffer64UTF8(response.data[columns]), false) 
-            //     }
-            //     else 
-            //       formikSubject.setFieldValue(columns, response.data[columns], false)
-            //   }
-            setSubjectData(response.data);
-            console.log(subjectData);
-            // setIsNewSubject(true);
-            // setIsEnableSubjectControl(false);
-        }
+        if(subjects !== null) {
+            setListSubject(response.data);
+        } 
     }
 
-    useEffect(() => {
-        fetchCourse();
-        fetchSubject();
-    }, []);
+    useEffect (  ()  =>  {
+        fetchData();
+        fetchDataSubject();
+    },[]);
 
     const data = {
         post: {
@@ -137,17 +127,27 @@ export default function Subject() {
                         </i>
                     </div>
                 </div>
-                <div className='mt-3 mb-3 text-sm'> หน่วยที่ 1.2 ข้าวเพื่อชีวิตและสังคม</div>
-                <div className='w-full mt-3'>
-                    <div className="min-h-screen-35 px-4 py-4 relative flex flex-col min-h-3 break-words bg-white w-full mb-6 rounded-lg shadow-lg">
-                        <div className='img-course lg:w-4/12 text-center flex flex-wrap mx-auto'>
-                            <img
-                                className="w-full align-middle"
-                                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRxgWGxEtMlqQqTJi9INeFmSksx54dZoSLxg&usqp=CAU" alt="" />
-                        </div>
-                        <div className='course-content lg:w-8/12 leading-none mx-auto mt-3 mb-3'>
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque repudiandae quaerat maiores quo, eligendi repellendus officia aliquam fugit numquam fuga laudantium enim eveniet quis reprehenderit nisi quae facere quasi culpa! Nostrum eligendi blanditiis rem vero cum esse quia magni sunt unde beatae numquam quod officiis, dicta ipsam maxime non placeat.
-                        </div>
+                 <h1 className='text-4xl px-2 py-2 THSarabunBold mt-4 font-bold'>{listCourse.CurriculumNameTH}</h1>
+                <div className='w-full'>
+                    <div className=" min-h-screen-35 px-4 py-4 relative flex flex-col min-h-3 break-words bg-white w-full mb-6 rounded-lg shadow-lg">
+                        <ReactQuill
+                            theme="snow"
+                            placeholder={"Write something awesome..."}
+                            readOnly={true}
+                            value={listCourse.DescriptionTH}
+                            modules={{
+                            // syntax: true,
+                            toolbar:null
+                            }}
+                            formats={[
+                            'header',
+                            'bold', 'italic', 'underline', 'strike', 'blockquote',
+                            'list', 'bullet', 'indent',
+                            'link', 'image','video',
+                            'align',
+                            'code-block'
+                            ]}
+                        />
 
                         <div className='subject-content px-4 py-1 rounded-lg lg:w-8/12 mx-auto mt-3 mb-3'>
                             {
@@ -163,12 +163,16 @@ export default function Subject() {
                                 })
                             }
                         </div>
+
+                        <div className='divComment'>
+                        <hr className="mt-6 border-b-1 mb-6 border-blueGray-300" />
+                            <CommentBox
+                                comments={data.comments}
+                                post={data.post} />
+                        </div>
                     </div>
                 </div>
-
-                <CommentBox
-                    comments={data.comments}
-                    post={data.post} />
+   
             </div>
 
         </>

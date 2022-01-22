@@ -24,6 +24,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER  ,
       allowNull: true,
     },
+    ImageName: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    ImageCourses: {
+      type: DataTypes.BLOB('long'),
+      allowNull: true,
+    },
     DescriptionTH: {
       type: DataTypes.BLOB('long'),
       allowNull: true,

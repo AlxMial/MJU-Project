@@ -47,7 +47,7 @@ export default function Navbar(props) {
     setIsThai((result));
   
     const checkIfClickedOutside = (e) => {
-      if (dropdownAdminPopUpShow && e.toElement.id !== "thaix" && e.toElement.id !== "engx" && e.toElement.id !== "ham" ) {
+      if (dropdownAdminPopUpShow && e.toElement.id !== "thaix" && e.toElement.id !== "engx" && e.toElement.id !== "ham" ||  e.toElement.id === ""  ) {
         setDropDownAdminOverShow(false);
       }else if (e.toElement.id === "")
         setDropDownAdminOverShow(false);

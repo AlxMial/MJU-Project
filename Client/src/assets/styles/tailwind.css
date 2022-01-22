@@ -3508,8 +3508,14 @@ text-blue-mju-home {
   display: none;
 }
 
+
+
 input[type=text]:disabled,input[type=password]:disabled,textarea:disabled {
   background: #F2F2F2;
+}
+
+.inputNoneDisable{
+  background: white !important;
 }
 
 .css-18gu508-Content{
@@ -3751,3 +3757,93 @@ input[type=text]:disabled,input[type=password]:disabled,textarea:disabled {
 .css-lr9fot-singleValue{
   line-height: 1.7;
 }
+
+
+/* ::-webkit-file-upload-button {
+  background-color: rgba(105, 172, 43, var(--tw-bg-opacity));
+  color:white;
+  border-radius: 0.5rem;
+  border:0px;
+  --tw-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+ 
+} */
+.custom-file-input::-webkit-file-upload-button {
+  visibility: hidden;
+  padding:0px;
+}
+.custom-file-input::before {
+  content: 'เลือกไฟล์';
+  display: inline-block;
+  outline: none;
+  background-color: rgba(105, 172, 43, var(--tw-bg-opacity));
+  color:white;
+  border-radius: 0.5rem;
+  border:0px;
+  --tw-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  width: 10vh;
+  height: 30px;
+  padding-top: 8px;
+  text-align: center;
+
+}
+
+
+.buttonIn {
+  position: relative;
+}
+
+.imageUpload {
+  display: none;
+}
+
+.inputUpload {
+  margin: 0px;
+  padding: 0px;
+  outline: none;
+  border-radius: 5px;
+}
+
+.spanUpload {
+  position: absolute;
+  top: 0;
+  border-radius: 5px;
+  right: 0px;
+  z-index: 2;
+  border: none;
+  top: 2px;
+  cursor: pointer;
+  color: white;
+
+  transform: translateX(2px);
+  --tw-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.buttonOutlineNone{
+  outline: none !important;
+}
+
+/* 
+.custom-file-input::-webkit-file-upload-button {
+  visibility: hidden;
+}
+.custom-file-input::before {
+  content: 'Select some files';
+  display: inline-block;
+  background: linear-gradient(top, #f9f9f9, #e3e3e3);
+  border-radius: 3px;
+  outline: none;
+  white-space: nowrap;
+  -webkit-user-select: none;
+  cursor: pointer;
+  text-shadow: 1px 1px #fff;
+
+}
+.custom-file-input:hover::before {
+  border-color: black;
+}
+.custom-file-input:active::before {
+  background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
+} */

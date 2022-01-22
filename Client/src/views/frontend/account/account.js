@@ -25,6 +25,7 @@ export default function Account() {
     let { id } = useParams();
     const history = useHistory();
     const [isLoading, setIsLoading] = useState(false);
+    var MJUId="MJU";
     const handleFileUpload = async (e) => {
       const base64 = await FilesService.convertToBase64(e.target.files[0]);
       setPostImage(base64);

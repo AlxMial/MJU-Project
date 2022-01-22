@@ -26,7 +26,7 @@ router.post("/", async (req, res) => {
 
 router.get('/byId/:id', async (req,res) =>{
   const id = req.params.id;
-  const Course = await Courses.findByPk(id);
+  const Course = await Courses.findOne({where: {id:id}});
   res.json(Course);
 });
 

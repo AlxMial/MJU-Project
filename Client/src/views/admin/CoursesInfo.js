@@ -60,6 +60,8 @@ export default function Courses() {
     const pagesVisited = pageNumber * usersPerPage;
     const pagesAttach = attachNumber * attachPerPage;
     const [optionsLearning, setOptionsLearning] = useState([])
+    const [imageCourses, setImageCourses] = useState("");
+    const [imageCoursesName,setImageCourseName] = useState("");
     const options = [
       { value: '1', label: 'ปฏิทิน' },
       { value: '2', label: 'การปลูก' },
@@ -221,7 +223,7 @@ export default function Courses() {
 
   async function fetchData() {
     let response = await axios(
-      urlPath+`/courses/byId/${id}`
+      urlPath+`courses/byId/${id}`
     );
     let user = await response.data;
     if(user !== null) {
@@ -238,6 +240,13 @@ export default function Courses() {
             StringJson[i] = {id:undefined,name:JsonTags[i].name}
           }
           setTags(StringJson)
+        }else if(columns === "ImageCourses")
+        {
+          if(response.data[columns] !== null)
+          {
+            const buffer = FilesService.buffer64UTF8(response.data[columns]);
+            setImageCourses(buffer);
+          }
         }
         else 
           formik.setFieldValue(columns, response.data[columns], false)
@@ -263,8 +272,6 @@ export default function Courses() {
             formikSubject.setFieldValue(columns, response.data[columns], false)
         }
         setListsubject(response.data);
-        // setIsNewSubject(true);
-        // setIsEnableSubjectControl(false);
       } 
     }
 
@@ -329,7 +336,9 @@ export default function Courses() {
       IsDocMedia:false,
       IsOtherMedia:false,
       IsDeleted:false,
-      LearningId:''
+      LearningId:'',
+      ImageCourses:'',
+      ImageName:''
    },
    validationSchema: Yup.object({
       CurriculumCode:Yup.string().required('* กรุณากรอก รหัสหลักสูตร'),
@@ -338,11 +347,12 @@ export default function Courses() {
       DescriptionTH:Yup.string().required('* กรุณากรอก ขอบเขตเนื้อหา (ไทย)')
    }),
    onSubmit: values => {
+    setIsLoading(true);
     formik.values.CurriculumType = (formik.values.CurriculumType === "") ? "1" : formik.values.CurriculumType ;
     formik.values.LearningId = (formik.values.LearningId === "") ? "1" : formik.values.LearningId ;
     formik.values.CurriculumTag = tags;
-
-
+    formik.values.ImageCourses = imageCourses;
+    formik.values.ImageName = imageCoursesName;
             axios.get(urlPath+`/courses/ByCurriculum/${values.CurriculumCode}`,{
               headers: {accessToken : localStorage.getItem("accessToken")}
             }).then((response) => {
@@ -360,23 +370,25 @@ export default function Courses() {
                       setListCourse(response.data.listOfCourses);
                     });
                   }
+       
                 });
-              } else {
-                  if(values.id === undefined)
-                    values.id = listCourse.filter(x => x.CurriculumCode === formik.values.CurriculumCode )[0].id;
-                  axios.put(urlPath+"/courses",values).then((response) => {
-                  if(response.data.error) 
-                  {
-                    addToast(response.data.error, { appearance: 'error', autoDismiss: true });
-                  } else {
-                    addToast('บันทึกข้อมูลสำเร็จ', { appearance: 'success', autoDismiss: true });
-                    setIsEnableControl(true);
-                  }
-                });
-              }
+                } else {
+                    if(values.id === undefined)
+                      values.id = listCourse.filter(x => x.CurriculumCode === formik.values.CurriculumCode )[0].id;
+                    axios.put(urlPath+"/courses",values).then((response) => {
+                    if(response.data.error) 
+                    {
+                      addToast(response.data.error, { appearance: 'error', autoDismiss: true });
+                    } else {
+                      addToast('บันทึกข้อมูลสำเร็จ', { appearance: 'success', autoDismiss: true });
+                      setIsEnableControl(true);
+                    }
+                  });
+                }
               } else {
                 addToast('ไม่สามารถบันทึกข้อมูลได้ เนื่องจากรหัสหลักสูตรซ้ำ กรุณากรอกรหัสหลักสูตรใหม่', { appearance: 'warning', autoDismiss: true });
               }
+              setIsLoading(false);
             });
    },
  });
@@ -503,13 +515,19 @@ export default function Courses() {
       formikSubject.setFieldValue('SubjectOfHour',e.target.value);
     }
   };
+
+  const handlePictureCourseUpload = async (e) => {
+    const base64 = await FilesService.convertToBase64(e.target.files[0]);
+    setImageCourses(base64);
+    setImageCourseName(e.target.files[0].name);
+    formik.setFieldValue('ImageName',e.target.files[0].name);
+  }
   //#endregion
 
   useEffect(()=>{
     fetchData();
     fetchDataSubject();
     fetchLearning();
-
   },[]);
 
   return (
@@ -712,6 +730,7 @@ export default function Courses() {
                       </div>
                     </div>
                   </div>
+               
                   <div className="w-full lg:w-6/12 px-4 py-1">
                     <div className="relative w-full mb-3">
                       <label
@@ -752,6 +771,52 @@ export default function Courses() {
                         value={formik.values.CurriculumNameENG}
                         disabled={enableControl}
                       />
+
+                  
+                    </div>
+                  </div>
+                  <div className="w-full px-4 py-1">
+                    <div className="relative w-full mb-3">
+                      <label
+                        className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
+                        
+                      >
+                        รูปภาพหลักสูตร
+                      </label>
+              
+                      {/* <input
+                        type="file"
+                        className=" custom-file-input  border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        id="CurriculumNameTH"
+                        name="CurriculumNameTH"
+                        accept="image/*"
+                        dir="rtl"
+                       
+                        disabled={enableControl}
+                      /> */}
+                      {/* <div className="image-upload">
+                        <label htmlFor="file-input" className="cursor-pointer">
+                          <input className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"/>
+                          <span>เลือกรูปภาพ</span>
+                        </label>
+                        <input id="file-input" type="file" accept="image/jpg, image/jpeg, image/png"  />
+                      </div>
+                     */}
+                     <div className="buttonIn image-upload ">
+                      <label htmlFor="file-input" className="cursor-pointer">
+                        <input
+                          type="text"
+                          className={"  border-0 px-2 py-2  placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" + ((!enableControl) ? " inputNoneDisable" : "")} 
+                          id="CurriculumNameENG"
+                          name="CurriculumNameENG"
+                          value={formik.values.ImageName}
+                          readOnly
+                          disabled={true}
+                        />
+                          <span className={"spanUpload px-2 py-2 mt-1 mr-2 text-sm font-bold bg-green-mju " + ((enableControl) ? "opacity-50" : "")} >เลือกรูปภาพ</span>
+                        </label>
+                        <input id="file-input" type="file" accept="image/jpg, image/jpeg, image/png"  onChange={(e) => handlePictureCourseUpload(e)}       disabled={enableControl}/>
+                      </div>
                     </div>
                   </div>
                   <div className="w-full lg:w-6/12 px-4 py-1">

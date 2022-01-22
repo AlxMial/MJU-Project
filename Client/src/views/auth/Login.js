@@ -7,6 +7,7 @@ import { useToasts } from 'react-toast-notifications';
 import { useFormik  } from "formik";
 import * as Yup from "yup";
 import urlPath from 'services/urlServer';
+import FilesService from 'services/files';
 
 export default function Login() {
   const { setAuthState } = useContext(AuthContext); 
@@ -36,12 +37,14 @@ export default function Login() {
             localStorage.setItem('login', JSON.stringify( { email: values.email, password: values.password }));
           else  
             localStorage.removeItem('login');
-
+          console.log(response.data)
           addToast('เข้าสู่ระบบสำเร็จ', { appearance: 'success', autoDismiss: true });
           localStorage.setItem("accessToken", response.data.token);
           localStorage.setItem("roleUser", response.data.role);
           localStorage.setItem("email", response.data.email);
           localStorage.setItem("learningPathId", response.data.learningPathId);
+          localStorage.setItem("fullName", response.data.firstName + ' ' + response.data.lastName);
+          localStorage.setItem("profilePicture",FilesService.buffer64(response.data.profilePicture));
           setAuthState({
               email : response.data.email,
               id: response.data.id,

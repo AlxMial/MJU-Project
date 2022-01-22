@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import './subject.css'
 import propTypes from 'prop-types'
+import TimeAgo from 'timeago-react';
+import moment from 'moment';
 
 class Post extends React.Component {
     state = {
@@ -25,8 +27,8 @@ class Post extends React.Component {
     }
     render() {
         return (
-            <div className="post">
-                <div className="desc"><i className="far fa-comment"></i><span>{this.props.commentsNumber}</span> Comments</div>
+            <div className="post text-sm font-bold">
+                <div className="desc"><i className="far fa-comment-alt"></i><span>&nbsp;&nbsp;{this.props.commentsNumber}</span>&nbsp;&nbsp;Comments</div>
                 {/* <div className="postBody">
                     <img src={this.props.userPic} className="postPic" alt="user Pic" />
                     <div className="postContent">
@@ -97,11 +99,18 @@ class CreateComment extends React.Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
+        const fullName = localStorage.getItem('fullName');
+        const profilePicture = localStorage.getItem('profilePicture');
+        const timeago = moment(new Date()).fromNow();
+        const data = {
+            TextComment:this.state.content.trim(),
+            UserName:fullName,
+        }
         this.props.onCommentSubmit({
-            user: "Anonym",
+            user: fullName,
             content: this.state.content.trim(),
-            userPic: "https://github.com/OlgaKoplik/CodePen/blob/master/anonym.png?raw=true",
-            publishDate: "Right now"
+            userPic: profilePicture,
+            publishDate: timeago
         });
         this.setState({
             content: "",
@@ -111,22 +120,23 @@ class CreateComment extends React.Component {
     render() {
         return (
             <form onSubmit={this.handleSubmit} className="createComment p-2 rounded-lg">
-                <label htmlFor="comment">Your Comment</label>
-                <textarea className='textComment rounded-lg'
+                <label htmlFor="comment" className='text-sm font-bold mt-2'>ความคิดเห็น</label>
+                <textarea className='textComment rounded-lg text-sm px-2 py-2'
                     id="comment"
                     type="text"
-                    placeholder="Comment"
+                    placeholder="ความคิดเห็นของคุณ"
                     value={this.state.content}
                     onChange={this.handleTextChange}
                     required />
                 <div className='btnComment w-full text-right'>
-                    <button className='btn-cancel lg:w-2/12 py-1' type="button">Cancel</button>
-                    <button className='btn-comment lg:w-2/12 py-1' type="submit">Post Comment</button>
+                    <button className='btn-cancel lg:w-2/12 py-1 text-sm buttonOutlineNone font-bold' type="button">ยกเลิก</button>
+                    <button className='btn-comment lg:w-2/12 py-1 text-sm px-2 py-2  font-bold' type="submit">โพสต์</button>
                 </div>
             </form>
         );
     }
 }
+
 CreateComment.propTypes = {
     onCommentSubmit: propTypes.func.isRequired,
     content: propTypes.string

@@ -22,7 +22,15 @@ router.post("/login", async (req, res) => {
           { email: user.email, id: user.id , role:user.role,learningPathId:user.learningPathId },
           "MJUPROJECT"
         );
-        res.json({ token: accessToken, email: email , id: user.id , isActivated: user.isActivated,role:user.role,profilePicture:user.profilePicture,learningPathId:user.learningPathId });
+        res.json({ token: accessToken, 
+          email: email , 
+          id: user.id , 
+          isActivated: user.isActivated,
+          role:user.role,
+          profilePicture:user.profilePicture,
+          learningPathId:user.learningPathId,
+          firstName:user.firstName,
+          lastName:user.lastName });
       }
     });
   }

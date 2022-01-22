@@ -2,7 +2,7 @@
     border-bottom: 1px solid #ccc;
 }
 .commentBox{
-    margin-top: 40px;
+    /* margin-top: 40px; */
     /* max-width: 700px;
     padding: 0px 0px 20px 0px;
     border-radius: 20px;
@@ -10,7 +10,7 @@
   }
   .post{
     background: #fff;
-    padding: 20px;
+    /* padding: 20px; */
     border-radius: 20px;
   }
   .postBody{
@@ -87,7 +87,7 @@
   .textComment{
         margin-top: 10px;
         border: 1px solid #78787863;
-        padding: 5px 5px 5px 10px;
+        padding:20px;
         transition: 0.2s;
         box-sizing: border-box;
         resize: none;
@@ -106,7 +106,7 @@
     border-radius: 5px;
     border: none;
     background: #08aff3;
-    margin-top: 20px;
+    margin-top: 10px;
     font-weight: bold;
   }
   /* .btn-comment:hover{
@@ -150,4 +150,17 @@
   }
   .subjectOfHour {
       border-bottom: 1px solid #ccc;
+  }
+  .ql-container.ql-snow {
+    border:0px;
+    width: 80%;
+    margin:auto;
+  } 
+  .ql-snow * {
+    box-shadow: none;
+  } 
+
+  .divComment{
+    width: 80%;
+    margin: auto;
   }

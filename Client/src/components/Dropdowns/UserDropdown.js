@@ -33,7 +33,8 @@ const UserDropdown = () => {
     });
 
     const checkIfClickedOutside = (e) => {
-      if (dropdownPopoverShow && e.toElement.id !== "accountx" && e.toElement.id !== "logoutx"  &&  btnDropdownRef.current && e.toElement.name !== "picture") {
+      console.log(e.toElement.id)
+      if (dropdownPopoverShow && e.toElement.id !== "accountx" && e.toElement.id !== "logoutx"  &&  btnDropdownRef.current && e.toElement.name !== "picture" || e.toElement.id === "") {
           setDropdownPopoverShow(false);
       }
     };
@@ -50,12 +51,13 @@ const UserDropdown = () => {
     localStorage.removeItem('email');
     localStorage.removeItem('roleUser');
     localStorage.removeItem("learningPathId");
+    localStorage.removeItem("fullName");
+    localStorage.removeItem("profilePicture");
     setAuthState({ email: "", id: 0, status: false,role:"",profilePicture:"",learningPathId:"" });
   }
 
   const linkAccount = () => {
     history.push("/home/account");
-    //window.location.reload()
   }
 
   return (
