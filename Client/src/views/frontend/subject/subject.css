@@ -139,3 +139,15 @@
     max-width: 580px;
     overflow-wrap: break-word;
   }
+
+  .subject-content {
+      border: 1px solid #ccc;
+      max-height: 250px;
+      overflow-y: scroll;
+  }
+  .subjectName {
+      color: #08aff3;
+  }
+  .subjectOfHour {
+      border-bottom: 1px solid #ccc;
+  }
