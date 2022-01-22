@@ -182,7 +182,9 @@ export default function Courses() {
   };
 
   const UploadFile = (data) => {
-      axios.post(urlPath+"/attachs",data).then((response)=>{
+      axios.post(urlPath+"/attachs",data ,{
+        headers: {accessToken : localStorage.getItem("accessToken")}
+      }).then((response)=>{
       if(response.data.error) {
         console.log(response.data.error);
       } else {
@@ -194,7 +196,9 @@ export default function Courses() {
 
   const DeletedFile = (id) => {
       axios
-      .delete(urlPath+`/attachs/${id}`)
+      .delete(urlPath+`/attachs/${id}`,{
+        headers: {accessToken : localStorage.getItem("accessToken")}
+      })
       .then(() => {
         setListAttach(
           listAttach.filter((val) => {
@@ -276,7 +280,9 @@ export default function Courses() {
     }
 
     async function fetchAttach(SubjectId) {
-      let response = await axios(urlPath+`/attachs/bySubjectsId/${SubjectId}`);
+      let response = await axios(urlPath+`/attachs/bySubjectsId/${SubjectId}`,{
+        headers: {accessToken : localStorage.getItem("accessToken")}
+      });
       let attach = await response.data;
       if(attach !== null) {
         for(var columns in response.data) {

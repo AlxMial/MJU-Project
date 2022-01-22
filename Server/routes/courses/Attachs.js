@@ -4,18 +4,18 @@ const { Attachs } = require('../../models');
 const { validateToken } = require("../../middlewares/AuthMiddleware");
 
 
-router.get('/bySubjectsId/:id', async (req,res) => {
+router.get('/bySubjectsId/:id',validateToken, async (req,res) => {
     const id = req.params.id;
     const Attach = await Attachs.findAll({ where : { SubjectId: id}});
     res.json(Attach);
   });
 
-router.post("/", async (req, res) => {
+router.post("/",validateToken, async (req, res) => {
   Attachs.create(req.body);
   res.json("SUCCESS");
 });
 
-router.delete("/:AttachsId", async (req, res) => {
+router.delete("/:AttachsId",validateToken, async (req, res) => {
     const attachid = req.params.AttachsId;
     await Attachs.destroy({
       where: {

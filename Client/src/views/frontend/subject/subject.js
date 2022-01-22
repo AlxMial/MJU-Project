@@ -7,13 +7,15 @@ import ReactQuill from 'react-quill';
 import urlPath from 'services/urlServer';
 import FilesService from 'services/files'
 import axios from 'axios';
+import moment from 'moment';
 
 import './subject.css'
 
 export default function Subject() {
 
-    const [listCourse,setListCourse] = useState([])
-    const [listSubject,setListSubject] = useState([])
+    const [listCourse,setListCourse] = useState([]);
+    const [listSubject,setListSubject] = useState([]);
+    const [listComment,setListComment] = useState([]);
     let { id } = useParams();
 
     const history = useHistory();
@@ -38,9 +40,22 @@ export default function Subject() {
         } 
     }
 
+    async function fetchDataComment() {
+        let response = await axios(urlPath+`/comments/byCourse/${id}`,{
+            headers: {accessToken : localStorage.getItem("accessToken")}
+          });
+        let subjects = response.data;
+        if(subjects !== null) {
+            var JsonLearning = [];
+            await subjects.forEach(val => JsonLearning.push({comments : [{id:val.id,user: val.UserName,content: val.TextComment,userPic:FilesService.buffer64(val.UserImage),publishDate:moment(new Date()).fromNow() }]}))
+            setListComment(JsonLearning[0]);
+        } 
+    } 
+
     useEffect (  ()  =>  {
         fetchData();
         fetchDataSubject();
+        fetchDataComment();
     },[]);
 
     const data = {
@@ -167,8 +182,12 @@ export default function Subject() {
                         <div className='divComment'>
                         <hr className="mt-6 border-b-1 mb-6 border-blueGray-300" />
                             <CommentBox
-                                comments={data.comments}
-                                post={data.post} />
+                                comments={[]}
+                                post={[]} 
+                                CourseId={id.toString()}
+                                />
+                       
+
                         </div>
                     </div>
                 </div>

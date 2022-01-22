@@ -23,6 +23,7 @@
   .publishDate{
     color: #787878;
     margin-left: 15px;
+    font-size: 1.5rem;
   }
   .postDesc{
     margin-top: 15px;
@@ -50,7 +51,7 @@
   }
   .comment{
     padding: 10px;
-    margin: 20px 30px;
+    margin: 10px 10px;
     /* color: #fff; */
   }
   .createComment{
@@ -60,8 +61,13 @@
     background-color: #eeee;
   }
   .commentAuthor {
-      font-weight: bold;
-    }
+    font-weight: bold;
+    font-size: 1.5rem;    
+  }
+
+  .commentContent{
+    font-size: 1.5rem;
+  }
   /* h2{
     margin:0;
     margin-bottom: 5px;
@@ -128,8 +134,8 @@
     display: flex;
   }
   .commentPic{
-    max-width: 45px;
-    max-height: 45px;
+    max-width: 65px;
+    max-height: 65px;
   }
   .commentHeader{
     display: flex;

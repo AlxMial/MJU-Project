@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
 import './subject.css'
 import propTypes from 'prop-types'
-import TimeAgo from 'timeago-react';
 import moment from 'moment';
+import urlPath from 'services/urlServer';
+import axios from 'axios';
+import FilesService from 'services/files'
 
 class Post extends React.Component {
     state = {
@@ -86,8 +88,9 @@ Comment.propTypes = {
 };
 
 class CreateComment extends React.Component {
+
     state = {
-        content: "",
+        content: ""
     };
 
     handleTextChange = e => {
@@ -102,10 +105,6 @@ class CreateComment extends React.Component {
         const fullName = localStorage.getItem('fullName');
         const profilePicture = localStorage.getItem('profilePicture');
         const timeago = moment(new Date()).fromNow();
-        const data = {
-            TextComment:this.state.content.trim(),
-            UserName:fullName,
-        }
         this.props.onCommentSubmit({
             user: fullName,
             content: this.state.content.trim(),
@@ -142,30 +141,82 @@ CreateComment.propTypes = {
     content: propTypes.string
 };
 
+
+
 export default class CommentBox extends Component {
 
-    state = {
-        comments: this.props.comments,
-        likes: this.props.post.likes,
-        commentsNumber: this.props.post.commentsNumber,
-    };
+    constructor(props) {
+        super(props);
+        this.state = {
+            comments: this.props.comments,
+            likes: this.props.post.likes,
+            commentsNumber: this.props.post.commentsNumber,
+            CourseId:this.props.CourseId
+        };
+        this.fetchDataComment(this.state.CourseId);
+    }
+    
+    fetchDataComment = (id) => {
+        axios.get(urlPath+`/comments/byCourse/${id}`,{
+            headers: {accessToken : localStorage.getItem("accessToken")}
+          }).then((response) => {
+            if(response.data !== null) {
+                var JsonLearning = [];
+                response.data.forEach(val => {
+                    JsonLearning.push({id:val.id,user: val.UserName,content: val.TextComment,userPic:FilesService.buffer64(val.UserImage),publishDate:moment(val.createdAt).fromNow() });
+                });
+                this.setState({comments:JsonLearning});
+                this.setState({commentsNumber:JsonLearning.length});
+            }
+        });
+    } 
 
     handleCommentSubmit = comment => {
         const comments = this.state.comments;
         comment.id = Date.now();
         const newComments = [comment].concat(comments);
+
+        const fullName = localStorage.getItem('fullName');
+        const profilePicture = localStorage.getItem('profilePicture');
+        const email = localStorage.getItem('email');
+
+        const data = {
+            TextComment: comment.content,
+            UserName:fullName,
+            UserImage:profilePicture,
+            RelatedTable:"Courses",
+            RelatedId:this.state.CourseId,
+            CourseId:this.state.CourseId,
+            IsDeleted:false,
+            AddBy:email,
+            EditBy:''
+        }
+
+        this.InsertComment(data)
+        
         this.setState({
             comments: newComments,
             commentsNumber: this.state.commentsNumber + 1,
         });
     }
+
+    InsertComment = value => {
+        axios.post(urlPath+"/comments",value,{
+            headers: {accessToken : localStorage.getItem("accessToken")}
+          }).then((response)=>{
+            if(response.data.error) 
+            {
+                console.log(response.data.error);
+            }
+        });
+    }
+
     handleLike = changeLikesNum => {
         const LikesNum = changeLikesNum.likes;
         this.setState({
             likes: LikesNum,
         });
     }
-
 
     render() {
         return (
@@ -186,7 +237,8 @@ export default class CommentBox extends Component {
                 <CreateComment
                     onCommentSubmit={this.handleCommentSubmit}
                 />
-                {this.state.comments.map((comment) =>
+                {
+                    this.state.comments.map((comment) =>
                     <Comment
                         publishDate={comment.publishDate}
                         key={comment.id}
@@ -194,14 +246,16 @@ export default class CommentBox extends Component {
                         content={comment.content}
                         user={comment.user}
                         userPic={comment.userPic} />
-                )}
+                    )
+                }
             </div>
         )
     }
 }
 
 CommentBox.propTypes = {
-    post: propTypes.object,
-    comments: propTypes.arrayOf(propTypes.object)
+    post: propTypes.arrayOf(propTypes.object),
+    comments: propTypes.arrayOf(propTypes.object),
+    CourseId: propTypes.string
 };
 

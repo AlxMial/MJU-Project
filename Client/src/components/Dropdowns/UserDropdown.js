@@ -33,7 +33,6 @@ const UserDropdown = () => {
     });
 
     const checkIfClickedOutside = (e) => {
-      console.log(e.toElement.id)
       if (dropdownPopoverShow && e.toElement.id !== "accountx" && e.toElement.id !== "logoutx"  &&  btnDropdownRef.current && e.toElement.name !== "picture" || e.toElement.id === "") {
           setDropdownPopoverShow(false);
       }

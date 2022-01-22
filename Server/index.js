@@ -9,6 +9,8 @@ app.use(cors());
 const db = require('./models');
 
 // // Routers
+const CommentRouter = require('./routes/comments/Comments');
+app.use("/comments",CommentRouter);
 const AttachsRouter = require('./routes/courses/Attachs');
 app.use("/attachs",AttachsRouter);
 const SubjectsRouter = require('./routes/courses/Subjects');
