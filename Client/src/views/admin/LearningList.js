@@ -5,6 +5,7 @@ import Modal from "react-modal";
 import ReactPaginate from 'react-paginate';
 import ConfirmDialog from '../../components/ConfirmDialog/ConfirmDialog'
 import { useToasts } from 'react-toast-notifications';
+import urlPath from 'services/urlServer';
 
 Modal.setAppElement('#root');
 const customStyles = {
@@ -77,11 +78,11 @@ export default function LearningList() {
 
     const deleteLearning = async (e) => {
 
-        const response = await  axios.get(`http://localhost:3001/learning/getCourses/${e}`);
-        const resMember = await  axios.get(`http://localhost:3001/learning/getMembers/${e}`);
+        const response = await  axios.get(urlPath+`/learning/getCourses/${e}`);
+        const resMember = await  axios.get(urlPath+`/learning/getMembers/${e}`);
         if(response.data === null && resMember === null){
             axios
-            .delete(`http://localhost:3001/learning/${e}`)
+            .delete(urlPath+`/learning/${e}`)
             .then(() => {
               setListLearning(
                 listLearning.filter((val) => {
@@ -101,15 +102,15 @@ export default function LearningList() {
         {
             var ArrayDeleted = [];
             for (const field of listLearning) {
-                const response = await  axios.get(`http://localhost:3001/learning/getCourses/${field.id}`);
-                const resMember = await  axios.get(`http://localhost:3001/learning/getMembers/${field.id}`);
+                const response = await  axios.get(urlPath+`/learning/getCourses/${field.id}`);
+                const resMember = await  axios.get(urlPath+`/learning/getMembers/${field.id}`);
                 if(field.IsDeleted && response.data === null && resMember.data === null) {
                     ArrayDeleted.push(field.id)
                 }else  { field.IsDeleted = false}
             }
           
             axios
-            .delete(`http://localhost:3001/learning/multidelete/${ArrayDeleted}`,{
+            .delete(urlPath+`/learning/multidelete/${ArrayDeleted}`,{
               headers: {accessToken : localStorage.getItem("accessToken")}
             })
             .then(() => {
@@ -219,9 +220,9 @@ export default function LearningList() {
     }
 
     useEffect( ()=>  {
-        axios.get("http://localhost:3001/learning").then( async (response)   =>   {
+        axios.get(urlPath+"/learning").then( async (response)   =>   {
              for(const learning of response.data.listLearning ){
-                await axios.get(`http://localhost:3001/courses/byLearningId/${learning.id}`).then((res) =>   {
+                await axios.get(urlPath+`/courses/byLearningId/${learning.id}`).then((res) =>   {
                     learning.CoursesCount = res.data.length;
                 });
             }

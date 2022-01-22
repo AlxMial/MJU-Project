@@ -6,6 +6,7 @@ import { AuthContext } from '../../../services/AuthContext';
 import axios from "axios";
 import FilesServices from '../../../services/files';
 import './curriculum.css'
+import urlPath from "services/urlServer";
 
 export default function Curriculum() {
     let { id } = useParams();
@@ -33,7 +34,7 @@ export default function Curriculum() {
     }
 
     async function fetchLearning() {
-        const response = await axios("http://localhost:3001/learning");
+        const response = await axios(urlPath+"/learning");
         const body = response.data.listLearning;
         var JsonLearning = [];
         body.forEach(field => JsonLearning.push({value: field.id.toString(),label: field.LearningPathNameTH }))
@@ -43,7 +44,7 @@ export default function Curriculum() {
     function fetchCourse() {
         const learningPathId = localStorage.getItem('learningPathId');
         const data = {learningPathId:learningPathId, Type:id};
-        axios.post("http://localhost:3001/courses/getCourseByTypeAndLearning",data,{
+        axios.post(urlPath+"/courses/getCourseByTypeAndLearning",data,{
             headers: {accessToken : localStorage.getItem("accessToken")}
         }).then((response)=>{
             for(const value of response.data) {

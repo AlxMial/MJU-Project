@@ -8,7 +8,7 @@ import Curriculum from 'views/frontend/curriculum/curriculum.js';
 import subject from 'views/frontend/subject/subject.js';
 import Account from 'views/frontend/account/account.js';
 import { AuthContext } from "../services/AuthContext";
-
+import urlPath from "services/urlServer";
 export default function Frontend() {
     const history = useHistory();
     const [authState, setAuthState] = useState({
@@ -25,7 +25,7 @@ export default function Frontend() {
 
     useEffect(() => {
         axios
-          .get("http://localhost:3001/users/auth", {
+          .get(urlPath+"/users/auth", {
             headers: {
               accessToken: localStorage.getItem("accessToken"),
             },

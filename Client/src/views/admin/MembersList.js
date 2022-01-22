@@ -4,6 +4,7 @@ import axios from "axios";
 import Modal from "react-modal";
 import ReactPaginate from 'react-paginate';
 import ConfirmDialog from '../../components/ConfirmDialog/ConfirmDialog'
+import urlPath from '../../services/urlServer'
 
 Modal.setAppElement('#root');
 const customStyles = {
@@ -104,7 +105,7 @@ export default function MembersList() {
     const deleteMember = (e,email) => {
         if(email !== "guest@mju.ac.th" && email !== "admin@mju.ac.th"){
             axios
-            .delete(`http://localhost:3001/members/${e}`,{
+            .delete(urlPath+`/members/${e}`,{
                 headers: {accessToken : localStorage.getItem("accessToken")}
             })
             .then(() => {
@@ -131,7 +132,7 @@ export default function MembersList() {
             });
             if(ArrayDeleted.length > 0){
                 axios
-                .delete(`http://localhost:3001/members/multidelete/${ArrayDeleted}`,{
+                .delete(urlPath+`/members/multidelete/${ArrayDeleted}`,{
                 headers: {accessToken : localStorage.getItem("accessToken")}
                 })
                 .then(() => {
@@ -263,7 +264,7 @@ export default function MembersList() {
 
       
   async function fetchLearning() {
-    axios.get("http://localhost:3001/learning",{
+    axios.get(urlPath+"/learning",{
         headers: {accessToken : localStorage.getItem("accessToken")}
       }).then((resLearning) =>   {
         var JsonLearning = [];
@@ -273,7 +274,7 @@ export default function MembersList() {
   }
 
   async function fetchMember() {
-    axios.get("http://localhost:3001/members",{
+    axios.get(urlPath+"/members",{
             headers: {accessToken : localStorage.getItem("accessToken")}
           }).then((response) =>   {
             if(response){

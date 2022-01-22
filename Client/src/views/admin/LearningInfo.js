@@ -6,7 +6,8 @@ import 'react-quill/dist/quill.snow.css';
 import {useFormik  } from "formik";
 import * as Yup from "yup";
 import { useToasts } from 'react-toast-notifications';
-import FilesService from '../../services/files';
+import FilesService from 'services/files';
+import urlPath from 'services/urlServer';
 // components
 
 export default  function Learning() {
@@ -32,7 +33,7 @@ export default  function Learning() {
     DescriptionTH: Yup.string().required('* กรุณากรอก รายละเอียดเส้นทางการเรียนรู้ (ไทย)'),
    }),
    onSubmit: values => {
-    axios.get(`http://localhost:3001/learning/byLearningCode/${values.LearningPathCode}`,{
+    axios.get(urlPath+`/learning/byLearningCode/${values.LearningPathCode}`,{
       headers: { 
         'Content-Type': 'application/json; charset=utf-8',
         accessToken : localStorage.getItem("accessToken"),
@@ -40,7 +41,7 @@ export default  function Learning() {
     },{ }).then((response) => {
       if(response.data === null || response.data.id === values.id) {
         if(isNew){
-          axios.post("http://localhost:3001/learning",values).then((response)=>{
+          axios.post(urlPath+"/learning",values).then((response)=>{
           if(response.data.error) 
           {
             addToast(response.data.error, { appearance: 'error', autoDismiss: true });
@@ -48,7 +49,7 @@ export default  function Learning() {
             addToast('บันทึกข้อมูลสำเร็จ', { appearance: 'success', autoDismiss: true });
             setIsEnableControl(true);
             setIsNew(false)
-            axios.get("http://localhost:3001/learning").then((response) =>   {
+            axios.get(urlPath+"/learning").then((response) =>   {
               setListLearning(response.data.listLearning);
             });
           }
@@ -56,7 +57,7 @@ export default  function Learning() {
         } else {
             if(values.id === undefined)
               values.id = listLearning.filter(x => x.LearningPathCode === formik.values.LearningPathCode )[0].id;
-            axios.put("http://localhost:3001/learning",values).then((response) => {
+            axios.put(urlPath+"/learning",values).then((response) => {
             if(response.data.error) 
             {
               addToast(response.data.error, { appearance: 'error', autoDismiss: true });
@@ -75,7 +76,7 @@ export default  function Learning() {
 
   async function fetchData() {
     let response = await axios(
-      `http://localhost:3001/learning/byId/${id}`
+      urlPath+`/learning/byId/${id}`
     );
     let user = await response.data;
     if(user !== null) {

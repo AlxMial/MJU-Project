@@ -9,7 +9,7 @@ import axios from "axios";
 import { useToasts } from 'react-toast-notifications';
 import ValidateService from '../../../services/validateValue'
 import Spinner from "components/Loadings/spinner/Spinner";
-
+import urlPath from "services/urlServer";
 export default function Account() {
 
     const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
@@ -107,7 +107,7 @@ export default function Account() {
         if(!isNew)
           if(values.id === undefined)
             values.id = listMembers.filter(x => x.accountCode === formik.values.accountCode )[0].id;
-        axios.get(`http://localhost:3001/members/getAccountCode/${values.accountCode}`,{
+        axios.get(urlPath+`/members/getAccountCode/${values.accountCode}`,{
           headers: {accessToken : localStorage.getItem("accessToken")}
         }).then((response) => {
           if(response.data === null || response.data.id === values.id) {
@@ -121,7 +121,7 @@ export default function Account() {
     });
   
     const insertAccount = (values) => {
-      axios.get(`http://localhost:3001/members/getemail/${values.email}`).then((response) => {
+      axios.get(urlPath+`/members/getemail/${values.email}`).then((response) => {
         if(response.data === null || (response.data && response.data.id === values.id)) {
           if(!confirmPassword)
           {
@@ -131,7 +131,7 @@ export default function Account() {
                 setIsLoading(true);
                 if(values.id === undefined)
                   values.id = listMembers.filter(x => x.accountCode === formik.values.accountCode )[0].id;
-                axios.put("http://localhost:3001/members",values,{
+                axios.put(urlPath+"/members",values,{
                   headers: {accessToken : localStorage.getItem("accessToken")}
                 }).then((response) => {
                 if(response.data.error) 
@@ -155,7 +155,7 @@ export default function Account() {
     async function fetchData() {
       const email = localStorage.getItem('email');
       let response = await axios(
-        `http://localhost:3001/members/getemail/${email}`
+        urlPath+`/members/getemail/${email}`
       );
       let user = await response.data;
       if(user !== null) {
@@ -172,8 +172,6 @@ export default function Account() {
         setIsEnableControl(false);
       }
     }
-  
-    
   
     useEffect(()=>{
         fetchData();
@@ -223,13 +221,13 @@ export default function Account() {
                                         type="button"
                                         onClick={() =>{EnableControl(true)}}
                                         >
-                                        <i className="fas fa-pencil-alt"></i>&nbsp;ละทิ้ง
+                                            <i className="fas fa-pencil-alt"></i>&nbsp;ละทิ้ง
                                         </button>     
                                         <button
                                         className="bg-blue-save-mju text-white active:bg-blueactive-mju font-bold uppercase text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" 
                                         type="submit"
                                         >
-                                        <i className="fas fa-save"></i>&nbsp;บันทึก
+                                            <i className="fas fa-save"></i>&nbsp;บันทึก
                                         </button>
                                     </>
                                     }

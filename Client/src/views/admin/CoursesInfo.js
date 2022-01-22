@@ -15,6 +15,7 @@ import Select from 'react-select'
 import * as Yup from "yup";
 import ReactPaginate from 'react-paginate';
 import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
+import urlPath from 'services/urlServer';
 
 Modal.setAppElement('#root');
 const customStyles = {
@@ -39,7 +40,6 @@ export default function Courses() {
     const [listCourse, setListCourse] = useState([]);
     const [listSubject, setListsubject] = useState([]);
     const [listAttach, setListAttach] = useState([]);
-    const [listLearning,setListLearning] = useState([]);
     const [numberHour, setNumberHour] = useState("0");
     const [headName , setHeadName] = useState("หลักสูตร");
     const [modalIsOpen, setIsOpen] = useState(false);
@@ -93,7 +93,7 @@ export default function Courses() {
 
   function DeletedSubject(id){
       axios
-      .delete(`http://localhost:3001/subjects/${id}`)
+      .delete(urlPath+`/subjects/${id}`)
       .then(() => {
         setListsubject(
           listSubject.filter((val) => {
@@ -180,7 +180,7 @@ export default function Courses() {
   };
 
   const UploadFile = (data) => {
-      axios.post("http://localhost:3001/attachs",data).then((response)=>{
+      axios.post(urlPath+"/attachs",data).then((response)=>{
       if(response.data.error) {
         console.log(response.data.error);
       } else {
@@ -192,7 +192,7 @@ export default function Courses() {
 
   const DeletedFile = (id) => {
       axios
-      .delete(`http://localhost:3001/attachs/${id}`)
+      .delete(urlPath+`/attachs/${id}`)
       .then(() => {
         setListAttach(
           listAttach.filter((val) => {
@@ -221,7 +221,7 @@ export default function Courses() {
 
   async function fetchData() {
     let response = await axios(
-      `http://localhost:3001/courses/byId/${id}`
+      urlPath+`/courses/byId/${id}`
     );
     let user = await response.data;
     if(user !== null) {
@@ -251,7 +251,7 @@ export default function Courses() {
   }
 
     async function fetchDataSubject() {
-      let response = await axios(`http://localhost:3001/subjects/byCoursesId/${id}`);
+      let response = await axios(urlPath+`/subjects/byCoursesId/${id}`);
       let subjects = await response.data;
       if(subjects !== null) {
         for(var columns in response.data) {
@@ -269,7 +269,7 @@ export default function Courses() {
     }
 
     async function fetchAttach(SubjectId) {
-      let response = await axios(`http://localhost:3001/attachs/bySubjectsId/${SubjectId}`);
+      let response = await axios(urlPath+`/attachs/bySubjectsId/${SubjectId}`);
       let attach = await response.data;
       if(attach !== null) {
         for(var columns in response.data) {
@@ -283,7 +283,7 @@ export default function Courses() {
     }
   
     async function fetchDetailSubject(SubjectId) {
-      let response = await axios(`http://localhost:3001/subjects/byId/${SubjectId}`);
+      let response = await axios(urlPath+`/subjects/byId/${SubjectId}`);
       let subjects = await response.data;
       if(subjects !== null) {
         for(var columns in response.data) {
@@ -301,7 +301,7 @@ export default function Courses() {
     }
 
     async function fetchLearning() {
-      const response = await axios("http://localhost:3001/learning");
+      const response = await axios(urlPath+"/learning");
       const body = await response.data.listLearning;
       var JsonLearning = [];
       body.forEach(field => JsonLearning.push({value: field.id.toString(),label: field.LearningPathNameTH }))
@@ -343,12 +343,12 @@ export default function Courses() {
     formik.values.CurriculumTag = tags;
 
 
-            axios.get(`http://localhost:3001/courses/ByCurriculum/${values.CurriculumCode}`,{
+            axios.get(urlPath+`/courses/ByCurriculum/${values.CurriculumCode}`,{
               headers: {accessToken : localStorage.getItem("accessToken")}
             }).then((response) => {
               if(response.data === null || response.data.id === values.id) {
                 if(isNew) {
-                  axios.post("http://localhost:3001/courses",values).then((response)=>{
+                  axios.post(urlPath+"/courses",values).then((response)=>{
                   if(response.data.error) 
                   {
                     addToast(response.data.error, { appearance: 'error', autoDismiss: true });
@@ -356,7 +356,7 @@ export default function Courses() {
                     addToast('บันทึกข้อมูลสำเร็จ', { appearance: 'success', autoDismiss: true });
                     setIsEnableControl(true);
                     setIsNew(false)
-                    axios.get("http://localhost:3001/courses").then((response) =>   {
+                    axios.get(urlPath+"/courses").then((response) =>   {
                       setListCourse(response.data.listOfCourses);
                     });
                   }
@@ -364,7 +364,7 @@ export default function Courses() {
               } else {
                   if(values.id === undefined)
                     values.id = listCourse.filter(x => x.CurriculumCode === formik.values.CurriculumCode )[0].id;
-                  axios.put("http://localhost:3001/courses",values).then((response) => {
+                  axios.put(urlPath+"/courses",values).then((response) => {
                   if(response.data.error) 
                   {
                     addToast(response.data.error, { appearance: 'error', autoDismiss: true });
@@ -401,7 +401,7 @@ export default function Courses() {
   onSubmit: values => {
       values.CourseId = id;
       if(isNewSubject){
-          axios.post("http://localhost:3001/subjects",values).then((response)=>{
+          axios.post(urlPath+"/subjects",values).then((response)=>{
           if(response.data.error) 
           {
             addToast(response.data.error, { appearance: 'error', autoDismiss: true });
@@ -409,7 +409,7 @@ export default function Courses() {
             addToast('บันทึกข้อมูลสำเร็จ', { appearance: 'success', autoDismiss: true });
             setIsNewSubject(false)
             setIsEnableSubjectControl(true);
-            axios.get(`http://localhost:3001/subjects/bySubjectCode/${formikSubject.values.SubjectCode}`).then((response) =>   {
+            axios.get(urlPath+`/subjects/bySubjectCode/${formikSubject.values.SubjectCode}`).then((response) =>   {
               setListsubject(response.data);
             });
           }
@@ -417,7 +417,7 @@ export default function Courses() {
       } else {
           if(values.id === undefined)
             values.id = listSubject.filter(x => x.SubjectCode === formikSubject.values.SubjectCode )[0].id;
-          axios.put("http://localhost:3001/subjects",values).then((response) => {
+          axios.put(urlPath+"/subjects",values).then((response) => {
             if(response.data.error) 
             {
               addToast(response.data.error, { appearance: 'error', autoDismiss: true });

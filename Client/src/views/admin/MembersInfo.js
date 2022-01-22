@@ -8,6 +8,7 @@ import Select, { NonceProvider } from 'react-select'
 import axios from "axios";
 import { useToasts } from 'react-toast-notifications';
 import ValidateService from '../../services/validateValue'
+import urlPath from '../../services/urlServer'
 // components
 
 export default function Members() {
@@ -41,11 +42,6 @@ export default function Members() {
     { value: '3', label: 'วิทยากร' },
     { value: '4', label: 'เกษตรกร' }
   ];
-
-  // const optionsLearning = [
-  //   { value: '1', label: 'ข้าว' },
-  //   { value: '2', label: 'มังคุด' }
-  // ];
 
   const defaultValue = (options, value) => {
     if(value.toString() === "" && options[0] !== undefined)
@@ -104,7 +100,7 @@ export default function Members() {
       if(!isNew)
         if(values.id === undefined)
           values.id = listMembers.filter(x => x.accountCode === formik.values.accountCode )[0].id;
-      axios.get(`http://localhost:3001/members/getAccountCode/${values.accountCode}`,{
+      axios.get(urlPath+`/members/getAccountCode/${values.accountCode}`,{
         headers: {accessToken : localStorage.getItem("accessToken")}
       }).then((response) => {
         if(response.data === null || response.data.id === values.id) {
@@ -118,14 +114,14 @@ export default function Members() {
   });
 
   const insertAccount = (values) => {
-    axios.get(`http://localhost:3001/members/getemail/${values.email}`).then((response) => {
+    axios.get(urlPath+`/members/getemail/${values.email}`).then((response) => {
       if(response.data === null || (response.data && response.data.id === values.id)) {
         if(!confirmPassword)
         {
           values.isActivated = value;
           values.profilePicture = postImage;
           if(isNew){
-              axios.post("http://localhost:3001/members",values).then((response)=>{
+              axios.post(urlPath+"/members",values).then((response)=>{
               if(response.data.error) 
               {
                 addToast(response.data.error, { appearance: 'error', autoDismiss: true });
@@ -133,7 +129,7 @@ export default function Members() {
                 addToast('บันทึกข้อมูลสำเร็จ', { appearance: 'success', autoDismiss: true });
                 setIsEnableControl(true);
                 setIsNew(false);
-                axios.get("http://localhost:3001/members",{
+                axios.get(urlPath+"/members",{
                   headers: {accessToken : localStorage.getItem("accessToken")}
                 }).then((response) => {
                   if(response){
@@ -145,7 +141,7 @@ export default function Members() {
           } else {
               if(values.id === undefined)
                 values.id = listMembers.filter(x => x.accountCode === formik.values.accountCode )[0].id;
-              axios.put("http://localhost:3001/members",values,{
+              axios.put(urlPath+"/members",values,{
                 headers: {accessToken : localStorage.getItem("accessToken")}
               }).then((response) => {
               if(response.data.error) 
@@ -167,7 +163,7 @@ export default function Members() {
 
   async function fetchData() {
     let response = await axios(
-      `http://localhost:3001/members/byId/${id}`,{
+      urlPath+`/members/byId/${id}`,{
         headers: {accessToken : localStorage.getItem("accessToken")}
       }
     );
@@ -188,7 +184,7 @@ export default function Members() {
   }
 
   async function fetchLearning() {
-    const response = await axios("http://localhost:3001/learning");
+    const response = await axios(urlPath+"/learning");
     const body = await response.data.listLearning;
     var JsonLearning = [];
     body.forEach(field => JsonLearning.push({value: field.id.toString(),label: field.LearningPathNameTH }))

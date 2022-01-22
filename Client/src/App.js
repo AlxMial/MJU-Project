@@ -4,6 +4,7 @@ import { ToastProvider } from 'react-toast-notifications';
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "assets/styles/tailwind.css";
 import axios from "axios";
+import urlPath from "services/urlServer";
 // layouts
 
 import Admin from "layouts/Admin.js";
@@ -25,7 +26,7 @@ function App() {
 
     useEffect(() => {
           axios
-            .get("http://localhost:3001/users/auth", {
+            .get(urlPath+"/users/auth", {
               headers: {
                 accessToken: localStorage.getItem("accessToken"),
               },

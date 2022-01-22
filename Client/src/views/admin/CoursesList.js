@@ -4,6 +4,7 @@ import axios from "axios";
 import Modal from "react-modal";
 import ReactPaginate from 'react-paginate';
 import ConfirmDialog from '../../components/ConfirmDialog/ConfirmDialog'
+import urlPath from 'services/urlServer';
 
 Modal.setAppElement('#root');
 const customStyles = {
@@ -74,7 +75,7 @@ export default function CoursesList() {
 
     const deleteCourses = (e) => {
         axios
-          .delete(`http://localhost:3001/courses/${e}`)
+          .delete(urlPath+`/courses/${e}`)
           .then(() => {
             setListCourses(
               listCourses.filter((val) => {
@@ -91,7 +92,7 @@ export default function CoursesList() {
             var ArrayDeleted = [];
             listCourses.forEach(field => { if(field.IsDeleted === true) { ArrayDeleted.push(field.id)}});
             axios
-            .delete(`http://localhost:3001/courses/multidelete/${ArrayDeleted}`,{
+            .delete(urlPath+`/courses/multidelete/${ArrayDeleted}`,{
               headers: {accessToken : localStorage.getItem("accessToken")}
             })
             .then(() => {
@@ -208,7 +209,7 @@ export default function CoursesList() {
     }
 
     useEffect( ()=>  {
-        axios.get("http://localhost:3001/courses").then((response) =>   {
+        axios.get(urlPath+"/courses").then((response) =>   {
             setListCourses(response.data.listOfCourses);
             setListSerch(response.data.listOfCourses);
         });

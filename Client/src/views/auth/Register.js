@@ -5,6 +5,8 @@ import * as Yup from "yup";
 import axios from "axios";
 import { useToasts } from 'react-toast-notifications';
 import Select from 'react-select'
+import urlPath from 'services/urlServer';
+
 export default function Register() {
 
   const [confirmPassword, setConfirmPassword] = useState(false);
@@ -50,10 +52,10 @@ export default function Register() {
       {
         values.isActivated = true;
         values.IsDeleted = false;
-        axios.get(`http://localhost:3001/members/getemail/${values.email}`).then((response) => {
+        axios.get(urlPath+`/members/getemail/${values.email}`).then((response) => {
           console.log(response)
           if(response.data === null) {
-              axios.post("http://localhost:3001/members",values).then((response)=>{
+              axios.post(urlPath+"/members",values).then((response)=>{
                 if(response.data.error) 
                 {
                   addToast(response.data.error, { appearance: 'error', autoDismiss: true });
@@ -67,15 +69,6 @@ export default function Register() {
             addToast('ไม่สามารถบันทึกข้อมูลได้ เนื่องจากอีเมลที่ใช้งานมีการลงทะเบียนเรียบร้อยแล้ว', { appearance: 'warning', autoDismiss: true });
           }
         });
-        // axios.post("http://localhost:3001/members",values).then((response)=>{
-        //   if(response.data.error) 
-        //   {
-        //     addToast(response.data.error, { appearance: 'error', autoDismiss: true });
-        //   } else {
-        //     addToast('ลงทะเบียนสำเร็จ', { appearance: 'success', autoDismiss: true });
-        //     history.push("/auth/login");
-        //   }
-        // });
       }
    },
   });
@@ -88,7 +81,7 @@ export default function Register() {
   }
 
   async function fetchLearning() {
-    const response = await axios("http://localhost:3001/learning");
+    const response = await axios(urlPath+"/learning");
     const body = await response.data.listLearning;
     var JsonLearning = [];
     body.forEach(field => JsonLearning.push({value: field.id.toString(),label: field.LearningPathNameTH }))

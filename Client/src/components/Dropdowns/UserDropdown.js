@@ -4,7 +4,7 @@ import { Link,useHistory } from "react-router-dom";
 import { AuthContext } from '../../services/AuthContext';
 import axios from "axios";
 import FilesService from "../../services/files";
-
+import urlPath from "services/urlServer";
 const UserDropdown = () => {
   // dropdown props
   const [dropdownPopoverShow, setDropdownPopoverShow] = React.useState(false);
@@ -26,7 +26,7 @@ const UserDropdown = () => {
 
   useEffect(() => {
     const email = localStorage.getItem('email');
-    axios.get(`http://localhost:3001/members/getemail/${email}`).then((response) => {
+    axios.get(urlPath+`/members/getemail/${email}`).then((response) => {
       if(response.data !== null)
         if(response.data.profilePicture !== undefined)
           setPictureProfile(FilesService.buffer64(response.data.profilePicture));

@@ -6,9 +6,9 @@ import { AuthContext } from '../../services/AuthContext';
 import { useToasts } from 'react-toast-notifications';
 import { useFormik  } from "formik";
 import * as Yup from "yup";
+import urlPath from 'services/urlServer';
 
 export default function Login() {
-
   const { setAuthState } = useContext(AuthContext); 
   const { addToast } = useToasts();
   let history = useHistory();
@@ -25,7 +25,7 @@ export default function Login() {
    }),
    onSubmit: values => {
     const data = {email:values.email, password:values.password};
-    axios.post("http://localhost:3001/users/login",data).then((response)=>{
+    axios.post(urlPath+"/users/login",data).then((response)=>{
     if(response.data.error) 
     {  
       addToast("ไม่สามารถเข้าสู่ระบบได้เนื่องจาก อีเมลหรือรหัสผ่านไม่ถูกต้อง", { appearance: 'error', autoDismiss: true });
