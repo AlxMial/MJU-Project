@@ -1,7 +1,7 @@
 
 
-import React,{useEffect, useState} from 'react'
-import { useHistory,Link,useParams } from "react-router-dom";
+import React, { useEffect, useState } from 'react'
+import { useHistory, Link, useParams } from "react-router-dom";
 import CommentBox from './CommentBox';
 import ReactQuill from 'react-quill';
 import urlPath from 'services/urlServer';
@@ -22,40 +22,40 @@ export default function Subject() {
 
     async function fetchData() {
         let response = await axios(
-          urlPath+`/courses/byId/${id}`
+            urlPath + `/courses/byId/${id}`
         );
         let user = await response.data;
-        if(user !== null) {
-          response.data.DescriptionTH = FilesService.buffer64UTF8(response.data.DescriptionTH)
-          response.data.DescriptionENG = FilesService.buffer64UTF8(response.data.DescriptionENG)
-          setListCourse(response.data);
+        if (user !== null) {
+            response.data.DescriptionTH = FilesService.buffer64UTF8(response.data.DescriptionTH)
+            response.data.DescriptionENG = FilesService.buffer64UTF8(response.data.DescriptionENG)
+            setListCourse(response.data);
         }
     }
-    
+
     async function fetchDataSubject() {
-        let response = await axios(urlPath+`/subjects/byCoursesId/${id}`);
+        let response = await axios(urlPath + `/subjects/byCoursesId/${id}`);
         let subjects = await response.data;
-        if(subjects !== null) {
+        if (subjects !== null) {
             setListSubject(response.data);
-        } 
+        }
     }
 
-    async function fetchDataComment() {
-        let response = await axios(urlPath+`/comments/byCourse/${id}`,{
-            headers: {accessToken : localStorage.getItem("accessToken")}
-          });
-        let subjects = response.data;
-        if(subjects !== null) {
-            var JsonLearning = [];
-            await subjects.forEach(val => JsonLearning.push({comments : [{id:val.id,user: val.UserName,content: val.TextComment,userPic:FilesService.buffer64(val.UserImage),publishDate:moment(new Date()).fromNow() }]}))
-            setListComment(JsonLearning[0]);
-        } 
-    } 
+    // async function fetchDataComment() {
+    //     let response = await axios(urlPath+`/comments/byCourse/${id}`,{
+    //         headers: {accessToken : localStorage.getItem("accessToken")}
+    //       });
+    //     let subjects = response.data;
+    //     if(subjects !== null) {
+    //         var JsonLearning = [];
+    //         await subjects.forEach(val => JsonLearning.push({comments : [{id:val.id,user: val.UserName,content: val.TextComment,userPic:FilesService.buffer64(val.UserImage),publishDate:moment(new Date()).fromNow() }]}))
+    //         setListComment(JsonLearning[0]);
+    //     } 
+    // } 
 
     useEffect (  ()  =>  {
         fetchData();
         fetchDataSubject();
-        fetchDataComment();
+        //fetchDataComment();
     },[]);
 
     const data = {
@@ -142,7 +142,7 @@ export default function Subject() {
                         </i>
                     </div>
                 </div>
-                 <h1 className='text-4xl px-2 py-2 THSarabunBold mt-4 font-bold'>{listCourse.CurriculumNameTH}</h1>
+                <h1 className='text-4xl px-2 py-2 THSarabunBold mt-4 font-bold'>{listCourse.CurriculumNameTH}</h1>
                 <div className='w-full'>
                     <div className=" min-h-screen-35 px-4 py-4 relative flex flex-col min-h-3 break-words bg-white w-full mb-6 rounded-lg shadow-lg">
                         <ReactQuill
@@ -151,16 +151,16 @@ export default function Subject() {
                             readOnly={true}
                             value={listCourse.DescriptionTH}
                             modules={{
-                            // syntax: true,
-                            toolbar:null
+                                // syntax: true,
+                                toolbar: null
                             }}
                             formats={[
-                            'header',
-                            'bold', 'italic', 'underline', 'strike', 'blockquote',
-                            'list', 'bullet', 'indent',
-                            'link', 'image','video',
-                            'align',
-                            'code-block'
+                                'header',
+                                'bold', 'italic', 'underline', 'strike', 'blockquote',
+                                'list', 'bullet', 'indent',
+                                'link', 'image', 'video',
+                                'align',
+                                'code-block'
                             ]}
                         />
 
@@ -168,7 +168,7 @@ export default function Subject() {
                             {
                                 subjectDataTemp.map((item) => {
                                     return (
-                                        <Link to='#' key={item.id}>
+                                        <Link to='/home/content/2' key={item.id}>
                                             <div className='font-bold subjectName'>{item.SubjectNameTH}</div>
                                             <div className='text-mute subjectOfHour'>
                                                 {item.SubjectOfHour} นาที
@@ -180,7 +180,7 @@ export default function Subject() {
                         </div>
 
                         <div className='divComment'>
-                        <hr className="mt-6 border-b-1 mb-6 border-blueGray-300" />
+                            <hr className="mt-6 border-b-1 mb-6 border-blueGray-300" />
                             <CommentBox
                                 comments={[]}
                                 post={[]} 
@@ -191,7 +191,7 @@ export default function Subject() {
                         </div>
                     </div>
                 </div>
-   
+
             </div>
 
         </>
