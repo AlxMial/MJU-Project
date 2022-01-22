@@ -139,7 +139,7 @@ export default function Subject() {
                 </div>
                 <div className='mt-3 mb-3 text-sm'> หน่วยที่ 1.2 ข้าวเพื่อชีวิตและสังคม</div>
                 <div className='w-full mt-3'>
-                    <div className="min-h-screen-35 px-4 relative flex flex-col min-h-3 break-words bg-white w-full mb-6 rounded-lg shadow-lg">
+                    <div className="min-h-screen-35 px-4 py-4 relative flex flex-col min-h-3 break-words bg-white w-full mb-6 rounded-lg shadow-lg">
                         <div className='img-course lg:w-4/12 text-center flex flex-wrap mx-auto'>
                             <img
                                 className="w-full align-middle"
