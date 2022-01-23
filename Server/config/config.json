@@ -4,20 +4,20 @@
     "password": "undefined@090421",
     "database": "mjuproject",
     "host": "184.82.24.148",
-    "dialect": "mysql"
+    "dialect": "mysql2"
   },
   "test": {
     "username": "mjuundefined",
     "password": "undefined@090421",
     "database": "mjuproject",
     "host": "184.82.24.148",
-    "dialect": "mysql"
+    "dialect": "mysql2"
   },
   "production": {
     "username": "mjuundefined",
     "password": "undefined@090421",
     "database": "mjuproject",
     "host": "184.82.24.148",
-    "dialect": "mysql"
+    "dialect": "mysql2"
   }
 }
