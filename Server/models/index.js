@@ -12,7 +12,7 @@ const db = {};
 
 let sequelize;
 sequelize = new Sequelize({
-  host: '184.82.24.148',
+  host: 'undefined.ddns.net:85',
   username: 'mjuundefined',
   password: 'undefined@090421',
   database: 'mjuproject',
