@@ -5,6 +5,7 @@
     "database": "mjuproject",
     "host": "184.82.24.148",
     "dialect": "mysql"
+    
   },
   "test": {
     "username": "mjuundefined",
