@@ -7,7 +7,7 @@ const basename = path.basename(__filename);
 
 /* Connect Database With Mysql Server */
 const env = process.env.NODE_ENV || 'development';
-const config = require(__dirname + '/../config/config.json')[env];
+const config = require(__dirname + '../../config/config.json')[env];
 const db = {};
 
 
