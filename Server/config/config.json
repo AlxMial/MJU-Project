@@ -1,6 +1,6 @@
 {
   "development": {
-    "username": "mjuundefined",
+    "username": "monty",
     "password": "undefined@090421",
     "database": "mjuproject",
     "host": "184.82.24.148",
@@ -8,14 +8,14 @@
     
   },
   "test": {
-    "username": "mjuundefined",
+    "username": "monty",
     "password": "undefined@090421",
     "database": "mjuproject",
     "host": "184.82.24.148",
     "dialect": "mysql"
   },
   "production": {
-    "username": "mjuundefined",
+    "username": "monty",
     "password": "undefined@090421",
     "database": "mjuproject",
     "host": "184.82.24.148",
