@@ -14,5 +14,13 @@
     "host": "184.82.24.148",
     "dialect": "mysql",
     "usedatabase":"database1"
+  },
+  "production": {
+    "use_env_variable": "DATABASE_URL",
+    "username": "mjuundefined",
+    "password": "undefined@090421",
+    "database": "mjuproject",
+    "host": "184.82.24.148",
+    "dialect": "mysql"
   }
 }
