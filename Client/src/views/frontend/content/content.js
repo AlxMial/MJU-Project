@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useHistory, Link } from "react-router-dom";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-
+import urlPath from 'services/urlServer';
 import './content.css'
 
 export default function Content() {
@@ -12,12 +12,11 @@ export default function Content() {
 
     async function fetchSubject() {
         let response = await axios(
-            `http://localhost:3001/subjects/byId/${id}`
+            urlPath+`/subjects/byId/${id}`
         );
         let data = await response.data;
         if (data !== null) {
             setSubjectData(response.data);
-            console.log(subjectData);
         }
         else { console.log('No Data') }
     }
