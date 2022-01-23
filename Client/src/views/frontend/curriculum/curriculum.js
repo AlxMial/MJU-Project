@@ -49,13 +49,11 @@ export default function Curriculum() {
         }).then((response) => {
             for (const value of response.data) {
                 var JsonTags = JSON.parse(value.CurriculumTag);
-                let StringJson = ([]);
                 for (var i = 0; i < JsonTags.length; i++) {
-                    StringJson[i] = { id: value.id, name: JsonTags[i].name }
+                    setTags(tags => [...tags, {key:i,id: value.id, name: JsonTags[i].name }]);
                 }
-                setTags(StringJson);
+                value.ImageCourses = FilesServices.buffer64(value.ImageCourses);
             }
-
             setListCourses(response.data);
         });
     }
@@ -108,7 +106,10 @@ export default function Curriculum() {
                                         type="button">
                                         <i className="fas fa-redo-alt"></i>&nbsp;ล้างค่า
                                     </button>
-                                    <button onClick={() => setValueSearch(searchText)}
+                                    <button onClick={() => { 
+                                        console.log(searchText)
+                                        setValueSearch(searchText)
+                                        }}
                                         className="w-6/12 lg:w-3/12 bg-green-mju text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none ease-linear transition-all duration-150"
                                         type="button">
                                         <i className="fas fa-filter"></i>&nbsp;ใช้ตัวกรอง
@@ -130,14 +131,16 @@ export default function Curriculum() {
                     <div className='flex flex-wrap '>
                         {listCourses.filter((item) => {
                             if (!valueSearch) return true
-                            if (item.title.includes(valueSearch) || item.tag.includes(valueSearch)) {
+                            if (item.CurriculumNameTH.includes(valueSearch) 
+                            || item.CurriculumTag.includes(valueSearch)
+                            || item.CurriculumNameENG.includes(valueSearch)) {
                                 return true
                             }
                         }).map((item) =>
                             <Link to={`/home/subject/${item.id}`} key={item.id} className="card px-4 md:w-4/12 relative flex flex-col min-w-0 break-words bg-white w-full mb-6 rounded-lg">
                                 <img
                                     alt="..."
-                                    src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSRxgWGxEtMlqQqTJi9INeFmSksx54dZoSLxg&usqp=CAU'
+                                    src={item.ImageCourses}
                                     className="w-full align-middle rounded-t-lg"
                                 />
                                 <blockquote className="blockquote relative p-4 mb-4 shadow-lg rounded-b-lg max-h-200-px ">
@@ -152,10 +155,10 @@ export default function Curriculum() {
                                             <TimeAgo datetime={item.createdAt} />
                                         </div>
                                         <div className='mt-1'>
-                                            {
-                                                tags.filter((tagsitem) => tagsitem.id === item.id).map(function (value) {
-                                                    return (<label key={value.id} className='tag py-1 mt-4 px-2 text-xs text-blue-mju-home mr-2'>{value.name}</label>)
-                                                })}
+                                        {
+                                            tags.filter((tagsitem) => tagsitem.id === item.id).map(function (value) {
+                                                return (<label key={value.key} className='tag py-1 mt-4 px-2 text-xs text-blue-mju-home mr-2'>{value.name}</label>)
+                                            })}
                                         </div>
                                     </footer>
 

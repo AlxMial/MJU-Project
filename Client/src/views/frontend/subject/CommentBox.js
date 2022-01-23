@@ -157,13 +157,16 @@ export default class CommentBox extends Component {
     }
     
     fetchDataComment = (id) => {
+
+        const defaultPicture = require("assets/img/noimg.png").default;
+
         axios.get(urlPath+`/comments/byCourse/${id}`,{
             headers: {accessToken : localStorage.getItem("accessToken")}
           }).then((response) => {
             if(response.data !== null) {
                 var JsonLearning = [];
                 response.data.forEach(val => {
-                    JsonLearning.push({id:val.id,user: val.UserName,content: val.TextComment,userPic:FilesService.buffer64(val.UserImage),publishDate:moment(val.createdAt).fromNow() });
+                    JsonLearning.push({id:val.id,user: val.UserName,content: val.TextComment,userPic:((val.UserImage.data.length === 0) ? defaultPicture : FilesService.buffer64(val.UserImage)),publishDate:moment(val.createdAt).fromNow() });
                 });
                 this.setState({comments:JsonLearning});
                 this.setState({commentsNumber:JsonLearning.length});
@@ -175,11 +178,10 @@ export default class CommentBox extends Component {
         const comments = this.state.comments;
         comment.id = Date.now();
         const newComments = [comment].concat(comments);
-
+        const defaultPicture = require("assets/img/noimg.png").default;
         const fullName = localStorage.getItem('fullName');
-        const profilePicture = localStorage.getItem('profilePicture');
+        const profilePicture = ((localStorage.getItem('profilePicture') === "") ?  defaultPicture :  localStorage.getItem('profilePicture'));
         const email = localStorage.getItem('email');
-
         const data = {
             TextComment: comment.content,
             UserName:fullName,
@@ -191,9 +193,7 @@ export default class CommentBox extends Component {
             AddBy:email,
             EditBy:''
         }
-
         this.InsertComment(data)
-        
         this.setState({
             comments: newComments,
             commentsNumber: this.state.commentsNumber + 1,

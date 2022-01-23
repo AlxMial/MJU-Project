@@ -149,6 +149,7 @@ export default function Courses() {
         <>
           <tr key={value.id}>
             <td className=" float-right border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 font-bold">
+              <img src={require("assets/img/"+FilesService.changeImageType(value.FileType)).default} className="CourseFilePic" alt="user Pic" />
             </td>
             <td  className="text-left border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 font-bold">
               <span className="cursor-pointer" onClick= {() => {DownloadFile(value.FileData,value.FileName)}} >{value.FileName}</span>
@@ -227,7 +228,7 @@ export default function Courses() {
 
   async function fetchData() {
     let response = await axios(
-      urlPath+`courses/byId/${id}`
+      urlPath+`/courses/byId/${id}`
     );
     let user = await response.data;
     if(user !== null) {
@@ -417,7 +418,8 @@ export default function Courses() {
     ContentTH:Yup.string().required('* กรุณากรอก เนื้อหา (ไทย)'),
   }),
   onSubmit: values => {
-      values.CourseId = id;
+      values.CourseId = (id === undefined) ? listCourse.filter(x => x.CurriculumCode === formik.values.CurriculumCode )[0].id : id;
+      
       if(isNewSubject){
           axios.post(urlPath+"/subjects",values).then((response)=>{
           if(response.data.error) 
@@ -427,7 +429,7 @@ export default function Courses() {
             addToast('บันทึกข้อมูลสำเร็จ', { appearance: 'success', autoDismiss: true });
             setIsNewSubject(false)
             setIsEnableSubjectControl(true);
-            axios.get(urlPath+`/subjects/bySubjectCode/${formikSubject.values.SubjectCode}`).then((response) =>   {
+            axios.get(urlPath+`/subjects/byCoursesId/${values.CourseId}`).then((response) =>   {
               setListsubject(response.data);
             });
           }
@@ -789,41 +791,22 @@ export default function Courses() {
                       >
                         รูปภาพหลักสูตร
                       </label>
-              
-                      {/* <input
-                        type="file"
-                        className=" custom-file-input  border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                        id="CurriculumNameTH"
-                        name="CurriculumNameTH"
-                        accept="image/*"
-                        dir="rtl"
-                       
-                        disabled={enableControl}
-                      /> */}
-                      {/* <div className="image-upload">
+                      <div className="buttonIn image-upload ">
                         <label htmlFor="file-input" className="cursor-pointer">
-                          <input className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"/>
-                          <span>เลือกรูปภาพ</span>
-                        </label>
-                        <input id="file-input" type="file" accept="image/jpg, image/jpeg, image/png"  />
+                          <input
+                            type="text"
+                            className={"  border-0 px-2 py-2  placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" + ((!enableControl) ? " inputNoneDisable" : "")} 
+                            id="CurriculumNameENG"
+                            name="CurriculumNameENG"
+                            value={formik.values.ImageName}
+                            readOnly
+                            disabled={true}
+                          />
+                            <span className={"spanUpload px-2 py-2 mt-1 mr-2 text-sm font-bold bg-green-mju " + ((enableControl) ? "opacity-50" : "")} >เลือกรูปภาพ</span>
+                          </label>
+                          <input id="file-input" type="file" accept="image/jpg, image/jpeg, image/png"  onChange={(e) => handlePictureCourseUpload(e)}       disabled={enableControl}/>
+                        </div>
                       </div>
-                     */}
-                     <div className="buttonIn image-upload ">
-                      <label htmlFor="file-input" className="cursor-pointer">
-                        <input
-                          type="text"
-                          className={"  border-0 px-2 py-2  placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" + ((!enableControl) ? " inputNoneDisable" : "")} 
-                          id="CurriculumNameENG"
-                          name="CurriculumNameENG"
-                          value={formik.values.ImageName}
-                          readOnly
-                          disabled={true}
-                        />
-                          <span className={"spanUpload px-2 py-2 mt-1 mr-2 text-sm font-bold bg-green-mju " + ((enableControl) ? "opacity-50" : "")} >เลือกรูปภาพ</span>
-                        </label>
-                        <input id="file-input" type="file" accept="image/jpg, image/jpeg, image/png"  onChange={(e) => handlePictureCourseUpload(e)}       disabled={enableControl}/>
-                      </div>
-                    </div>
                   </div>
                   <div className="w-full lg:w-6/12 px-4 py-1">
                     <div className="relative w-full mb-3">
@@ -941,13 +924,6 @@ export default function Courses() {
                       <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
                         แท็ก
                       </label>
-                      {/* <TagsInput
-                        value={selected}
-                        onChange={(e) => { InputTags(e); setSelected(e); }}
-                        id="CurriculumTag"
-                        name="CurriculumTag"
-                        placeHolder="enter tags"
-                      /> */}
                       <div  style={enableControl ? {pointerEvents: "none", opacity: "0.4"} : {}}>
                           <ReactTags
                              ref={reactTags}
@@ -1226,15 +1202,15 @@ export default function Courses() {
                                             </label>
                                           </div>
                                           <div>
-                                            <div className="image-upload  " style={ (!isNewSubject && !enableSubjectControl) ? {} :  {pointerEvents: "none", opacity: "0.4"}}>
+                                            <div className="imageUpload" style={ (!isNewSubject && !enableSubjectControl) ? {} :  {pointerEvents: "none", opacity: "0.4"}}>
                                               <label
                                                 className="bg-purple-mju cursor-pointer text-white mb-2 px-2 py-2 active:bg-purple-active font-bold uppercase text-xs rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
-                                                htmlFor="file-input">
-                                                  <i className="fas fa-book-reader"></i> &nbsp;แนบไฟล์
+                                                htmlFor="file-input2">
+                                                  <i className="fas fa-book-reader"></i> แนบไฟล์
                                               </label>
                                               <input 
                                                 type="file" 
-                                                id="file-input"
+                                                id="file-input2"
                                                 onChange={(e) => handleFileUpload(e)}/>
                                             </div>
                                           </div>

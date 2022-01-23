@@ -2558,6 +2558,10 @@ text-blue-mju-home {
   color:#1285c1 !important;
 }
 
+.text-blue-mju-front {
+  color: #0aa7e5;
+}
+
 .text-yellow-mju{
   color: #ffea00 ;
 }
@@ -3485,6 +3489,10 @@ text-blue-mju-home {
   border-bottom-right-radius: 0.25rem;
   border-style: none;
 }
+.ql-container.ql-snow 
+{
+  width: 100%;
+}
 
 .ql-snow .ql-tooltip {
   left:0px !important;
@@ -3794,7 +3802,7 @@ input[type=text]:disabled,input[type=password]:disabled,textarea:disabled {
   position: relative;
 }
 
-.imageUpload {
+.imageUpload>input {
   display: none;
 }
 
@@ -3847,3 +3855,8 @@ input[type=text]:disabled,input[type=password]:disabled,textarea:disabled {
 .custom-file-input:active::before {
   background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
 } */
+
+.CourseFilePic{
+  max-width: 25px;
+  max-height: 25px;
+}

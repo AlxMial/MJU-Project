@@ -26,13 +26,24 @@ class FilesService {
 
     changeImageType = (type) => {
         const ImgType = ["7z.png", "avi.png", "doc.png", "gif.png","jpg.png","m3u.png","mkv.png","mp3.png","mp4.png","mpeg.png","pdf.png","png.png","ppt.png","rar.png","txt.png","wav.png","wmv.png","xls.png","zip.png"];
-        const ArrayType = type.split("/");
-        if(ArrayType.length > 1)
-        {        
-            return ImgType[ImgType.indexOf(ArrayType[1]+'.png')];
-        } else {
-            return ImgType[ImgType.indexOf('pdf.png')];
-        }
+        if(type.includes("spreadsheetml"))
+            return "xls.png"
+        else if (type.includes("wordprocessingml"))
+            return "doc.png"
+        else if (type.includes("zip"))
+            return "zip.png"
+        else if (type.includes("presentationml"))
+            return "ppt.png"
+        else if (type.includes("jpeg"))
+            return "jpg.png"
+        else if (type.includes("png"))
+            return "png.png"
+        else
+            return "pdf.png"
+    };
+
+    changeImage = () => {
+        return 'pdf.png';
     };
 }
 

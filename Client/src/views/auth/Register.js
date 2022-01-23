@@ -111,21 +111,21 @@ export default function Register() {
                 <h2 className="text-2xl text-bold THSarabunBold">INFORMATION</h2>
                 <br/>
                 <div className="text-indent">
-                  <span className="text-xs">
+                  <span className="text-sm">
                     Organic farming is an agricultural system that uses fertilizers of organic origin such as compost manure, green manure, and bone meal and places emphasis on techniques such as crop rotation and companion planting. It originated early in the 20th century in reaction to rapidly changing farming practices. Certified organic agriculture accounts for 70 million hectares globally, with over half of that total in Australia. Organic farming continues to be developed by various organizations today. Biological pest control, mixed cropping and the fostering of insect predators are encouraged. Organic standards are designed to allow the use of naturally-occurring substances while prohibiting or strictly limiting synthetic substances.
                   </span>
                 </div>
                 <br/>
                 <br/>
                 <div className="text-indent">
-                  <span  className="text-xs">
+                  <span  className="text-sm">
                     Since 1990, the market for organic food and other products has grown rapidly, reaching $63 billion worldwide in 2012. This demand has driven a similar increase in organically-managed farmland that grew from 2001 to 2011 at a compounding rate of 8.9% per annum.
                   </span>
                 </div>
                 <br/>
                 <br/>
                 <div className="text-indent">
-                  <span  className="text-xs">
+                  <span  className="text-sm">
                     As of 2019, approximately 72,300,000 hectares (179,000,000 acres) worldwide were farmed organically, representing approximately 1.5 percent of total world farmland.
                   </span>
                 </div>
@@ -283,7 +283,7 @@ export default function Register() {
                           {
                             setConfirmPassword(e.target.value);
                           }
-                          else if (e.target.value === "" && valueConfirm === "")
+                          else if (e.target.value === "" && valueConfirm === "" || e.target.value === valueConfirm)
                           {
                             setConfirmPassword(null);
                           }

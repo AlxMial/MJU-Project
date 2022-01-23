@@ -21,3 +21,20 @@
 .fa-file-excel{
     color: green;
 }
+
+
+.ReactQuill-Editor{
+    margin: auto;
+  }
+
+  .ReactQuill-Editor   .ql-snow *{
+    box-shadow: none;
+  }
+
+  .ReactQuill-Editor   .ql-container.ql-snow {
+    border:0px;
+  }
+
+  .ReactQuill-Editor .ql-editor{
+    min-height: 0px !important;
+  }

@@ -141,6 +141,7 @@
     display: flex;
     align-items: center;
   }
+
   .commentBody{
     max-width: 580px;
     overflow-wrap: break-word;
@@ -151,20 +152,31 @@
       max-height: 250px;
       overflow-y: scroll;
   }
+
   .subjectName {
       color: #08aff3;
   }
+
   .subjectOfHour {
       border-bottom: 1px solid #ccc;
   }
-  .ql-container.ql-snow {
-    border:0px;
+
+  .ReactQuill-Editor{
     width: 80%;
-    margin:auto;
-  } 
-  .ql-snow * {
+    margin: auto;
+  }
+
+  .ReactQuill-Editor   .ql-snow *{
     box-shadow: none;
-  } 
+  }
+
+  .ReactQuill-Editor   .ql-container.ql-snow {
+    border:0px;
+  }
+
+  .ReactQuill-Editor .ql-editor{
+    min-height: 0px !important;
+  }
 
   .divComment{
     width: 80%;

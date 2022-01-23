@@ -37,7 +37,6 @@ export default function Login() {
             localStorage.setItem('login', JSON.stringify( { email: values.email, password: values.password }));
           else  
             localStorage.removeItem('login');
-          console.log(response.data)
           addToast('เข้าสู่ระบบสำเร็จ', { appearance: 'success', autoDismiss: true });
           localStorage.setItem("accessToken", response.data.token);
           localStorage.setItem("roleUser", response.data.role);
