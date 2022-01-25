@@ -10,7 +10,8 @@ router.get("/", async (req, res) => {
 
 router.post("/", async (req, res) => {
   Subjects.create(req.body);
-  res.json("SUCCESS");
+  //const subject = await Subjects.findOne({ where : { SubjectCode: req.body.SubjectCode}});
+  res.json("success");
 });
 
 router.get('/byId/:id', async (req,res) =>{

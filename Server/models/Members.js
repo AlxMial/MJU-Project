@@ -63,7 +63,30 @@ module.exports = (sequelize, DataTypes) => {
       EditBy: {
         type: DataTypes.STRING,
         allowNull: true,
+      },
+      birthDate: {
+        type: DataTypes.JSON,
+        allowNull: true,
+      },
+      gender: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      groupMember: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      province: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },district: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },subDistrict: {
+        type: DataTypes.STRING,
+        allowNull: true,
       }
+      
     });
     return Members;
   };

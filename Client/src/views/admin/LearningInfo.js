@@ -150,7 +150,7 @@ export default  function Learning() {
                   <div className="w-full px-4 py-1">
                     <div className="relative w-full mb-3">
                       <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
-                        รหัสเส้นทางการเรียนรู้
+                        รหัสเส้นทางการเรียนรู้<span className="text-red-500"> *</span>
                       </label>
                       <input
                         type="text"
@@ -172,7 +172,7 @@ export default  function Learning() {
                   <div className="w-full lg:w-6/12 px-4 py-1">
                     <div className="relative w-full mb-3">
                       <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
-                        ชื่อเส้นทางการเรียนรู้ (ไทย)
+                        ชื่อเส้นทางการเรียนรู้ (ไทย)<span className="text-red-500"> *</span>
                       </label>
                       <input
                         type="text"
@@ -211,10 +211,10 @@ export default  function Learning() {
                   <div className="w-full lg:w-6/12 px-4 py-1">
                     <div className="relative w-full mb-3">
                       <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
-                        รายละเอียดเส้นทางการเรียนรู้ (ไทย)
+                        รายละเอียดเส้นทางการเรียนรู้ (ไทย)<span className="text-red-500"> *</span>
                       </label>
                       <ReactQuill
-                        theme="snow"
+                        theme="snow"  
                         value={formik.values.DescriptionTH}
                         onChange={v =>  formik.setFieldValue('DescriptionTH', v)} 
                         placeholder={"Write something awesome..."}

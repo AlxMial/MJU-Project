@@ -43,9 +43,13 @@ export default function Navbar(props) {
   useEffect(() => {
     resizeWindow();
     const isValue = localStorage.getItem("translate")
-    var result = (isValue === 'true');
-    setIsThai((result));
-  
+    if(isValue === null){
+      var result = true;
+      setIsThai((result));
+    }else {
+      setIsThai(isValue === "true");
+    }
+
     const checkIfClickedOutside = (e) => {
       if (dropdownAdminPopUpShow && e.toElement.id !== "thaix" && e.toElement.id !== "engx" && e.toElement.id !== "ham" ||  e.toElement.id === ""  ) {
         setDropDownAdminOverShow(false);
@@ -76,7 +80,7 @@ export default function Navbar(props) {
               <li className={"flex items-center text-lg font-bold text-white "  +  (windowWidth < 1024 ? " hidden" : "block")}>
                 <img
                   alt="..."
-                  src={require("assets/img/Logo_x3.png").default}
+                  src={require("assets/img/Group_1.png").default}
                   className="h-auto align-middle border-none max-w-100-px"
                 />
               </li>

@@ -9,7 +9,7 @@ import * as Yup from "yup";
 import urlPath from 'services/urlServer';
 import FilesService from 'services/files';
 
-export default function Login() {
+export default function ResetPassword() {
   const { setAuthState } = useContext(AuthContext); 
   const { addToast } = useToasts();
   let history = useHistory();

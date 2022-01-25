@@ -80,7 +80,7 @@ export default function LearningList() {
 
         const response = await  axios.get(urlPath+`/learning/getCourses/${e}`);
         const resMember = await  axios.get(urlPath+`/learning/getMembers/${e}`);
-        if(response.data === null && resMember === null){
+        if(response.data === null && resMember.data === null){
             axios
             .delete(urlPath+`/learning/${e}`)
             .then(() => {

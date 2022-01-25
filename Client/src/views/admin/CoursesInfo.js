@@ -636,7 +636,7 @@ export default function Courses() {
                           <label
                             className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
                           >
-                            รหัสหลักสูตร
+                            รหัสหลักสูตร <span className="text-red-500"> *</span>
                           </label>
                           <input
                             type="text"
@@ -677,9 +677,7 @@ export default function Courses() {
                     <div className="flex flex-wrap">
                       <div className="w-full lg:w-6/12">
                         <div className="relative w-full mb-3">
-                          <label
-                            className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
-                          >
+                          <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
                             ประเภทหลักสูตร
                           </label>
                           <Select
@@ -698,7 +696,7 @@ export default function Courses() {
                           <label
                             className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
                           >
-                            จำนวนชั่วโมง
+                            จำนวนชั่วโมง<span className="text-red-500"> *</span>
                           </label>
                           <div className="flex flex-wrap">
                             <div className="w-full lg:w-6/12 mb-3">
@@ -745,7 +743,7 @@ export default function Courses() {
                         className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
                         
                       >
-                        ชื่อหลักสูตร (ไทย)
+                        ชื่อหลักสูตร (ไทย)<span className="text-red-500"> *</span>
                       </label>
                       <input
                         type="text"
@@ -813,7 +811,7 @@ export default function Courses() {
                       <label
                         className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
                         >
-                        ขอบเขตเนื้อหา (ไทย)
+                        ขอบเขตเนื้อหา (ไทย)<span className="text-red-500"> *</span>
                       </label>
                       <ReactQuill
                         theme="snow"
@@ -1037,7 +1035,7 @@ export default function Courses() {
                                         <label
                                           className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
                                         >
-                                          รหัสหัวข้อการเรียนรู้ (ไทย)
+                                          รหัสหัวข้อการเรียนรู้ <span className="text-red-500"> *</span>
                                         </label>
                                         <input
                                           type="text"
@@ -1084,7 +1082,7 @@ export default function Courses() {
                                         <label
                                           className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
                                         >
-                                          ชื่อหัวข้อการเรียนรู้ (ไทย)
+                                          ชื่อหัวข้อการเรียนรู้ (ไทย)<span className="text-red-500"> *</span>
                                         </label>
                                         <input
                                           type="text"
@@ -1124,7 +1122,7 @@ export default function Courses() {
                                       <div className="relative w-full mb-3">
                                         <label
                                           className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
-                                          เนื้อหา (ไทย)
+                                          เนื้อหา (ไทย)<span className="text-red-500"> *</span>
                                         </label>
                                         <ReactQuill
                                           theme="snow"

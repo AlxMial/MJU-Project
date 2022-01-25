@@ -52,6 +52,7 @@ const UserDropdown = () => {
     localStorage.removeItem("learningPathId");
     localStorage.removeItem("fullName");
     localStorage.removeItem("profilePicture");
+    localStorage.removeItem("translate")
     setAuthState({ email: "", id: 0, status: false,role:"",profilePicture:"",learningPathId:"" });
   }
 

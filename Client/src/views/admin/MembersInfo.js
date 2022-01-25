@@ -1,14 +1,20 @@
 import React,{useState,useEffect} from "react";
 import Switch from "components/Toggles/Switch";
-import { useParams, useHistory } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import FilesService from '../../services/files'
 import { useFormik  } from "formik";
 import * as Yup from "yup";
-import Select, { NonceProvider } from 'react-select'
+import Select from 'react-select'
 import axios from "axios";
 import { useToasts } from 'react-toast-notifications';
 import ValidateService from '../../services/validateValue'
 import urlPath from '../../services/urlServer'
+import 'react-modern-calendar-datepicker/lib/DatePicker.css';
+import DatePicker from 'react-modern-calendar-datepicker';
+import moment from 'moment';
+import api_province from '../../assets/data/api_province.json'
+import api_amphure from '../../assets/data/api_amphure.json'
+import api_tombon from '../../assets/data/api_tombon.json'
 // components
 
 export default function Members() {
@@ -26,6 +32,16 @@ export default function Members() {
   let { id } = useParams();
   const [optionsLearning, setOptionsLearning] = useState([])
 
+  const defaultDate = {
+    year:  new Date().getFullYear(),
+    month: new Date().getMonth()+1,
+    day: new Date().getDate(),
+  };
+  const [selectedDay, setSelectedDay] = useState(defaultDate);
+  const [dataProvice,setDataProvice]=useState([]);
+  const [dataDistrict,setDataDistrict]=useState([]);
+  const [dataSubDistrict,setSubDistrict] = useState([]);
+  const [dayBirth,setDayBirth] = useState(0);
   const handleFileUpload = async (e) => {
     const base64 = await FilesService.convertToBase64(e.target.files[0]);
     setPostImage(base64);
@@ -43,13 +59,34 @@ export default function Members() {
     { value: '4', label: 'เกษตรกร' }
   ];
 
+  const optionsGender = [
+    { value: '1', label: 'ชาย'},
+    { value: '2', label: 'หญิง' },
+  ];
+
+  
+
   const defaultValue = (options, value) => {
     if(value.toString() === "" && options[0] !== undefined)
     { 
         value = options[0].value;
     }
-    return options ? options.find(option => option.value === value.toString()) : "";
+    return options ? options.find(option => option.value.toString()  === value.toString()) : "";
   };
+
+  // render regular HTML input element
+  const renderCustomInput = ({ ref }) => (
+    <>
+      <span className="datepicker-toggle-register">
+        <span className="datepicker-toggle-button"><i className="far fa-calendar "></i></span>
+        <input ref={ref}
+        type="text"
+        className="datepicker-input cursor-pointer  mb-4 my-custom-input-class border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" // a styling class
+        disabled={enableControl}
+        value={selectedDay !== null ? `${selectedDay.day}/${selectedDay.month}/${selectedDay.year}` :  new Date().toLocaleDateString('en-GB')} />
+      </span>
+    </>
+  )
 
   /*จำนวนนาทีสำหรับหลักสูตร*/
   const onHandleTelephoneChange = (e) => {
@@ -82,14 +119,21 @@ export default function Members() {
       password:'',
       profilePicture:'',
       isActivated:false,
-      IsDeleted:false
+      IsDeleted:false,
+      birthDate:new Date(),
+      gender:'',
+      groupMember:'',
+      province:'',
+      district:'',
+      subDistrict:''
     },
     validationSchema: Yup.object({
       accountCode:Yup.string().required('* กรุณากรอก รหัสบัญชีผู้ใช้'),
       firstName:Yup.string().required('* กรุณากรอก ชื่อ'),
       lastName:Yup.string().required('* กรุณากรอก นามสกุล'),
       email:Yup.string().email('* รูปแบบอีเมลไม่ถูกต้อง').required('* กรุณากรอก อีเมล'),
-      phoneNumber:Yup.string().matches(phoneRegExp, '* รูปแบบเบอร์โทรศัพท์ ไม่ถูกต้อง'),
+      phoneNumber:Yup.string().matches(phoneRegExp, '* รูปแบบเบอร์โทรศัพท์ ไม่ถูกต้อง').required('* กรุณากรอก เบอร์โทรศัพท์'),
+      birthDate:Yup.string().required('* กรุณากรอก วันเกิด'),
       password:Yup.string().required('* กรุณากรอก รหัสผ่าน'),
     }),
 
@@ -97,6 +141,11 @@ export default function Members() {
       formik.values.title = (formik.values.title === "") ? "1" : formik.values.title ;
       formik.values.role = (formik.values.role === "") ? "1" : formik.values.role ;
       formik.values.learningPathId = (formik.values.learningPathId === "") ? "1" : formik.values.learningPathId;
+      formik.values.gender = (formik.values.gender === "") ? "1" : formik.values.gender;
+      formik.values.province = (formik.values.province === "") ? "1" : formik.values.province;
+      formik.values.district = (formik.values.district === "") ? "1001" : formik.values.district;
+      formik.values.subDistrict = (formik.values.subDistrict === "") ? "100101" : formik.values.subDistrict;
+      formik.values.birthDate = selectedDay;
       if(!isNew)
         if(values.id === undefined)
           values.id = listMembers.filter(x => x.accountCode === formik.values.accountCode )[0].id;
@@ -169,8 +218,34 @@ export default function Members() {
     );
     let user = await response.data;
     if(user !== null) {
-      const fields = ['title', 'firstName', 'lastName', 'accountCode', 'email','phoneNumber','address','description','role','learningPathId','profilePicture','isActivated','IsDeleted','password','id'];
-      fields.forEach(field => formik.setFieldValue(field, response.data[field], false));
+      var ProvinceId = "";
+      var District = "";
+      for(var columns in response.data) {
+        if(columns === "province")
+          ProvinceId = response.data[columns]
+        if(columns === "district")
+          District = response.data[columns]
+
+        if(columns === "birthDate")
+        {
+
+          const obj = JSON.parse(response.data[columns]);
+          CalBirthDay(obj);
+          setSelectedDay(obj);
+          formik.setFieldValue(columns, obj, false);
+        }else if (columns === "district") {
+          setDataDistrict(api_amphure.filter(e => e.province_id.toString() === ProvinceId));
+          formik.setFieldValue('district',api_amphure.filter(e => (e.value.toString() === response.data[columns]))[0].value);
+        }else if (columns === "subDistrict") {
+          console.log(District)
+          setSubDistrict(api_tombon.filter(e => e.value.toString().substring(0, 4) === District));  
+          formik.setFieldValue('subDistrict',api_tombon.filter(e => e.value.toString() ===  response.data[columns] )[0].value);
+        }
+        else {
+          formik.setFieldValue(columns, response.data[columns], false);
+        }
+      }
+
       if(response.data.profilePicture !== null)
         setPostImage(FilesService.buffer64(response.data.profilePicture));
       setValue(response.data.isActivated);
@@ -191,9 +266,33 @@ export default function Members() {
     setOptionsLearning(JsonLearning)
   }
 
-  
+  const GetAddress =(type,id)=>{
+    if(type === "district"){
+      setDataDistrict([]);
+      setDataDistrict(api_amphure.filter(e => e.province_id === id));
+      formik.setFieldValue('district',api_amphure.filter(e => e.province_id === id)[0].value);
+      setSubDistrict([]);
+      setSubDistrict(api_tombon.filter(e => e.value.toString().substring(0, 4) === (api_amphure.filter(e => e.province_id.toString() === id.toString()))[0].value.toString()));  
+      formik.setFieldValue('subDistrict',api_tombon.filter(e => e.value.toString().substring(0, 4) === (api_amphure.filter(e => e.province_id.toString() === id.toString()))[0].value.toString())[0].value);
+    }
+    else if(type==="subDistrict")
+    {
+      setSubDistrict([]);
+      setSubDistrict(api_tombon.filter(e => e.value.toString().substring(0, 4) === id.toString() ));  
+      formik.setFieldValue('subDistrict',api_tombon.filter(e => e.value.toString().substring(0, 4) === id.toString() )[0].value);
+    }
+  }
 
+  const CalBirthDay =(e)=>{
+    const diffDays = (date, otherDate) => Math.ceil(Math.abs(date - otherDate) / (1000 * 60 * 60 * 24));
+    const day = diffDays(new Date(e.year+'/'+e.month+'/'+e.day), new Date());
+    setDayBirth((day > 365 && new Date(e.year+'/'+e.month+'/'+e.day) < new Date()) ? parseInt(day/365) : 0 )
+  }
+  
   useEffect(()=>{
+      setDataProvice(api_province);
+      GetAddress("district",1);
+      GetAddress("subDistrict",1001);
       fetchData();
       fetchLearning();
   },[]);
@@ -265,7 +364,7 @@ export default function Members() {
                       <div className="w-full lg:w-6/12 px-4">
                         <div className="relative lg:w-6/12  mb-3">
                           <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
-                            รหัสบัญชีผู้ใช้
+                            รหัสบัญชีผู้ใช้<span className="text-red-500"> *</span>
                           </label>
                           <input
                             type="text"
@@ -321,8 +420,8 @@ export default function Members() {
                           <label
                             className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
                           >
-                            ชื่อ
-                          </label>
+                            ชื่อ<span className="text-red-500"> *</span>
+                          </label> 
                           <input
                             type="text"
                             className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
@@ -344,7 +443,7 @@ export default function Members() {
                           <label
                             className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
                           >
-                            นามสกุล
+                            นามสกุล<span className="text-red-500"> *</span>
                           </label>
                           <input
                             type="text"
@@ -374,7 +473,7 @@ export default function Members() {
                   <div className="w-full lg:w-6/12 px-4 py-1">
                     <div className="relative w-full mb-3">
                       <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
-                        อีเมล
+                        อีเมล<span className="text-red-500"> *</span>
                       </label>
                       <input
                         type="text"
@@ -397,7 +496,7 @@ export default function Members() {
                       <label
                         className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
                       >
-                        เบอร์โทร
+                        เบอร์โทร<span className="text-red-500"> *</span>
                       </label>
                       <input
                         type="text"
@@ -419,6 +518,77 @@ export default function Members() {
                     </div>
                   </div>
                   <div className="w-full lg:w-6/12 px-4 py-1">
+                    <div className="flex flex-wrap">
+                      <div className="w-full lg:w-4/12">
+                        <label
+                          className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
+                        >
+                          วันเกิด<span className="text-red-500"> *</span>
+                        </label>
+                        <DatePicker
+                          value={selectedDay}
+                          onChange={(e) => {setSelectedDay(e); CalBirthDay(e); }}
+                          renderInput={renderCustomInput} // render a custom input
+                          shouldHighlightWeekends
+                        />
+                        {formik.touched.birthDate && formik.errors.birthDate ? (
+                              <div className="text-sm py-2 px-2 text-red-500">{formik.errors.birthDate}</div>
+                          ) : null}
+                      </div>
+                      <div className="w-full lg:w-4/12">
+                        <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
+                          อายุ
+                        </label>
+                        <input
+                                type="text"
+                                className="border-0 px-2 py-2   mb-4 laceholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                                id="NumOfHours"
+                                name="NumOfHours"
+                                value={dayBirth}
+                                onBlur={formik.handleBlur}
+                                readOnly={true}
+                                disabled={enableControl}
+                        
+                          />
+                         <span className="text-xs font-bold"> &nbsp;ปี</span>
+                      </div>
+                      <div className="w-full lg:w-4/12">
+                        <label
+                          className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
+                        >
+                          เพศ
+                        </label>
+                        <Select
+                              id="gender"
+                              name="gender"
+                              onChange={value => {formik.setFieldValue('gender',value.value)}}
+                              className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" 
+                              options={optionsGender}
+                              value={defaultValue(optionsGender, formik.values.gender)}
+                              isDisabled={enableControl}
+                              />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-6/12 px-4 py-1">
+                    <div className="relative w-full mb-3">
+                      <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
+                        ชื่อกลุ่ม
+                      </label>
+                      <input
+                        type="text"
+                        className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        id="groupMember"
+                        name="groupMember"
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.groupMember}
+                        disabled={enableControl}
+                        autoComplete="new-password"
+                      />
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-6/12 px-4 py-1">
                     <div className="relative w-full mb-3">
                       <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
                         บทบาท
@@ -431,7 +601,7 @@ export default function Members() {
                         className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm-select shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" 
                         options={optionsRole} 
                         value={defaultValue(optionsRole, formik.values.role)}
-                        isDisabled={enableControl}/>
+                        isDisabled={enableControl || formik.values.email === "admin@mju.ac.th"}/>
                     </div>
                   </div>
                   <div className="w-full lg:w-6/12 px-4 py-1">
@@ -451,9 +621,9 @@ export default function Members() {
                     </div>
                   </div>
                   <div className="w-full lg:w-6/12 px-4 py-1">
-                    <div className="relative w-full mb-3">
+                    <div className="relative w-full mb-4">
                       <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
-                        รหัสผ่าน
+                        รหัสผ่าน<span className="text-red-500"> *</span>
                       </label>
                       <input
                         type="password"
@@ -481,7 +651,7 @@ export default function Members() {
                     </div>
                   </div>
                   <div className="w-full lg:w-6/12 px-4 py-1">
-                    <div className="relative w-full mb-3">
+                    <div className="relative w-full mb-4">
                       <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
                         ยืนยันรหัสผ่าน
                       </label>
@@ -500,14 +670,13 @@ export default function Members() {
                     </div>
                   </div>
                   <div className="w-full lg:w-6/12 px-4 py-1">
-                    <div className="relative w-full mb-3">
+                    <div className="relative w-full mb-5">
                       <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
                         ที่อยู่
                       </label>
-                      <textarea
+                      <input
                         type="text"
-                        className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                        rows="4"
+                        className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="address"
                         name="address"
                         onChange={formik.handleChange}
@@ -515,7 +684,57 @@ export default function Members() {
                         value={formik.values.address}
                         disabled={enableControl}
                         autoComplete="new-password"
-                      ></textarea>
+                      />
+                    </div>
+                    <div className="relative w-full mb-3">
+                      <div className="flex flex-wrap">
+                        <div className="w-full lg:w-4/12 mb-4">
+                          <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
+                            จังหวัด
+                          </label>
+                            <Select  
+                              id="province"
+                              name="province"
+                              onChange={value => { 
+                                formik.setFieldValue('province',value.value); 
+                                GetAddress("district",value.value); 
+                              }}
+                              className="border-0 placeholder-blueGray-300 w-90 text-blueGray-600 bg-white rounded text-sm-select shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" 
+                              options={dataProvice} 
+                              menuPlacement="top"
+                              value={defaultValue(dataProvice, formik.values.province)}
+                              isDisabled={enableControl}/>
+                        </div>
+                        <div className="w-full lg:w-4/12 mb-4">
+                          <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
+                            อำเภอ
+                          </label>
+                            <Select  
+                              id="district"
+                              name="district"
+                              onChange={value => {  formik.setFieldValue('district',value.value);
+                              GetAddress("subDistrict",value.value);}}
+                              className="border-0 placeholder-blueGray-300 w-90 text-blueGray-600 bg-white rounded text-sm-select shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" 
+                              options={dataDistrict} 
+                              menuPlacement="top"
+                              value={defaultValue(dataDistrict, formik.values.district)}
+                              isDisabled={enableControl}/>
+                        </div>
+                        <div className="w-full lg:w-4/12">
+                          <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
+                            ตำบล
+                          </label>
+                            <Select  
+                              id="subDistrict"
+                              name="subDistrict"
+                              onChange={value => {  formik.setFieldValue('subDistrict',value.value)}}
+                              className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm-select shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" 
+                              options={dataSubDistrict} 
+                              menuPlacement="top"
+                              value={defaultValue(dataSubDistrict, formik.values.subDistrict)}
+                              isDisabled={enableControl}/>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div className="w-full lg:w-6/12 px-4 py-1">
@@ -526,7 +745,7 @@ export default function Members() {
                       <textarea
                         type="text"
                         className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                        rows="4"
+                        rows="6"
                         id="description"
                         name="description"
                         onChange={formik.handleChange}

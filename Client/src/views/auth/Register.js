@@ -6,19 +6,42 @@ import axios from "axios";
 import { useToasts } from 'react-toast-notifications';
 import Select from 'react-select'
 import urlPath from 'services/urlServer';
-
+import 'react-modern-calendar-datepicker/lib/DatePicker.css';
+import DatePicker from 'react-modern-calendar-datepicker';
+import { Calendar } from "react-modern-calendar-datepicker";
 export default function Register() {
 
   const [confirmPassword, setConfirmPassword] = useState(false);
   const [valueConfirm, setValueConfirm] = useState("");
   const [isTerm,setIsTerm] = useState("");
   const { addToast } = useToasts();
+  const [selectedDay, setSelectedDay] = useState(null);
   let history = useHistory();
   const [optionsLearning, setOptionsLearning] = useState([])
   const optionsRole = [
     { value: '3', label: 'วิทยากร' },
     { value: '4', label: 'เกษตรกร' }
   ];
+
+  const optionsGender = [
+    { value: '1', label: 'ชาย'},
+    { value: '2', label: 'หญิง' },
+  ];
+
+    // render regular HTML input element
+    const renderCustomInput = ({ ref }) => (
+      <>
+        <span className="datepicker-toggle">
+          <span className="datepicker-toggle-button"><i className="far fa-calendar "></i></span>
+          <input ref={ref}
+          type="text"
+    
+          className="datepicker-input cursor-pointer  mb-4  border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" // a styling class
+          value={selectedDay !== null ? `${selectedDay.day}/${selectedDay.month}/${selectedDay.year}` :  new Date().toLocaleDateString('en-GB')} />
+        </span>
+      </>
+    )
+  
 
 
   const formik = useFormik({
@@ -36,7 +59,13 @@ export default function Register() {
       password:'',
       profilePicture:'',
       isActivated:false,
-      IsDeleted:false
+      IsDeleted:false,
+      gender:'',
+      birthDate:new Date(),
+      province:'',
+      district:'',
+      subDistrict:''
+
    },
    validationSchema: Yup.object({
      firstName:Yup.string().required('* กรุณากรอก ชื่อ'),
@@ -48,6 +77,11 @@ export default function Register() {
    onSubmit: values => {
       formik.values.role = (formik.values.role === "") ? "3" : formik.values.role ;
       formik.values.learningPathId = (formik.values.learningPathId === "") ? "1" : formik.values.learningPathId ;
+      formik.values.gender = (formik.values.gender === "") ? "1" : formik.values.gender ;
+      formik.values.birthDate = selectedDay;
+      formik.values.province = (formik.values.province === "") ? "1" : formik.values.province;
+      formik.values.district = (formik.values.district === "") ? "1001" : formik.values.district;
+      formik.values.subDistrict = (formik.values.subDistrict === "") ? "100101" : formik.values.subDistrict;
       if(!confirmPassword && isTerm)
       {
         values.isActivated = true;
@@ -188,19 +222,6 @@ export default function Register() {
                     >
                       Role
                     </label>
-                    {/* <select 
-                        className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-xs shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                        id="role"
-                        name="role"
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.role}
-                        autoComplete="new-password"
-                    >
-                      <option value={3}>วิทยากร</option>
-                      <option value={4}>เกษตรกร</option>
-                    </select> */}
-
                       <Select  
                         id="role"
                         name="role"
@@ -232,6 +253,44 @@ export default function Register() {
                    {formik.touched.email && formik.errors.email ? (
                               <div className="text-sm py-2 px-2 text-red-500">{formik.errors.email}</div>
                           ) : null}
+                </div>
+                <div className="flex flex-wrap relative mt-4">
+                  <div className="w-full lg:w-6/12">
+                    <div className="relative w-full mb-3 px-2">
+                      <label
+                        className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
+                        
+                      >
+                        Date of Birth
+                      </label>
+                      <DatePicker
+                          value={selectedDay}
+                          onChange={(e) => {setSelectedDay(e);}}
+                          renderInput={renderCustomInput} // render a custom input
+                          shouldHighlightWeekends
+                        />
+
+                                            
+                  
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-6/12">
+                    <div className="relative w-full mb-3 px-2">
+                      <label
+                        className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
+                        
+                      >Gender
+                      </label>
+                      <Select
+                        id="gender"
+                        name="gender"
+                        onChange={value => {formik.setFieldValue('gender',value.value)}}
+                        className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" 
+                        options={optionsGender}
+                        value={defaultValue(optionsGender, formik.values.gender)}
+                        />
+                    </div>
+                  </div>
                 </div>
                 <div className="relative w-full px-2 mt-4">
                   <label
