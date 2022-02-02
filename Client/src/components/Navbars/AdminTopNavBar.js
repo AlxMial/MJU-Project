@@ -4,9 +4,11 @@ import { createPopper } from "@popperjs/core";
 import { useHistory } from "react-router-dom";
 // components
 import UserDropdown from "components/Dropdowns/UserDropdown.js";
+import { connect } from "react-redux";
+import { setLocale } from "react-redux-i18n";
+import * as Storage from "../../services/Storage.service";
 
-export default function Navbar(props) {
-
+const AdminTopNavBar = ({ setLocale }) => {
   const [navbarOpen, setNavbarOpen] = React.useState(false);
   const [isThai,setIsThai] = React.useState(true);
   const [windowWidth, setWindowWidth] = useState(0);
@@ -34,9 +36,17 @@ export default function Navbar(props) {
 
   const ChangeTranslate = (e) => {
     if(e.target.id === "thaix")
+    {  
       setIsThai(true);
+      Storage.SetLanguage("th"); 
+      setLocale("th");
+    }
     else 
-      setIsThai(false)
+    { 
+      setIsThai(false) 
+      Storage.SetLanguage("en");
+      setLocale("en");
+    }
     localStorage.setItem("translate",(e.target.id === "thaix") ? true : false);
   }
   
@@ -44,10 +54,15 @@ export default function Navbar(props) {
     resizeWindow();
     const isValue = localStorage.getItem("translate")
     if(isValue === null){
-      var result = true;
-      setIsThai((result));
+      Storage.SetLanguage("th"); 
+      setIsThai(true);
+      setLocale("th");
     }else {
       setIsThai(isValue === "true");
+      if(isValue === "true")
+      { setLocale("th");    Storage.SetLanguage("th"); }
+      else  
+      { setLocale("en");    Storage.SetLanguage("en"); }
     }
 
     const checkIfClickedOutside = (e) => {
@@ -87,7 +102,7 @@ export default function Navbar(props) {
               <li className={"flex items-center text-lg font-bold text-white " +  (windowWidth < 1024 ? " hidden" : "block") }>
                 &nbsp;   | &nbsp;
               </li>
-              <li className="flex items-center text-lg font-bold text-white cursor-pointer" onClick={()=>{ClickHome()}}>
+              <li className="flex items-center text-2xl font-bold text-white cursor-pointer THSarabun" onClick={()=>{ClickHome()}}>
                 Organic Masterclass
               </li>
             </ul>
@@ -111,7 +126,7 @@ export default function Navbar(props) {
                   </span>
                 </div>
               </a>
-              <span className={"w-12 h-12 text-sm bg-blueGray-200 inline-flex ml-3 items-center justify-center rounded-lg" + (windowWidth < 1024 ? " block" : " hidden")}>
+              <span className={"w-12 h-12 text-sm bg-blueGray-200 inline-flex ml-3 items-center justify-center rounded-full" + (windowWidth < 1024 ? " block" : " hidden")}>
                 <UserDropdown /> 
               </span>
 
@@ -126,7 +141,7 @@ export default function Navbar(props) {
                   href="#pablo"
                   id="thaix"
                   className={
-                    "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700 "
+                    "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700 THSarabun "
                     + (!isThai
                       ? "opacity-75"
                       : "textUnderline")}
@@ -138,7 +153,7 @@ export default function Navbar(props) {
                   href="#pablo"
                   id="engx"
                   className={
-                    "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700 "
+                    "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700 THSarabun "
                    + (isThai
                       ? "opacity-75"
                       : "textUnderline")}
@@ -189,3 +204,13 @@ export default function Navbar(props) {
     </>
   );
 }
+
+
+const matchStateToProps = (state) => ({});
+
+const mapDispatchToProps = (dispatch) => ({
+  setLocale: (lang) => {
+    dispatch(setLocale(lang));
+  },
+});
+export default connect(matchStateToProps, mapDispatchToProps)(AdminTopNavBar);

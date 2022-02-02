@@ -15,6 +15,7 @@ import Learning from "views/admin/LearningInfo";
 import LearningList from "views/admin/LearningList";
 import Courses from "views/admin/CoursesInfo";
 import CoursesList from "views/admin/CoursesList";
+import * as Storage from "../services/Storage.service";
 
 export default function Admin() {
   const box = useRef(null);
@@ -34,11 +35,11 @@ export default function Admin() {
       history.push("/home");
 
     if(window.location.pathname.includes("members"))
-      setTodos("จัดการบัญชีผู้ใช้")
+    { (Storage.GetLanguage() === "th") ? setTodos("จัดการบัญชีผู้ใช้") : setTodos("Account Management")}
     else if(window.location.pathname.includes("learning"))
-      setTodos("จัดการเส้นทางการเรียนรู้")
+    { (Storage.GetLanguage() === "th") ? setTodos("จัดการเส้นทางการเรียนรู้") : setTodos("Learning Path Management")}
     else 
-      setTodos("จัดการหลักสูตร")
+    { (Storage.GetLanguage() === "th") ? setTodos("จัดการหลักสูตร") : setTodos("Curriculum Management")} 
      
   });
 
@@ -48,12 +49,11 @@ export default function Admin() {
       function handleOutsideClick(event) {
         if (ref.current && !ref.current.contains(event.target)) {
           if(window.location.pathname.includes("members"))
-            setTodos("จัดการบัญชีผู้ใช้")
+            { (Storage.GetLanguage() === "th") ? setTodos("จัดการบัญชีผู้ใช้") : setTodos("Account Management")}
           else if(window.location.pathname.includes("learning"))
-            setTodos("จัดการเส้นทางการเรียนรู้")
+            { (Storage.GetLanguage() === "th") ? setTodos("จัดการเส้นทางการเรียนรู้") : setTodos("Learning Path Management")}
           else 
-            setTodos("จัดการหลักสูตร")
-        }
+            { (Storage.GetLanguage() === "th") ? setTodos("จัดการหลักสูตร") : setTodos("Curriculum Management")}        }
       }
       // Adding click event listener
       document.addEventListener("click", handleOutsideClick);

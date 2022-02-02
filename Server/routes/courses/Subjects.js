@@ -9,9 +9,9 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-  Subjects.create(req.body);
-  //const subject = await Subjects.findOne({ where : { SubjectCode: req.body.SubjectCode}});
-  res.json("success");
+  await Subjects.create(req.body);
+  const subject = await Subjects.findOne({ where : { SubjectCode: req.body.SubjectCode,CourseId: req.body.CourseId}});
+  res.json(subject);
 });
 
 router.get('/byId/:id', async (req,res) =>{
@@ -35,7 +35,8 @@ router.get('/bySubjectCode/:code', async (req,res) =>{
 
 router.put("/" , async (req,res) =>{
   await Subjects.update(req.body,{where : {id: req.body.id }})
-  res.json("SUCCESS");
+  const subject = await Subjects.findOne({ where : { SubjectCode: req.body.SubjectCode,CourseId: req.body.CourseId}});
+  res.json(subject);
 });
 
 router.delete("/:SubjectId", async (req, res) => {

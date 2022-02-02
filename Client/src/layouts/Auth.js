@@ -5,6 +5,9 @@ import Navbar from "components/Navbars/AuthNavbar.js";
 // views
 import Login from "views/auth/Login.js";
 import Register from "views/auth/Register.js";
+import ForgotPassword from "views/auth/ForgotPassword";
+import ResetPassword from "views/auth/ResetPassword";
+import ForgotReturn from "views/auth/ForgotReturn";
 
 
 export default function Auth() {
@@ -19,6 +22,9 @@ export default function Auth() {
           <Switch>
             <Route path="/auth/login" exact component={Login} />
             <Route path="/auth/register" exact component={Register} />
+            <Route path="/auth/forgotpassword" exact component={ForgotPassword} />
+            <Route path="/auth/resetpassword/:id" exact component={ResetPassword} />
+            <Route path="/auth/forgotreturn" exact component={ForgotReturn} />
             <Redirect from="/" to="/auth/login" />
           </Switch>
         </section>

@@ -21,15 +21,15 @@ export default function Login() {
       isRemember: false
    },
    validationSchema: Yup.object({
-    email:Yup.string().required('* กรุณากรอก อีเมล'),
-    password: Yup.string().required('* กรุณากรอก รหัสผ่าน'),
+    email:Yup.string().required('* Please enter your email'),
+    password: Yup.string().required('* Please enter your password'),
    }),
    onSubmit: values => {
     const data = {email:values.email, password:values.password};
     axios.post(urlPath+"/users/login",data).then((response)=>{
     if(response.data.error) 
     {  
-      addToast("ไม่สามารถเข้าสู่ระบบได้เนื่องจาก อีเมลหรือรหัสผ่านไม่ถูกต้อง", { appearance: 'error', autoDismiss: true });
+      addToast("Can't login because Invalid email or password", { appearance: 'error', autoDismiss: true });
     }
     else{
         if(response.data.isActivated){
@@ -37,7 +37,7 @@ export default function Login() {
             localStorage.setItem('login', JSON.stringify( { email: values.email, password: values.password }));
           else  
             localStorage.removeItem('login');
-          addToast('เข้าสู่ระบบสำเร็จ', { appearance: 'success', autoDismiss: true});
+          addToast('Login Successfully', { appearance: 'success', autoDismiss: true});
           localStorage.setItem("accessToken", response.data.token);
           localStorage.setItem("roleUser", response.data.role);
           localStorage.setItem("email", response.data.email);
@@ -57,7 +57,7 @@ export default function Login() {
           else 
           history.push("/home");
         } else {
-          addToast("ไม่สามารถเข้าสู่ระบบได้เนื่องจาก Email สำหรับเข้าใช้งานระบบถูกยกเลิกใช้งาน", { appearance: 'error', autoDismiss: true });
+          addToast("Unable to login because the email for access to the system has been deactivated.", { appearance: 'error', autoDismiss: true });
         }
       }
     });
@@ -149,7 +149,7 @@ export default function Login() {
                       <div>
                       <label className="inline-flex items-center cursor-pointer mt-2">
                           <span className="ml-2 text-xs font-semibold text-blueGray-600">
-                            Forgot Password?
+                            <Link className="cursor-pointer text-xs font-bold text-blue-mju" to="/auth/forgotpassword"> Forgot Password? </Link>
                           </span>
                         </label>
                       </div>

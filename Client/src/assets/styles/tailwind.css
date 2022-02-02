@@ -71,6 +71,15 @@ Improve consistency of default fonts in all browsers. (https://github.com/sindre
 }
 
 
+.THSarabun{
+  font-family:
+  THSarabun !important;
+}
+
+/* *{
+    font-family:
+  THSarabun !important;
+} */
 
 body {
   font-family:
@@ -1726,57 +1735,57 @@ select {
 }
 
 .text-xs {
-  font-size: 1.2rem;
+  font-size:1.2rem;
   line-height: 1rem;
 }
 
 .text-sm {
+  font-size: 1.25rem;
+  line-height: 1rem;
+}
+
+.text-sm-select {
+  font-size: 1.4rem;
+  line-height: 1.5rem;
+}
+
+.text-sm-texteditor {
+  font-size: 1rem !important;
+  line-height: 1rem !important;
+}
+
+.text-base {
   font-size: 1.5rem;
   line-height: 1.25rem;
 }
 
-.text-sm-select {
-  font-size: 1.5rem;
-  line-height: 2rem;
-}
-
-.text-sm-texteditor {
-  font-size: 1.2rem !important;
-  line-height: 1.5rem !important;
-}
-
-.text-base {
+.text-lg {
   font-size: 1.8rem;
   line-height: 1.5rem;
 }
 
-.text-lg {
-  font-size: 2rem;
-  line-height: 1.75rem;
-}
-
 .text-xl {
-  font-size: 2.2rem;
-  line-height: 1.75rem;
+  font-size: 2rem;
+  line-height: 1.5rem;
 }
 
 .text-2xl {
-  font-size: 2.5rem;
-  line-height: 2rem;
+  font-size: 2.25rem;
+  line-height: 1.75rem;
 }
 
 .text-3xl {
-  font-size: 2.8rem;
+  font-size: 2.5rem;
   line-height: 2.25rem;
 }
 
 .text-4xl {
-  font-size: 3rem;
-  line-height: 2.5rem;
+  font-size: 2.8rem;
+  line-height: 2.25rem;
 }
 
 .text-5xl {
-  font-size: 4rem;
+  font-size: 3.5rem;
   line-height: 1;
 }
 
@@ -3117,6 +3126,11 @@ text-blue-mju-home {
     margin-left: 16rem;
   }
 
+  .md\:ml-68 {
+    margin-left: 18rem;
+  }
+
+
   .md\:min-h-full {
     min-height: 100%;
   }
@@ -3196,6 +3210,11 @@ text-blue-mju-home {
     width: 16rem;
   }
 
+  
+  .md\:w-68 {
+    width: 18rem;
+  }
+
   .md\:w-4\/12 {
     width: 33.333333%;
   }
@@ -3224,6 +3243,10 @@ text-blue-mju-home {
 
   .lg\:bg-opacity-0 {
     --tw-bg-opacity: 0;
+  }
+
+  .w-80{
+    width: 80%;
   }
 
   .w-90{
@@ -3898,8 +3921,8 @@ input[type=text]:disabled,input[type=password]:disabled,textarea:disabled {
 }
 
 .CourseFilePic{
-  max-width: 25px;
-  max-height: 25px;
+  max-width: 30px;
+  max-height: 30px;
 }
 
 .custom-calendar {
@@ -3958,9 +3981,30 @@ input[type=text]:disabled,input[type=password]:disabled,textarea:disabled {
 
 .datepicker-toggle-button {
   position: absolute;
-  right: 0;
+ right: 0;
   text-align: right;
   /* margin: auto; */
   margin-top: 0.8rem;
   margin-right: 0.8rem;
+}
+
+
+
+.datepicker-toggle-button-account {
+  position: absolute;
+  right: 30px;
+  text-align: right;
+  /* margin: auto; */
+  margin-top: 0.8rem;
+  margin-right: 0.8rem;
+}
+.sun-editor .se-resizing-bar{
+  border:0px !important;
+  min-height: 0px !important;
+}
+.sun-editor{
+  border:0px !important;
+}
+.display-inline{
+  display: inline-flex;
 }

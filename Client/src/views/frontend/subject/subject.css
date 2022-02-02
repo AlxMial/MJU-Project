@@ -151,14 +151,17 @@
       border: 1px solid #ccc;
       max-height: 250px;
       overflow-y: scroll;
+      width: 80%;
   }
 
   .subjectName {
       color: #08aff3;
+      font-size: 1.5rem;
   }
 
   .subjectOfHour {
       border-bottom: 1px solid #ccc;
+      font-size: 1.2rem;
   }
 
   .ReactQuill-Editor{

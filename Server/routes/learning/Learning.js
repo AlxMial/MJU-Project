@@ -39,10 +39,16 @@ router.get('/getMembers/:id', async (req,res) =>{
 });
 
 
-router.get('/byLearningCode/:code', validateToken , async (req,res) =>{
-  const id = req.params.code.toString("utf8");
+router.post("/byLearningCode", validateToken , async (req,res) =>{
+  const id = req.body.code.toString("utf8");
+  const name = req.body.name.toString("utf8");
   const learning = await Learning.findOne({
-    where: {  LearningPathCode: id },
+    where: { 
+      [Op.or]: [
+        { LearningPathCode: id },
+        { LearningPathNameTH: name }
+      ]
+    },
    });
   res.json(learning);
 });

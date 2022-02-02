@@ -1,5 +1,5 @@
 import React,{useState,useEffect, useCallback, useRef} from "react";
-import ReactQuill from 'react-quill';
+import ReactQuill,{Quill} from 'react-quill';
 import { useParams } from "react-router-dom";
 import 'react-quill/dist/quill.snow.css';
 import ReactTags from 'react-tag-autocomplete'
@@ -16,7 +16,13 @@ import * as Yup from "yup";
 import ReactPaginate from 'react-paginate';
 import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 import urlPath from 'services/urlServer';
+import ImageResize from 'quill-image-resize-module-react';
+import * as Storage from "../../../src/services/Storage.service";
+import SunEditor from 'suneditor-react';
+import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 
+const locale = require("react-redux-i18n").I18n;
+Quill.register('modules/imageResize', ImageResize);
 Modal.setAppElement('#root');
 const customStyles = {
   content: {
@@ -42,6 +48,8 @@ export default function Courses() {
     const [listAttach, setListAttach] = useState([]);
     const [numberHour, setNumberHour] = useState("0");
     const [headName , setHeadName] = useState("หลักสูตร");
+    const [Name , setName] = useState("หลักสูตร");
+    const [NameEng , setNameEng] = useState("Curriculum");
     const [modalIsOpen, setIsOpen] = useState(false);
     const [modalIsOpenAttach, setIsOpenAttach] = useState(false);
     const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
@@ -62,12 +70,18 @@ export default function Courses() {
     const [optionsLearning, setOptionsLearning] = useState([])
     const [imageCourses, setImageCourses] = useState("");
     const [imageCoursesName,setImageCourseName] = useState("");
+    const [arrayAttach,setArrayAtteach] = useState([]);
     const options = [
       { value: '1', label: 'ปฏิทิน' },
       { value: '2', label: 'การปลูก' },
       { value: '3', label: 'การแปรรูป' }
     ];
   //#endregion
+
+  const handleKeyDown = (event) => {
+
+    event.stopPropagation(); //Get the keydown event
+  }
 
   //#region list Subject and Attach
   /****************** list Subject *******************************************/
@@ -113,14 +127,14 @@ export default function Courses() {
         <>
         <tr key={value.id}>
           <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4 cursor-pointer">
-            <span onClick={() => {fetchDetailSubject(value.id);  openModal(); } }> {value.SubjectOfHour} ชั่วโมง</span>
+            <span onClick={() => {fetchDetailSubject(value.id);  openModal(); } }> {value.SubjectOfHour}  {locale.t("Course.info.lblHour")}</span>
           </th>
           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4 font-bold cursor-pointer">
-            <span onClick={() => {fetchDetailSubject(value.id);  openModal(); } }> {value.SubjectNameTH} </span>
+            <span onClick={() => {fetchDetailSubject(value.id);  openModal(); } }> {((Storage.GetLanguage()==="th") ? value.SubjectNameTH : value.SubjectNameENG)}</span>
           </td>
           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4 font-bold">
-            <label className="text-red-500 cursor-pointer" onClick={()=>{openModalSubject()}}> <i className="fas fa-trash"></i> ลบ</label>
-            <ConfirmDialog  showModal={modalIsOpenSubject} message={"หัวข้อการเรียนรู้"} hideModal={()=>{closeModalSubject()}} confirmModal={() => {DeletedSubject(value.id)}} id={value.id}/>
+            <label className="text-red-500 cursor-pointer" onClick={()=>{openModalSubject()}}> <i className="fas fa-trash"></i> {locale.t("Button.lblDelete")}</label>
+            <ConfirmDialog  showModal={modalIsOpenSubject} message={ (Storage.GetLanguage()==="th") ? "หัวข้อการเรียนรู้" : "learning topic"} hideModal={()=>{closeModalSubject()}} confirmModal={() => {DeletedSubject(value.id)}} id={value.id}/>
           </td>
         </tr>
         </>
@@ -158,7 +172,7 @@ export default function Courses() {
               { DateTimesService.formatDate(value.createdAt) }
             </th>
             <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 font-bold">
-              <label className="text-red-500 cursor-pointer" onClick={()=>{openModalAttach()}}> <i className="fas fa-trash"></i> ลบ</label>
+              <label className="text-red-500 cursor-pointer" onClick={()=>{openModalAttach()}}> <i className="fas fa-trash"></i> {locale.t("Button.lblDelete")}</label>
               <ConfirmDialog  showModal={modalIsOpenAttach} message={"ไฟล์แนบ"} hideModal={()=>{closeModalAttach()}} confirmModal={() => {DeletedFile(value.id)}} type={value.FileType} id={value.Id}/>
             </td>
           </tr>
@@ -174,11 +188,10 @@ export default function Courses() {
     {
       addToast('Size file over 25 MB', { appearance: 'error', autoDismiss: true });
     } else { 
-      var SubId = listSubject.filter((val) => {
-        return val.SubjectCode === formikSubject.values.SubjectCode;
-      })[0].id;
-      const data = {FileName:e.target.files[0].name,FileType:e.target.files[0].type,FileData:base64,IsDeleted:false,SubjectId:SubId}
-      UploadFile(data);
+      const data = {FileName:e.target.files[0].name,FileType:e.target.files[0].type,FileData:base64,IsDeleted:false}      
+      setArrayAtteach([...arrayAttach, data]);
+      setListAttach([...listAttach, data]);
+      //UploadFile(data);
     }
   };
 
@@ -187,15 +200,17 @@ export default function Courses() {
         headers: {accessToken : localStorage.getItem("accessToken")}
       }).then((response)=>{
       if(response.data.error) {
-        console.log(response.data.error);
+        //console.log(response.data.error);
       } else {
-        addToast('บันทึกข้อมูลสำเร็จ', { appearance: 'success', autoDismiss: true });
-        setListAttach([...listAttach, data]);
+        //console.log(response.data)
+        //addToast('บันทึกข้อมูลสำเร็จ', { appearance: 'success', autoDismiss: true });
+        //setListAttach([...listAttach, data]);
       }
     });
   };
 
   const DeletedFile = (id) => {
+      setIsLoading(true);
       axios
       .delete(urlPath+`/attachs/${id}`,{
         headers: {accessToken : localStorage.getItem("accessToken")}
@@ -207,6 +222,7 @@ export default function Courses() {
           })
         );
         closeModalAttach();
+        setIsLoading(false);
     });
   }
 
@@ -226,7 +242,8 @@ export default function Courses() {
 
   //#region FetchData
 
-  async function fetchData() {
+  async function fetchData() {  
+    setIsLoading(true);
     let response = await axios(
       urlPath+`/courses/byId/${id}`
     );
@@ -252,15 +269,21 @@ export default function Courses() {
             const buffer = FilesService.buffer64UTF8(response.data[columns]);
             setImageCourses(buffer);
           }
+        }else if (columns === "ImageName")
+        {
+          setImageCourseName(response.data[columns]);
+          formik.setFieldValue(columns, response.data[columns], false)
         }
         else 
           formik.setFieldValue(columns, response.data[columns], false)
       }
       setListCourse(response.data);
       setIsNew(false);
+      setIsLoading(false);
     } else {
       setIsNew(true);
       setIsEnableControl(false);
+      setIsLoading(false);
     }
   }
 
@@ -297,6 +320,7 @@ export default function Courses() {
     }
   
     async function fetchDetailSubject(SubjectId) {
+      setIsLoading(true);
       let response = await axios(urlPath+`/subjects/byId/${SubjectId}`);
       let subjects = await response.data;
       if(subjects !== null) {
@@ -311,7 +335,8 @@ export default function Courses() {
         fetchAttach(response.data.id);
         setIsNewSubject(false);
         setIsEnableSubjectControl(true);
-      } 
+      }
+      setIsLoading(false); 
     }
 
     async function fetchLearning() {
@@ -319,7 +344,7 @@ export default function Courses() {
       const body = await response.data.listLearning;
       var JsonLearning = [];
       body.forEach(field => JsonLearning.push({value: field.id.toString(),label: field.LearningPathNameTH }))
-      setOptionsLearning(JsonLearning)
+      setOptionsLearning(JsonLearning);
     }
 
   //#endregion 
@@ -348,10 +373,10 @@ export default function Courses() {
       ImageName:''
    },
    validationSchema: Yup.object({
-      CurriculumCode:Yup.string().required('* กรุณากรอก รหัสหลักสูตร'),
-      CurriculumNameTH:Yup.string().required('* กรุณากรอก ชื่อหลักสูตร'),
-      NumOfHours:Yup.string().required('* กรุณากรอก จำนวนชั่วโมงหลักสูตร'),
-      DescriptionTH:Yup.string().required('* กรุณากรอก ขอบเขตเนื้อหา (ไทย)')
+      CurriculumCode:Yup.string().required((Storage.GetLanguage() === "th") ? '* กรุณากรอก รหัสหลักสูตร' : '* Please enter Curriculum code'),
+      CurriculumNameTH:Yup.string().required((Storage.GetLanguage() === "th") ?'* กรุณากรอก ชื่อหลักสูตร' : '* Please enter Curriculum name' ),
+      NumOfHours:Yup.string().required((Storage.GetLanguage() === "th") ? '* กรุณากรอก จำนวนชั่วโมงหลักสูตร' : '* Please enter Curriculum hours'),
+      DescriptionTH:Yup.string().required((Storage.GetLanguage() === "th") ?'* กรุณากรอก ขอบเขตเนื้อหา (ไทย)' : '* Please enter Content scope (Thai)')
    }),
    onSubmit: values => {
     setIsLoading(true);
@@ -370,7 +395,7 @@ export default function Courses() {
                   {
                     addToast(response.data.error, { appearance: 'error', autoDismiss: true });
                   } else {
-                    addToast('บันทึกข้อมูลสำเร็จ', { appearance: 'success', autoDismiss: true });
+                    addToast((Storage.GetLanguage() === "th") ? 'บันทึกข้อมูลสำเร็จ' : 'Save data successfully', { appearance: 'success', autoDismiss: true });
                     setIsEnableControl(true);
                     setIsNew(false)
                     axios.get(urlPath+"/courses").then((response) =>   {
@@ -387,13 +412,13 @@ export default function Courses() {
                     {
                       addToast(response.data.error, { appearance: 'error', autoDismiss: true });
                     } else {
-                      addToast('บันทึกข้อมูลสำเร็จ', { appearance: 'success', autoDismiss: true });
+                      addToast((Storage.GetLanguage() === "th") ? 'บันทึกข้อมูลสำเร็จ' : 'Save data successfully', { appearance: 'success', autoDismiss: true });
                       setIsEnableControl(true);
                     }
                   });
                 }
               } else {
-                addToast('ไม่สามารถบันทึกข้อมูลได้ เนื่องจากรหัสหลักสูตรซ้ำ กรุณากรอกรหัสหลักสูตรใหม่', { appearance: 'warning', autoDismiss: true });
+                addToast( (Storage.GetLanguage() === "th") ? 'ไม่สามารถบันทึกข้อมูลได้ เนื่องจากรหัสหลักสูตรซ้ำ กรุณากรอกรหัสหลักสูตรใหม่' : 'Failed to save data. due to duplicate Curriculum code Please enter a new Curriculum code' , { appearance: 'warning', autoDismiss: true });
               }
               setIsLoading(false);
             });
@@ -413,20 +438,25 @@ export default function Courses() {
       IsDeleted:false
   },
   validationSchema: Yup.object({
-    SubjectCode:Yup.string().required('* กรุณากรอก รหัสหัวข้อการเรียนรู้'),
-    SubjectNameTH:Yup.string().required('* กรุณากรอก ชื่อหัวข้อการเรียนรู้'),
-    ContentTH:Yup.string().required('* กรุณากรอก เนื้อหา (ไทย)'),
+    SubjectCode:Yup.string().required((Storage.GetLanguage() === "th") ? '* กรุณากรอก รหัสหัวข้อการเรียนรู้' : 'Please enter the Subject code'),
+    SubjectNameTH:Yup.string().required((Storage.GetLanguage() === "th") ?'* กรุณากรอก ชื่อหัวข้อการเรียนรู้' : 'Please enter the Subject name'),
+    ContentTH:Yup.string().required((Storage.GetLanguage() === "th") ?'* กรุณากรอก เนื้อหา (ไทย)' : 'Please enter the Content (thai)'),
   }),
-  onSubmit: values => {
+  onSubmit: values => {      
+      setIsLoading(true);
       values.CourseId = (id === undefined) ? listCourse.filter(x => x.CurriculumCode === formik.values.CurriculumCode )[0].id : id;
-      
       if(isNewSubject){
           axios.post(urlPath+"/subjects",values).then((response)=>{
-          if(response.data.error) 
+          if(response.data === null) 
           {
-            addToast(response.data.error, { appearance: 'error', autoDismiss: true });
+            //addToast(response.data.error, { appearance: 'error', autoDismiss: true });
           } else {
-            addToast('บันทึกข้อมูลสำเร็จ', { appearance: 'success', autoDismiss: true });
+            arrayAttach.forEach(value => {
+              const data = {FileName:value.FileName,FileType:value.FileType,FileData:value.FileData,IsDeleted:false,SubjectId:response.data.id}
+              UploadFile(data);
+            });
+            setArrayAtteach([]);
+            addToast((Storage.GetLanguage() === "th") ? 'บันทึกข้อมูลสำเร็จ' : 'Save data successfully', { appearance: 'success', autoDismiss: true });
             setIsNewSubject(false)
             setIsEnableSubjectControl(true);
             axios.get(urlPath+`/subjects/byCoursesId/${values.CourseId}`).then((response) =>   {
@@ -438,15 +468,22 @@ export default function Courses() {
           if(values.id === undefined)
             values.id = listSubject.filter(x => x.SubjectCode === formikSubject.values.SubjectCode )[0].id;
           axios.put(urlPath+"/subjects",values).then((response) => {
-            if(response.data.error) 
+            if(response.data === null) 
             {
-              addToast(response.data.error, { appearance: 'error', autoDismiss: true });
+              //addToast(response.data.error, { appearance: 'error', autoDismiss: true });
             } else {
-              addToast('บันทึกข้อมูลสำเร็จ', { appearance: 'success', autoDismiss: true });
+  
+                arrayAttach.filter(e => e.SubjectId === undefined).forEach(value => {
+                  const data = {FileName:value.FileName,FileType:value.FileType,FileData:value.FileData,IsDeleted:false,SubjectId:response.data.id}
+                  UploadFile(data);
+                })
+                setArrayAtteach([]);
+              addToast((Storage.GetLanguage() === "th") ? 'บันทึกข้อมูลสำเร็จ' : 'Save data successfully', { appearance: 'success', autoDismiss: true });
               setIsEnableSubjectControl(true);
             }
           });
       }
+      setIsLoading(false);
     },
   });
   //#endregion
@@ -488,6 +525,12 @@ export default function Courses() {
   const PageChange = (e) => {
     if(!isNew)
       setHeadName(e);
+
+    if(e === "หลักสูตร")
+      setName((Storage.GetLanguage() === "th") ? 'หลักสูตร' : 'Curriculum');
+    else 
+      setName((Storage.GetLanguage() === "th") ? 'หัวข้อการเรียนรู้ / เนื้อหา' : 'Subject / Content');
+    
   }
 
   /* Default Value Option */
@@ -533,6 +576,7 @@ export default function Courses() {
   //#endregion
 
   useEffect(()=>{
+    setName((Storage.GetLanguage() === "th") ? 'หลักสูตร' : 'Curriculum');
     fetchData();
     fetchDataSubject();
     fetchLearning();
@@ -541,18 +585,18 @@ export default function Courses() {
   return (
     <>
       {isLoading ? ( <> <Spinner  customText={"Loading"}/></>) : (<></>)}
-      <div className="flex flex-wrap  mt-4 lg:w-6/12 ">
+      <div className="flex flex-wrap  mt-4 w-full ">
         <div className="w-full lg:w-6/12 px-4">
           <div className={"relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg border-0 " + ((headName === "หลักสูตร") ? "bg-green-mju" : "bg-blueGray-100")}>
             <div className="flex flex-wrap cursor-pointer " onClick={()=> {PageChange("หลักสูตร")}}>
-              <div className="w-full lg:w-2/12 py-2 px-2 text-sm text-center align-middle  ">
+              <div className="lg:w-2/12 py-2 px-2 text-sm text-center align-middle  ">
                 <span className={"w-10 h-10 text-sm  inline-flex items-center justify-center  rounded-full " + ((headName === "หลักสูตร") ? "bg-white" : "bg-green-mju")}>
                   <label className={"w-full align-middle font-bold cursor-pointer " + ((headName === "หลักสูตร") ? "text-green-mju" : "text-white") } onClick={()=> {PageChange("หลักสูตร")}}>1</label>
                 </span>
               </div>
-              <div className="w-full lg:w-10/12 py-2 px-2 text-base  align-middle ">
+              <div className="lg:w-10/12 py-2 px-2 text-base  align-middle ">
                 <span className="text-sm inline-flex">
-                  <label className={"w-full align-middle font-bold pt-3 cursor-pointer " + ((headName === "หลักสูตร") ? "text-white" : "text-black")} onClick={()=> {PageChange("หลักสูตร")}}>จัดการหลักสูตร</label>
+                  <label className={"w-full align-middle font-bold pt-3 cursor-pointer " + ((headName === "หลักสูตร") ? "text-white" : "text-black")} onClick={()=> {PageChange("หลักสูตร")}}>{locale.t("Menu.lblCourse")}</label>
                 </span>
               </div>
             </div>
@@ -561,14 +605,14 @@ export default function Courses() {
         <div className="w-full lg:w-6/12 px-4">
           <div className={"relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg border-0 " + ((headName === "หัวข้อการเรียนรู้ / เนื้อหา") ? "bg-green-mju" : "bg-blueGray-100")} disabled={isNew}>
             <div className="flex flex-wrap cursor-pointer" onClick={()=> {PageChange("หัวข้อการเรียนรู้ / เนื้อหา")}}>
-              <div className="w-full lg:w-2/12 py-2 px-2 text-sm text-center align-middle ">
+              <div className=" lg:w-2/12 py-2 px-2 text-sm text-center align-middle ">
                 <span className={"w-10 h-10 text-sm  inline-flex items-center justify-center rounded-full " + ((headName === "หัวข้อการเรียนรู้ / เนื้อหา") ? "bg-white" : "bg-green-mju")}>
                   <label className={"w-full align-middle font-bold cursor-pointer " + ((headName === "หัวข้อการเรียนรู้ / เนื้อหา") ? "text-green-mju" : "text-white") } onClick={()=> {PageChange("หัวข้อการเรียนรู้ / เนื้อหา")}}>2</label>
                 </span>
               </div>
-              <div className="w-full lg:w-10/12 py-2 px-2 text-base align-middle ">
+              <div className=" lg:w-10/12 py-2 px-2 text-base align-middle ">
                 <span className="text-sm inline-flex">
-                  <label className={"w-full align-middle font-bold pt-3 cursor-pointer " + ((headName === "หัวข้อการเรียนรู้ / เนื้อหา") ? "text-white" : "text-black")}  onClick={()=> {PageChange("หัวข้อการเรียนรู้ / เนื้อหา")}}>หัวข้อการเรียนรู้ / เนื้อหา</label>
+                  <label className={"w-full align-middle font-bold pt-3 cursor-pointer " + ((headName === "หัวข้อการเรียนรู้ / เนื้อหา") ? "text-white" : "text-black")}  onClick={()=> {PageChange("หัวข้อการเรียนรู้ / เนื้อหา")}}>{locale.t("Course.info.lblTabCourse")}</label>
                 </span>
               </div>
             </div>
@@ -583,43 +627,46 @@ export default function Courses() {
             <div className="rounded-t bg-white mb-0 px-4 py-4">
               <div className="text-center flex justify-between">
                 <div className="">
-                  <h6 className="text-blueGray-700 text-xl font-bold mt-2">จัดการหลักสูตร {'>'} <label className="text-green-200-mju">{headName}</label></h6>
+                  <h6 className="text-blueGray-700 text-xl font-bold mt-2">{locale.t("Menu.lblCourse")} {'>'} <label className="text-green-200-mju">
+                  {
+                     (Storage.GetLanguage() === "th" && headName === "หลักสูตร") ? "หลักสูตร" : ((Storage.GetLanguage() === "th" && headName === "หัวข้อการเรียนรู้ / เนื้อหา") ? "หัวข้อการเรียนรู้ / เนื้อหา" : ((Storage.GetLanguage() === "en" && headName === "หัวข้อการเรียนรู้ / เนื้อหา") ? "Subject / Content" : "Curriculum")) 
+                  }</label></h6>
                 </div>
                 <div className="text-center flex justify-between">
                   <div>
                     <button
-                    className={" text-white active:bg-purple-active font-bold uppercase text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150 " + ((isNew) ? " btn-purple-mju-disable" : " bg-purple-mju")}
+                    className={" text-white active:bg-purple-active font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150 " + ((isNew) ? " btn-purple-mju-disable" : " bg-purple-mju")}
                     type="button"
                     disabled={isNew}
                     onClick ={() => {PageChange("หัวข้อการเรียนรู้ / เนื้อหา")}}
                     >
-                      <i className="fas fa-book-reader"></i> &nbsp;จัดการหัวข้อการเรียนรู้
+                      <i className="fas fa-book-reader"></i> &nbsp;{locale.t("Course.info.lblTabSubject")}
                     </button>
                   </div>
                   <div>
                     {(enableControl && !isNew) ? 
                       <button
-                        className="bg-green-mju text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                        className="bg-green-mju text-white active:bg-lightBlue-600 font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                         type="button"
                         onClick={ () => {EnableControl(false)}}
                       >
-                        <i className="fas fa-pencil-alt"></i>&nbsp;แก้ไข
+                        <i className="fas fa-pencil-alt"></i>&nbsp;{locale.t("Button.lblEdit")}
                       </button> 
                       :
                       <>
                         <button
-                          className={"bg-rose-mju text-white active:bg-rose-mju font-bold uppercase text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" + ((isNew ? " hidden" : " "))}
+                          className={"bg-rose-mju text-white active:bg-rose-mju font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" + ((isNew ? " hidden" : " "))}
                           type="button"
                           onClick={() =>{EnableControl(true)}}
                         >
-                        <i className="fas fa-pencil-alt"></i>&nbsp;ละทิ้ง
+                        <i className="fas fa-pencil-alt"></i>&nbsp;{locale.t("Button.lblDrop")}
                         </button>     
                         <button
-                          className="bg-blue-save-mju text-white active:bg-blueactive-mju font-bold uppercase text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" 
+                          className="bg-blue-save-mju text-white active:bg-blueactive-mju font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" 
                           type="submit"
                           onClick={formik.handleSubmit}
                           >
-                        <i className="fas fa-save"></i>&nbsp;บันทึก
+                        <i className="fas fa-save"></i>&nbsp;{locale.t("Button.lblSave")}
                         </button>
                       </>
                       }
@@ -634,9 +681,9 @@ export default function Courses() {
                       <div className="w-full lg:w-6/12">
                         <div className="relative w-full mb-3">
                           <label
-                            className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
+                            className="block  text-blueGray-600 text-sm font-bold mb-2"
                           >
-                            รหัสหลักสูตร <span className="text-red-500"> *</span>
+                            {locale.t("Course.list.lblCourseCode")} <span className="text-red-500"> *</span>
                           </label>
                           <input
                             type="text"
@@ -656,9 +703,9 @@ export default function Courses() {
                       <div className="w-full lg:w-6/12">
                         <div className="relative w-full mb-3">
                           <label
-                            className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
+                            className="block  text-blueGray-600 text-sm font-bold mb-2"
                           >
-                            เส้นทางการเรียนรู้
+                            {locale.t("Course.info.lblLearning")}
                           </label>
                           <Select
                               id="LearningId"
@@ -677,8 +724,8 @@ export default function Courses() {
                     <div className="flex flex-wrap">
                       <div className="w-full lg:w-6/12">
                         <div className="relative w-full mb-3">
-                          <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
-                            ประเภทหลักสูตร
+                          <label className="block  text-blueGray-600 text-sm font-bold mb-2">
+                            {locale.t("Course.info.lblCourseType")}
                           </label>
                           <Select
                               id="CurriculumType"
@@ -693,10 +740,8 @@ export default function Courses() {
                       </div>
                       <div className="w-full lg:w-6/12">
                         <div className="relative w-full mb-3">
-                          <label
-                            className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
-                          >
-                            จำนวนชั่วโมง<span className="text-red-500"> *</span>
+                          <label className="block  text-blueGray-600 text-sm font-bold mb-2">
+                            {locale.t("Course.info.lblAmountHourse")}<span className="text-red-500"> *</span>
                           </label>
                           <div className="flex flex-wrap">
                             <div className="w-full lg:w-6/12 mb-3">
@@ -710,9 +755,8 @@ export default function Courses() {
                                 onBlur={formik.handleBlur}
                                 value={formik.values.NumOfHours}
                                 disabled={enableControl}
-                        
                               />
-                              <span className="text-xs font-bold"> &nbsp;ชั่วโมง</span>
+                              <span className="text-xs font-bold"> &nbsp;{locale.t("Course.info.lblHour")}</span>
                             </div>
                             <div className="w-full lg:w-6/12 mb-3">
                               <input
@@ -725,7 +769,7 @@ export default function Courses() {
                                 onBlur={formik.handleBlur}
                                 value={formik.values.NumOfMin}
                                 disabled={enableControl}
-                              /><span className="text-xs font-bold"> &nbsp;นาที</span>
+                              /><span className="text-xs font-bold"> &nbsp;{locale.t("Course.info.lblMin")}</span>
                             </div>
                             {formik.touched.NumOfHours && formik.errors.NumOfHours ? (
                               <div className="text-sm py-2 px-2 text-red-500">{formik.errors.NumOfHours}</div>
@@ -740,10 +784,10 @@ export default function Courses() {
                   <div className="w-full lg:w-6/12 px-4 py-1">
                     <div className="relative w-full mb-3">
                       <label
-                        className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
+                        className="block  text-blueGray-600 text-sm font-bold mb-2"
                         
                       >
-                        ชื่อหลักสูตร (ไทย)<span className="text-red-500"> *</span>
+                        {locale.t("Course.list.lblCourseNameTH")}<span className="text-red-500"> *</span>
                       </label>
                       <input
                         type="text"
@@ -763,9 +807,9 @@ export default function Courses() {
                   <div className="w-full lg:w-6/12 px-4 py-1">
                     <div className="relative w-full mb-3">
                       <label
-                        className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
+                        className="block  text-blueGray-600 text-sm font-bold mb-2"
                       >
-                        ชื่อหลักสูตร (ENG)
+                        {locale.t("Course.list.lblCourseNameENG")}
                       </label>
                       <input
                         type="text"
@@ -784,10 +828,10 @@ export default function Courses() {
                   <div className="w-full px-4 py-1">
                     <div className="relative w-full mb-3">
                       <label
-                        className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
+                        className="block  text-blueGray-600 text-sm font-bold mb-2"
                         
                       >
-                        รูปภาพหลักสูตร
+                        {locale.t("Course.info.lblCourseImage")}
                       </label>
                       <div className="buttonIn image-upload ">
                         <label htmlFor="file-input" className="cursor-pointer">
@@ -809,36 +853,89 @@ export default function Courses() {
                   <div className="w-full lg:w-6/12 px-4 py-1">
                     <div className="relative w-full mb-3">
                       <label
-                        className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
+                        className="block  text-blueGray-600 text-sm font-bold mb-2"
                         >
-                        ขอบเขตเนื้อหา (ไทย)<span className="text-red-500"> *</span>
+                         {locale.t("Course.info.lblCourseContentTH")}<span className="text-red-500"> *</span>
                       </label>
-                      <ReactQuill
+                      {/* <ReactQuill
                         theme="snow"
                         value={formik.values.DescriptionTH}
                         onChange={v =>  formik.setFieldValue('DescriptionTH', v)} 
                         placeholder={"Write something awesome..."}
                         readOnly={enableControl}
                         modules={{
-                          // syntax: true,
-                          toolbar: [ 
-                            [{ 'header': [1, 2, false] }],
-                            ['bold', 'italic', 'underline','strike', 'blockquote'],
-                            [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
-                            [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}], 
-                            ['link', 'image','video'], 
-                            ['clean'] 
-                          ]
+                          toolbar: [
+                            ['bold', 'italic', 'underline', 'strike'] ,
+                            [{ align: [] }],
+                        
+                            [{ list: 'ordered'}, { list: 'bullet' }],
+                            [{ indent: '-1'}, { indent: '+1' }],
+                        
+                            [{ size: ['small', false, 'large', 'huge'] }],
+                            [{ header: [1, 2, 3, 4, 5, 6, false] }],
+                            ['link', 'image', 'video'],
+                            [{ color: [] }, { background: [] }],
+                        
+                            ['clean'],['code-block']
+                          ],  imageResize: {
+                            parchment: Quill.import('parchment'),
+                            modules: ['Resize', 'DisplaySize', 'Toolbar']
+                          },
+                          clipboard: {
+                            matchVisual: false,
+                          },
                         }}
                         formats={[
-                          'header',
-                          'bold', 'italic', 'underline', 'strike', 'blockquote',
-                          'list', 'bullet', 'indent',
-                          'link', 'image','video',
-                          'align',
-                          'code-block'
+                          'bold', 'italic', 'underline', 'strike',
+                          'align', 'list', 'indent',
+                          'size', 'header',
+                          'link', 'image', 'video',
+                          'color', 'background',
+                          'clean','code-block'
                         ]}
-                      />
+                      /> */}
+              
+                       <SunEditor
+                          disable={enableControl}
+                          setDefaultStyle="font-family: THSarabun; font-size: 18px;" 
+                          width="100%"
+                          height="300px"
+                          onKeyDown={handleKeyDown} 
+                          setContents={formik.values.DescriptionTH}
+                          onChange={v =>  formik.setFieldValue('DescriptionTH', v)} 
+                          setOptions={{
+                          buttonList: [
+                            [
+                              "undo",
+                              "redo",
+                              "font",
+                              "fontSize",
+                              "formatBlock",
+                              "paragraphStyle",
+                              "blockquote",
+                              "bold",
+                              "underline",
+                              "italic",
+                              "strike",
+                              "fontColor",
+                              "hiliteColor",
+                              "textStyle",
+                              "removeFormat",
+                              "outdent",
+                              "indent",
+                              "align",
+                              "horizontalRule",
+                              "list",
+                              "lineHeight",
+                              "table",
+                              "link",
+                              "image",
+                              "video",
+                              "fullScreen",
+                              "codeView",
+                            ]
+                          ]
+                        }}/>
                       {formik.touched.DescriptionTH && formik.errors.DescriptionTH ? (
                         <div className="text-sm py-2 px-2 text-red-500">{formik.errors.DescriptionTH}</div>
                       ) : null}
@@ -846,41 +943,93 @@ export default function Courses() {
                   </div>
                   <div className="w-full lg:w-6/12 px-4 py-1">
                     <div className="relative w-full mb-3">
-                      <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
-                        ขอบเขตเนื้อหา (ENG)
+                      <label className="block  text-blueGray-600 text-sm font-bold mb-2">
+                        {locale.t("Course.info.lblCourseContentENG")}
                       </label>
-                      <ReactQuill
+                      {/* <ReactQuill
                         theme="snow"
                         value={formik.values.DescriptionENG}
                         onChange={v =>  formik.setFieldValue('DescriptionENG', v)} 
                         placeholder={"Write something awesome..."}
                         readOnly={enableControl}
                         modules={{
-                          // syntax: true,
-                          toolbar: [ 
-                            [{ 'header': [1, 2, false] }],
-                            ['bold', 'italic', 'underline','strike', 'blockquote'],
-                            [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
-                            [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}], 
-                            ['link', 'image','video'],
-                            ['clean'] 
-                          ]
+                          toolbar: [
+                            ['bold', 'italic', 'underline', 'strike'],
+                            [{ align: [] }],
+                        
+                            [{ list: 'ordered'}, { list: 'bullet' }],
+                            [{ indent: '-1'}, { indent: '+1' }],
+                        
+                            [{ size: ['small', false, 'large', 'huge'] }],
+                            [{ header: [1, 2, 3, 4, 5, 6, false] }],
+                            ['link', 'image', 'video'],
+                            [{ color: [] }, { background: [] }],
+                        
+                            ['clean'],
+                          ],  imageResize: {
+                            parchment: Quill.import('parchment'),
+                            modules: ['Resize', 'DisplaySize', 'Toolbar']
+                          },
+                          clipboard: {
+                            matchVisual: false,
+                          },
                         }}
                         formats={[
-                          'header',
-                          'bold', 'italic', 'underline', 'strike', 'blockquote',
-                          'list', 'bullet', 'indent',
-                          'link', 'image','video',
-                          'align',
-                          'code-block'
+                          'bold', 'italic', 'underline', 'strike',
+                          'align', 'list', 'indent',
+                          'size', 'header',
+                          'link', 'image', 'video',
+                          'color', 'background',
+                          'clean',
                         ]}
-                      />
+                      /> */}
+                      <SunEditor
+                          disable={enableControl}
+                          setDefaultStyle="font-family: THSarabun; font-size: 18px;" 
+                          width="100%"
+                          height="300px"
+                          onKeyDown={handleKeyDown} 
+                          setContents={formik.values.DescriptionENG}
+                          onChange={v =>  formik.setFieldValue('DescriptionENG', v)} 
+                          setOptions={{
+                          buttonList: [
+                            [
+                              "undo",
+                              "redo",
+                              "font",
+                              "fontSize",
+                              "formatBlock",
+                              "paragraphStyle",
+                              "blockquote",
+                              "bold",
+                              "underline",
+                              "italic",
+                              "strike",
+                              "fontColor",
+                              "hiliteColor",
+                              "textStyle",
+                              "removeFormat",
+                              "outdent",
+                              "indent",
+                              "align",
+                              "horizontalRule",
+                              "list",
+                              "lineHeight",
+                              "table",
+                              "link",
+                              "image",
+                              "video",
+                              "fullScreen",
+                              "codeView",
+                            ]
+                          ]
+                        }}/>
                     </div>
                   </div>
                   <div className="w-full lg:w-6/12 px-4 py-1">
                     <div className="relative w-full mb-3">
-                      <label className="block uppercase text-blueGray-600 text-sm font-bold mb-3">
-                        สื่อวัสดุ / อุปกรณ์
+                      <label className="block  text-blueGray-600 text-sm font-bold mb-3">
+                        {locale.t("Course.info.lblEquipment")}
                       </label>
                        <input
                         type="checkbox"
@@ -892,7 +1041,7 @@ export default function Courses() {
                         checked={formik.values.IsOtherMat}
                         disabled={enableControl}
                       />
-                       <label className="text-sm font-bold px-3 text-blueGray-600">คอมพิวเตอร์</label>
+                       <label className="text-sm font-bold px-3 text-blueGray-600">{locale.t("Course.info.lblComputer")}</label>
                        <input
                         type="checkbox"
                         className="form-checkbox rounded text-green-200-mju w-5 h-5 ease-linear transition-all duration-150"
@@ -903,7 +1052,7 @@ export default function Courses() {
                         checked={formik.values.IsComMat}
                         disabled={enableControl}
                       />
-                       <label className="text-sm font-bold px-3 text-blueGray-600">LCD</label>
+                       <label className="text-sm font-bold px-3 text-blueGray-600">{locale.t("Course.info.lblLCD")}</label>
                        <input
                         id="IsLCDMat"
                         type="checkbox"
@@ -914,13 +1063,41 @@ export default function Courses() {
                         checked={formik.values.IsLCDMat}
                         disabled={enableControl}
                       />
-                       <span className="pt-2"><label className="text-sm font-bold px-3 text-blueGray-600">อื่นๆ</label></span>
+                       <span className="pt-2"><label className="text-sm font-bold px-3 text-blueGray-600">{locale.t("Course.info.lblOther")}</label></span>
+                       <br/>
+                       <br/>
+                        <label className="block  text-blueGray-600 text-sm font-bold mb-3">
+                          {locale.t("Course.info.lblDocTraining")}
+                        </label>
+                        <input
+                          id="IsOtherMedia"
+                          type="checkbox"
+                          className="form-checkbox rounded text-green-200-mju w-5 h-5 ease-linear transition-all duration-150"
+                          name="IsOtherMedia"
+                          onChange={formik.handleChange}
+                          onBlur={formik.handleBlur}
+                          checked={formik.values.IsOtherMedia}
+                          disabled={enableControl}
+                        />
+                        <label className="text-sm font-bold px-3 text-blueGray-600">{locale.t("Course.info.lblDocument")}</label>
+                        &nbsp;
+                        <input
+                          id="IsDocMedia"
+                          type="checkbox"
+                          className="form-checkbox rounded text-green-200-mju w-5 h-5 ease-linear transition-all duration-150"
+                          name="IsDocMedia"
+                          onChange={formik.handleChange}
+                          onBlur={formik.handleBlur}
+                          checked={formik.values.IsDocMedia}
+                          disabled={enableControl}
+                        />
+                        <label className="text-sm font-bold px-3 text-blueGray-600">{locale.t("Course.info.lblVDO")}</label>
                     </div>
                   </div>
                   <div className="w-full lg:w-6/12 px-4 py-1">
                     <div className="relative w-full mb-3">
-                      <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
-                        แท็ก
+                      <label className="block  text-blueGray-600 text-sm font-bold mb-2">
+                        {locale.t("Main.lblTag")}
                       </label>
                       <div  style={enableControl ? {pointerEvents: "none", opacity: "0.4"} : {}}>
                           <ReactTags
@@ -938,50 +1115,20 @@ export default function Courses() {
                         </div>
                     </div>
                   </div>
-                  <div className="w-full lg:w-6/12 px-4 py-1">
-                    <div className="relative w-full mb-3">
-                      <label className="block uppercase text-blueGray-600 text-sm font-bold mb-3">
-                        สื่อวัสดุ / อุปกรณ์
-                      </label>
-                      <input
-                        id="IsOtherMedia"
-                        type="checkbox"
-                        className="form-checkbox rounded text-green-200-mju w-5 h-5 ease-linear transition-all duration-150"
-                        name="IsOtherMedia"
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        checked={formik.values.IsOtherMedia}
-                        disabled={enableControl}
-                      />
-                      <label className="text-sm font-bold px-3 text-blueGray-600">เอกสารอบรม</label>
-                      &nbsp;
-                      <input
-                        id="IsDocMedia"
-                        type="checkbox"
-                        className="form-checkbox rounded text-green-200-mju w-5 h-5 ease-linear transition-all duration-150"
-                        name="IsDocMedia"
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        checked={formik.values.IsDocMedia}
-                        disabled={enableControl}
-                      />
-                      <label className="text-sm font-bold px-3 text-blueGray-600">สื่อ VDO</label>
-                    </div>
-                  </div>
                 </div>
               </div>
             </form>
             <div className={"flex-auto px-4 py-4 pt-4 "   + ((headName === "หลักสูตร") ? "hidden" : "block") }>
               <div className="text-center flex justify-between">
                 <div className="py-2">
-                  <span className="text-blueGray-700 text-base font-bold py-2">หลักสูตร : <label className="text-blue-mju ">{formik.values.CurriculumNameTH} ( {formik.values.NumOfHours} ชั่วโมง {formik.values.NumOfMin} นาที ) </label></span>
+                  <span className="text-blueGray-700 text-base font-bold py-2">{locale.t("Course.info.lblCourse")} : <label className="text-blue-mju "> {(Storage.GetLanguage() === "th") ? formik.values.CurriculumNameTH : formik.values.CurriculumNameENG} ( {formik.values.NumOfHours} {locale.t("Course.info.lblHour")} {formik.values.NumOfMin} {locale.t("Course.info.lblMin")} ) </label></span>
                 </div>
                 <div>
                   <button
-                    className="bg-blue-mju text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                    className="bg-blue-mju text-white active:bg-lightBlue-600 font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                     type="button"
                     onClick={() => { setIsNewSubject(true); setIsEnableSubjectControl(false); setListAttach([]); formikSubject.resetForm(); openModal();}}>
-                    &nbsp;+ เพิ่มหัวข้อการเรียนรู้
+                    &nbsp;+ {locale.t("Subject.list.lblAddSubject")}
                   </button>
                     <Modal
                       isOpen={modalIsOpen}
@@ -997,31 +1144,31 @@ export default function Courses() {
                               <div className="rounded-t bg-white mb-0 px-4 py-4">
                                 <div className="text-center flex justify-between">
                                   <div className="">
-                                    <h6 className="text-blueGray-700 text-xl font-bold mt-2">จัดการหลักสูตร {'>'} <label className="text-green-200-mju">{headName}</label></h6>
+                                    <h6 className="text-blueGray-700 text-xl font-bold mt-2">{locale.t("Menu.lblCourse")} {'>'} <label className="text-green-200-mju">{(Storage.GetLanguage() === "th" && headName === "หลักสูตร") ? "หลักสูตร" : "Curriculum"}</label></h6>
                                   </div>
                                   <div className="">
                                   {(enableSubjectControl && !isNewSubject) ? 
                                     <button
-                                      className="bg-green-mju text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                                      className="bg-green-mju text-white active:bg-lightBlue-600 font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                                       type="button"
                                       onClick={ () => {EnableControlSubject(false)}}
                                     >
-                                      <i className="fas fa-pencil-alt"></i>&nbsp;แก้ไข
+                                      <i className="fas fa-pencil-alt"></i>&nbsp;{locale.t("Button.lblEdit")}
                                     </button> 
                                     :
                                     <>
                                       <button
-                                        className={"bg-rose-mju text-white active:bg-rose-mju font-bold uppercase text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" + ((isNewSubject ? " hidden" : " "))}
+                                        className={"bg-rose-mju text-white active:bg-rose-mju font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" + ((isNewSubject ? " hidden" : " "))}
                                         type="button"
                                         onClick={() =>{EnableControlSubject(true)}}
                                       >
-                                      <i className="fas fa-pencil-alt"></i>&nbsp;ละทิ้ง
+                                      <i className="fas fa-pencil-alt"></i>&nbsp;{locale.t("Button.lblDrop")}
                                       </button>     
                                       <button
-                                        className="bg-blue-save-mju text-white active:bg-blueactive-mju font-bold uppercase text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" 
+                                        className="bg-blue-save-mju text-white active:bg-blueactive-mju font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" 
                                         type="submit"
                                         >
-                                      <i className="fas fa-save"></i>&nbsp;บันทึก
+                                      <i className="fas fa-save"></i>&nbsp;{locale.t("Button.lblSave")}
                                       </button>
                                     </>
                                     }
@@ -1033,9 +1180,9 @@ export default function Courses() {
                                     <div className="w-full lg:w-6/12 px-4 py-1">
                                       <div className="relative w-full mb-3">
                                         <label
-                                          className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
+                                          className="block  text-blueGray-600 text-sm font-bold mb-2"
                                         >
-                                          รหัสหัวข้อการเรียนรู้ <span className="text-red-500"> *</span>
+                                          {locale.t("Subject.info.lblSubjectCode")} <span className="text-red-500"> *</span>
                                         </label>
                                         <input
                                           type="text"
@@ -1047,16 +1194,14 @@ export default function Courses() {
                                           value={formikSubject.values.SubjectCode}
                                           disabled={enableSubjectControl}
                                         />
-                                        {formik.touched.SubjectCode && formik.errors.SubjectCode ? (
-                                          <div className="text-sm py-2 px-2 text-red-500">{formik.errors.SubjectCode}</div>
+                                        {formikSubject.touched.SubjectCode && formikSubject.errors.SubjectCode ? (
+                                          <div className="text-sm py-2 px-2 text-red-500">{formikSubject.errors.SubjectCode}</div>
                                         ) : null}
                                       </div>
                                     </div>
                                     <div className="w-full lg:w-6/12 px-4 py-1">
-                                      <label
-                                        className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
-                                      >
-                                        ระยะเวลา
+                                      <label className="block  text-blueGray-600 text-sm font-bold mb-2">
+                                        {locale.t("Subject.list.lblSubjectTime")}
                                       </label>
                                       <div className="relative w-full mb-3">
                                         <div className="flex flex-wrap">
@@ -1072,7 +1217,7 @@ export default function Courses() {
                                               value={formikSubject.values.SubjectOfHour}
                                               disabled={enableSubjectControl}
                                             />
-                                            <span className="text-xs font-bold"> &nbsp;ชั่วโมง</span>
+                                            <span className="text-xs font-bold"> &nbsp;{locale.t("Course.info.lblHour")}</span>
                                           </div>
                                         </div>
                                     </div>
@@ -1080,9 +1225,9 @@ export default function Courses() {
                                   <div className="w-full lg:w-6/12 px-4 py-1">
                                       <div className="relative w-full mb-3">
                                         <label
-                                          className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
+                                          className="block  text-blueGray-600 text-sm font-bold mb-2"
                                         >
-                                          ชื่อหัวข้อการเรียนรู้ (ไทย)<span className="text-red-500"> *</span>
+                                          {locale.t("Subject.info.lblSubjectTH")}<span className="text-red-500"> *</span>
                                         </label>
                                         <input
                                           type="text"
@@ -1094,17 +1239,17 @@ export default function Courses() {
                                           value={formikSubject.values.SubjectNameTH}
                                           disabled={enableSubjectControl}
                                         />
-                                        {formik.touched.SubjectNameTH && formik.errors.SubjectNameTH ? (
-                                          <div className="text-sm py-2 px-2 text-red-500">{formik.errors.SubjectNameTH}</div>
+                                        {formikSubject.touched.SubjectNameTH && formikSubject.errors.SubjectNameTH ? (
+                                          <div className="text-sm py-2 px-2 text-red-500">{formikSubject.errors.SubjectNameTH}</div>
                                         ) : null}
                                       </div>
                                     </div>
                                     <div className="w-full lg:w-6/12 px-4 py-1">
                                       <div className="relative w-full mb-3">
                                         <label
-                                          className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
+                                          className="block  text-blueGray-600 text-sm font-bold mb-2"
                                         >
-                                          หัวข้อการเรียนรู้ (ENG)
+                                          {locale.t("Subject.info.lblSubjectENG")}
                                         </label>
                                         <input
                                           type="text"
@@ -1121,71 +1266,176 @@ export default function Courses() {
                                     <div className="w-full  px-4 py-1">
                                       <div className="relative w-full mb-3">
                                         <label
-                                          className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
-                                          เนื้อหา (ไทย)<span className="text-red-500"> *</span>
+                                          className="block  text-blueGray-600 text-sm font-bold mb-2">
+                                          {locale.t("Subject.info.lblSubjectContentTH")}<span className="text-red-500"> *</span>
                                         </label>
-                                        <ReactQuill
+                                        {/* <ReactQuill
                                           theme="snow"
                                           value={formikSubject.values.ContentTH}
                                           onChange={v =>  formikSubject.setFieldValue('ContentTH', v)} 
                                           placeholder={"Write something awesome..."}
                                           readOnly={enableSubjectControl}
                                           modules={{
-                                            // syntax: true,
-                                            toolbar: [ 
-                                              [{ 'header': [1, 2, false] }],
-                                              ['bold', 'italic', 'underline','strike', 'blockquote'],
-                                              [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
-                                              [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}], 
-                                              ['link', 'image'], 
-                                              ['clean'] 
-                                            ]
+                                            toolbar: [
+                                              ['bold', 'italic', 'underline', 'strike'],
+                                              [{ align: [] }],
+                                          
+                                              [{ list: 'ordered'}, { list: 'bullet' }],
+                                              [{ indent: '-1'}, { indent: '+1' }],
+                                          
+                                              [{ size: ['small', false, 'large', 'huge'] }],
+                                              [{ header: [1, 2, 3, 4, 5, 6, false] }],
+                                              ['link', 'image', 'video'],
+                                              [{ color: [] }, { background: [] }],
+                                          
+                                              ['clean']
+                                            ],  imageResize: {
+                                              parchment: Quill.import('parchment'),
+                                              modules: ['Resize', 'DisplaySize', 'Toolbar']
+                                            },
+                                            clipboard: {
+                                              matchVisual: false,
+                                            },
                                           }}
                                           formats={[
-                                            'header',
-                                            'bold', 'italic', 'underline', 'strike', 'blockquote',
-                                            'list', 'bullet', 'indent',
-                                            'link', 'image',
-                                            'align',
-                                            'code-block'
+                                            'bold', 'italic', 'underline', 'strike',
+                                            'align', 'list', 'indent',
+                                            'size', 'header',
+                                            'link', 'image', 'video',
+                                            'color', 'background',
+                                            'clean'
                                           ]}
-                                        />
-                                        {formik.touched.ContentTH && formik.errors.ContentTH ? (
-                                          <div className="text-sm py-2 px-2 text-red-500">{formik.errors.ContentTH}</div>
+                                        /> */}
+                                        <SunEditor
+                                          disable={enableSubjectControl}
+                                          setDefaultStyle="font-family: THSarabun; font-size: 18px;" 
+                                          width="100%"
+                                          height="400px"
+                                          onKeyDown={handleKeyDown} 
+                                          setContents={formikSubject.values.ContentTH}
+                                          onChange={v =>  formikSubject.setFieldValue('ContentTH', v)} 
+                                          setOptions={{
+                                          buttonList: [
+                                            [
+                                              "undo",
+                                              "redo",
+                                              "font",
+                                              "fontSize",
+                                              "formatBlock",
+                                              "paragraphStyle",
+                                              "blockquote",
+                                              "bold",
+                                              "underline",
+                                              "italic",
+                                              "strike",
+                                              "fontColor",
+                                              "hiliteColor",
+                                              "textStyle",
+                                              "removeFormat",
+                                              "outdent",
+                                              "indent",
+                                              "align",
+                                              "horizontalRule",
+                                              "list",
+                                              "lineHeight",
+                                              "table",
+                                              "link",
+                                              "image",
+                                              "video",
+                                              "fullScreen",
+                                              "codeView",
+                                            ]
+                                          ]
+                                        }}/>
+                                        {formikSubject.touched.ContentTH && formikSubject.errors.ContentTH ? (
+                                          <div className="text-sm py-2 px-2 text-red-500">{formikSubject.errors.ContentTH}</div>
                                         ) : null}
+                                        
                                       </div>
                                     </div>
                                     <div className="w-full  px-4 py-1">
                                       <div className="relative w-full mb-3">
-                                        <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
-                                          เนื้อหา (ENG)
+                                        <label className="block  text-blueGray-600 text-sm font-bold mb-2">
+                                          {locale.t("Subject.info.lblSubjectContentENG")}
                                         </label>
-                                        <ReactQuill
+                                        {/* <ReactQuill
                                           theme="snow"
                                           value={formikSubject.values.ContentENG}
                                           onChange={v =>  formikSubject.setFieldValue('ContentENG', v)} 
                                           placeholder={"Write something awesome..."}
                                           readOnly={enableSubjectControl}
                                           modules={{
-                                            // syntax: true,
-                                            toolbar: [ 
-                                              [{ 'header': [1, 2, false] }],
-                                              ['bold', 'italic', 'underline','strike', 'blockquote'],
-                                              [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
-                                              [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}], 
-                                              ['link', 'image'], 
-                                              ['clean'] 
-                                            ]
+                                            toolbar: [
+                                              ['bold', 'italic', 'underline', 'strike'],
+                                              [{ align: [] }],
+                                          
+                                              [{ list: 'ordered'}, { list: 'bullet' }],
+                                              [{ indent: '-1'}, { indent: '+1' }],
+                                          
+                                              [{ size: ['small', false, 'large', 'huge'] }],
+                                              [{ header: [1, 2, 3, 4, 5, 6, false] }],
+                                              ['link', 'image', 'video'],
+                                              [{ color: [] }, { background: [] }],
+                                          
+                                              ['clean']
+                                            ],  imageResize: {
+                                              parchment: Quill.import('parchment'),
+                                              modules: ['Resize', 'DisplaySize', 'Toolbar']
+                                            },
+                                            clipboard: {
+                                              matchVisual: false,
+                                            },
                                           }}
                                           formats={[
-                                            'header',
-                                            'bold', 'italic', 'underline', 'strike', 'blockquote',
-                                            'list', 'bullet', 'indent',
-                                            'link', 'image',
-                                            'align',
-                                            'code-block'
+                                            'bold', 'italic', 'underline', 'strike',
+                                            'align', 'list', 'indent',
+                                            'size', 'header',
+                                            'link', 'image', 'video',
+                                            'color', 'background',
+                                            'clean'
                                           ]}
-                                        />
+                                        /> */}
+                                        <SunEditor
+                                          disable={enableSubjectControl}
+                                          setDefaultStyle="font-family: THSarabun; font-size: 18px;" 
+                                          width="100%"
+                                          height="400px"
+                                          onKeyDown={handleKeyDown} 
+                                          setContents={formikSubject.values.ContentENG}
+                                          onChange={v =>  formikSubject.setFieldValue('ContentENG', v)} 
+                                          setOptions={{
+                                          buttonList: [
+                                            [
+                                              "undo",
+                                              "redo",
+                                              "font",
+                                              "fontSize",
+                                              "formatBlock",
+                                              "paragraphStyle",
+                                              "blockquote",
+                                              "bold",
+                                              "underline",
+                                              "italic",
+                                              "strike",
+                                              "fontColor",
+                                              "hiliteColor",
+                                              "textStyle",
+                                              "removeFormat",
+                                              "outdent",
+                                              "indent",
+                                              "align",
+                                              "horizontalRule",
+                                              "list",
+                                              "lineHeight",
+                                              "table",
+                                              "link",
+                                              "image",
+                                              "video",
+                                              "fullScreen",
+                                              "codeView",
+                                            ]
+                                          ]
+                                        }}/>
                                         {formik.touched.SubjectCode && formik.errors.SubjectCode ? (
                                           <div className="text-sm py-2 px-2 text-red-500">{formik.errors.SubjectCode}</div>
                                         ) : null}
@@ -1195,16 +1445,16 @@ export default function Courses() {
                                       <div className="relative w-full mb-3">
                                         <div className=" flex justify-between align-middle  mb-2">
                                           <div>
-                                            <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2 mt-2">
-                                              ไฟล์แนบ
+                                            <label className="block  text-blueGray-600 text-sm font-bold mb-2 mt-2">
+                                              {locale.t("Main.lblListAttach")}
                                             </label>
                                           </div>
                                           <div>
-                                            <div className="imageUpload" style={ (!isNewSubject && !enableSubjectControl) ? {} :  {pointerEvents: "none", opacity: "0.4"}}>
+                                            <div className="imageUpload" style={ (!enableSubjectControl) ? {} :  {pointerEvents: "none", opacity: "0.4"}}>
                                               <label
-                                                className="bg-purple-mju cursor-pointer text-white mb-2 px-2 py-2 active:bg-purple-active font-bold uppercase text-xs rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                                                className="bg-purple-mju cursor-pointer text-white mb-2 px-2 py-2 active:bg-purple-active font-bold  text-xs rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                                                 htmlFor="file-input2">
-                                                  <i className="fas fa-book-reader"></i> แนบไฟล์
+                                                  <i className="fas fa-book-reader"></i> {locale.t("Main.lblAttach")}
                                               </label>
                                               <input 
                                                 type="file" 
@@ -1220,22 +1470,22 @@ export default function Courses() {
                                               <thead>
                                                 <tr>
                                                   <th
-                                                  className={" px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"}
+                                                  className={" px-6 align-middle border border-solid py-3 text-xs  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"}
                                                   >
                                                   </th>
                                                   <th
-                                                  className={" px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"}
+                                                  className={" px-6 align-middle border border-solid py-3 text-xs  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"}
                                                   >
-                                                    ชื่อ
+                                                    {locale.t("Subject.info.FileName")}
                                                   </th>
                                                   <th
-                                                  className={"px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"}
+                                                  className={"px-6 align-middle border border-solid py-3 text-xs  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"}
                                                   >
-                                                    วันที่
+                                                    {locale.t("Subject.info.lblFileDate")}
                                                   </th>
                                                   <th
                                                   className={
-                                                      "px-6 align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"
+                                                      "px-6 align-middle border border-solid py-3 text-xs  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"
                                                   }
                                                   >
                                                   </th>
@@ -1279,20 +1529,20 @@ export default function Courses() {
                   <thead>
                     <tr>
                         <th
-                        className={"text-center px-6 align-middle border border-solid py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"}
+                        className={"text-center px-6 align-middle border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"}
                         >
-                          ระยะเวลา
+                          {locale.t("Subject.list.lblSubjectTime")}
                         </th>
                         <th
                         className={
-                            "px-6 align-middle border border-solid py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"
+                            "px-6 align-middle border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"
                         }
                         >
-                          หัวข้อการเรียนรู้
+                          {locale.t("Subject.list.lblSubject")}
                         </th>
                         <th
                         className={
-                            "px-6 align-middle border border-solid py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"
+                            "px-6 align-middle border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"
                         }
                         >
                         </th>

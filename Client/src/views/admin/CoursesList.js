@@ -5,6 +5,9 @@ import Modal from "react-modal";
 import ReactPaginate from 'react-paginate';
 import ConfirmDialog from '../../components/ConfirmDialog/ConfirmDialog'
 import urlPath from 'services/urlServer';
+import Spinner from '../../components/Loadings/spinner/Spinner'
+import * as Storage from "../../../src/services/Storage.service";
+const locale = require("react-redux-i18n").I18n;
 
 Modal.setAppElement('#root');
 const customStyles = {
@@ -32,6 +35,8 @@ export default function CoursesList() {
     const usersPerPage = 10;
     const pagesVisited = pageNumber * usersPerPage;
     const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
+    const [isRemove,setIsRemove] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     function openModal(type) {
         setIsOpen(true);
     }
@@ -71,6 +76,7 @@ export default function CoursesList() {
             setListCourses(tempCourses);
             setDeleteNumber(tempCourses.filter(x => x.IsDeleted === true).length);
         }
+        if(listCourses.filter(x => x.IsDeleted === true).length === 0){setIsRemove(true)}else{setIsRemove(false)}
     };
 
     const deleteCourses = (e) => {
@@ -117,8 +123,7 @@ export default function CoursesList() {
     .slice(pagesVisited, pagesVisited + usersPerPage)
     .map((value) => {
       return (
-        <>
-            <tr key={value.id}>
+        <tr role="row" key={value.id }>
                 <th className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap">
                     <input
                         type="checkbox"
@@ -144,7 +149,7 @@ export default function CoursesList() {
                     { (value.NumOfHours*60)+value.NumOfMin }
                 </td>
                 <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-3">
-                    <label className="text-red-500 cursor-pointer" onClick={() => {openModal("delete")}}>  <i className="fas fa-trash"></i> ลบ</label>
+                    <label className="text-red-500 cursor-pointer" onClick={() => {openModal("delete")}}>  <i className="fas fa-trash"></i> {locale.t("Button.lblDelete")}</label>
                     <Modal
                         isOpen={modalIsOpen}
                         onAfterOpen={afterOpenModal}
@@ -159,7 +164,7 @@ export default function CoursesList() {
                                 <div className="rounded-t bg-white mb-0 px-4 py-4">
                                     <div className="text-center flex justify-between">
                                     <div className="">
-                                        <h6 className="text-blueGray-700 text-base  font-bold mt-2"><i className="fas fa-exclamation-triangle"></i>&nbsp; แจ้งเตือน</h6>
+                                        <h6 className="text-blueGray-700 text-base  font-bold mt-2"><i className="fas fa-exclamation-triangle"></i>&nbsp; {locale.t("Main.lblWarning")}</h6>
                                     </div>
                                     <div className="">
                                     </div>
@@ -171,7 +176,7 @@ export default function CoursesList() {
                                         <div className="relative w-full mb-3">
                                             <div className=" align-middle  mb-2">
                                                 <div  className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4">
-                                                    <label className="cursor-pointer">คุณต้องการทำการลบข้อมูลใช่หรือไม่</label>
+                                                    <label className="cursor-pointer">{locale.t("Warning.lblDelete")}</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -180,9 +185,9 @@ export default function CoursesList() {
                                                 <div>
                                                 </div>
                                                 <div  className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4">
-                                                    <label className="text-red-500 cursor-pointer" onClick={() => {openModal(deleteCourses(value.id))}}> <i className="fas fa-trash"></i> ลบ</label>
+                                                    <label className="text-red-500 cursor-pointer" onClick={() => {openModal(deleteCourses(value.id))}}> <i className="fas fa-trash"></i> {locale.t("Button.lblDelete")}</label>
                                                     <label className="font-bold">&nbsp;|&nbsp;</label>
-                                                    <label className="cursor-pointer" onClick={closeModal}> <i className="fas fa-times"></i> ยกเลิก</label>
+                                                    <label className="cursor-pointer" onClick={closeModal}> <i className="fas fa-times"></i> {locale.t("Button.lblCancel")}</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -194,7 +199,6 @@ export default function CoursesList() {
                     </Modal>
                 </td>
             </tr>
-            </>
         );
     });
 
@@ -209,15 +213,18 @@ export default function CoursesList() {
     }
 
     useEffect( ()=>  {
+        setIsLoading(true);
         axios.get(urlPath+"/courses").then((response) =>   {
             setListCourses(response.data.listOfCourses);
             setListSerch(response.data.listOfCourses);
+            setIsLoading(false);
         });
       },[]);
       
 
   return (
     <>
+      {isLoading ? ( <> <Spinner  customText={"Loading"}/></>) : (<></>)}
       <div className="flex flex-wrap mt-4 md:min-h-full ">
         <div className="w-full mb-12 px-4">
             <div className={"relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-2xl bg-white"}>
@@ -225,18 +232,18 @@ export default function CoursesList() {
                     <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">
                         {/* Brand */}
                             <h3 className={"font-semibold text-lg text-blueGray-700"}>
-                                จัดการหลักสูตร
+                                {locale.t("Menu.lblCourse")}
                             </h3>
                             <h3 className={"font-semibold px-2 text-lg text-blueGray-700"}>
                                 |
                             </h3>
                             <h3 className={"font-semibold text-sm text-blueGray-700"}>
-                                {listCourses.length} รายการ
+                                {listCourses.length}  {locale.t("Main.lblItem")}
                             </h3>
-                            <h3 className={"font-semibold text-sm text-blueGray-700 leading-2"}>
+                            <h3 className={"font-semibold text-sm text-blueGray-700 leading-2" + ((isRemove) ? " block" : " hidden")}>
                             &nbsp; <i className="fas fa-trash text-red-500 cursor-pointer" onClick={()=>{openModalSubject()}}></i> &nbsp;
-                                <span>ลบ {deleteNumber} รายการที่เลือก</span>
-                                <ConfirmDialog  showModal={modalIsOpenSubject} message={"จัดการบัญชีผู้ใช้"} hideModal={()=>{closeModalSubject()}} confirmModal={() => {deleteByList()}}/>
+                                <span>{locale.t("Button.lblDelete")} {deleteNumber} {locale.t("Main.lblChoose")}</span>
+                                <ConfirmDialog  showModal={modalIsOpenSubject} message={ ((Storage.GetLanguage() === "th") ? "จัดการหลักสูตร" : "Curriculum Management")} hideModal={()=>{closeModalSubject()}} confirmModal={() => {deleteByList()}}/>
                             </h3>
                         {/* Form */}
                         <form className="md:flex hidden flex-row flex-wrap items-center lg:ml-auto mr-3">
@@ -258,7 +265,7 @@ export default function CoursesList() {
                             className="bg-white text-black active:bg-lightBlue-600 font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                             type="button"
                             >
-                            <i className="fas fa-plus text-green-mju"></i> เพิ่ม
+                            <i className="fas fa-plus text-green-mju"></i> {locale.t("Button.lblInsert")}
                             </button></Link>
                         </ul>
                     </div>
@@ -285,35 +292,35 @@ export default function CoursesList() {
                             "px-2 align-middle border border-solid py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"
                         }
                         >
-                        รหัสหลักสูตร
+                            {locale.t("Course.list.lblCourseCode")}
                         </th>
                         <th
                         className={
                             "px-2  border border-solid py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"
                         }
                         >
-                        ชื่อหลักสูตร (ไทย)
+                            {locale.t("Course.list.lblCourseNameTH")}
                         </th>
                         <th
                         className={
                             "px-2 align-middle border border-solid py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"
                         }
                         >
-                        ชื่อหลักสูตร (ENG)
+                            {locale.t("Course.list.lblCourseNameENG")}
                         </th>
                         <th
                         className={
                             "px-2 align-middle border border-solid py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"
                         }
                         >
-                        จำนวนหัวข้อการเรียนรู้
+                            {locale.t("Course.list.lblAmountSubject")}
                         </th>
                         <th
                         className={
                             "px-2 align-middle border border-solid py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"
                         }
                         >
-                        เวลา (นาที)
+                            {locale.t("Course.list.lblAmountMin")}
                         </th>
                         <th
                         className={

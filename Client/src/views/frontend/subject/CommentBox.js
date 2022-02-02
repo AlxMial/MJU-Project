@@ -5,6 +5,8 @@ import moment from 'moment';
 import urlPath from 'services/urlServer';
 import axios from 'axios';
 import FilesService from 'services/files'
+import * as Storage from "../../../../src/services/Storage.service";
+const locale = require("react-redux-i18n").I18n;
 
 class Post extends React.Component {
     state = {
@@ -119,17 +121,17 @@ class CreateComment extends React.Component {
     render() {
         return (
             <form onSubmit={this.handleSubmit} className="createComment p-2 rounded-lg">
-                <label htmlFor="comment" className='text-sm font-bold mt-2'>ความคิดเห็น</label>
+                <label htmlFor="comment" className='text-sm font-bold mt-2'>{locale.t("Main.lblComment")}</label>
                 <textarea className='textComment rounded-lg text-sm px-2 py-2'
                     id="comment"
                     type="text"
-                    placeholder="ความคิดเห็นของคุณ"
+                    placeholder={locale.t("Main.lblYourComment")}
                     value={this.state.content}
                     onChange={this.handleTextChange}
                     required />
                 <div className='btnComment w-full text-right'>
-                    <button className='btn-cancel lg:w-2/12 py-1 text-sm buttonOutlineNone font-bold' type="button">ยกเลิก</button>
-                    <button className='btn-comment lg:w-2/12 py-1 text-sm px-2 py-2  font-bold' type="submit">โพสต์</button>
+                    <button className='btn-cancel lg:w-2/12 py-1 text-sm buttonOutlineNone font-bold' type="button">{locale.t("Button.lblCancel")}</button>
+                    <button className='btn-comment lg:w-2/12 py-1 text-sm px-2 py-2  font-bold' type="submit">{locale.t("Main.lblPost")}</button>
                 </div>
             </form>
         );

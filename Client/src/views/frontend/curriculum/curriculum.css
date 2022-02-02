@@ -18,12 +18,16 @@
     align-items: center;
     display: flex;
 }
-img {
-    max-height: 200px;
+
+.Block-curriculum img {
+    max-height: 150px   ;
     object-fit: cover;
+    background-repeat:no-repeat;
+    background-position: center center;
 }
+
 .blockquote {
-    height: 200px;
+ height: 220px;
 }
 
 .blockquote p {
@@ -48,9 +52,53 @@ footer {
 
 
 .text-editor{
-    white-space: nowrap !important;
+    /* white-space: nowrap !important; */
     overflow: hidden !important;
-    height: 90px !important;
+    height: 40% !important;
     width: 100%;
     text-overflow: ellipsis !important;
 }
+
+.backScreen-pb{
+    padding-bottom: 20rem !important;
+}
+@media (min-width: 390px) {
+    .text-editor{
+        height: 50% !important;
+    }
+    
+    .backScreen-pb{
+        padding-bottom: 22rem !important;
+    }
+    
+    .Block-curriculum img {
+        max-height: 35vw;
+    }
+}
+
+@media (min-width: 768px) {
+    .text-editor{
+        height: 39% !important;
+    }
+    .backScreen-pb{
+        padding-bottom: 20rem !important;
+    }
+    .Block-curriculum img {
+        max-height: 120px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .text-editor{
+        height: 50% !important;
+    }
+    .backScreen-pb{
+        padding-bottom: 20rem !important;
+    }
+    .Block-curriculum img {
+        max-height: 150px;
+    }
+}
+
+
+

@@ -6,6 +6,9 @@ import ReactPaginate from 'react-paginate';
 import ConfirmDialog from '../../components/ConfirmDialog/ConfirmDialog'
 import { useToasts } from 'react-toast-notifications';
 import urlPath from 'services/urlServer';
+import Spinner from '../../components/Loadings/spinner/Spinner'
+import * as Storage from "../../../src/services/Storage.service";
+const locale = require("react-redux-i18n").I18n;
 
 Modal.setAppElement('#root');
 const customStyles = {
@@ -32,8 +35,10 @@ export default function LearningList() {
     const [listSearch, setListSerch] = useState([]);
     const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
     const usersPerPage = 10;
+    const [isLoading, setIsLoading] = useState(false);
     const pagesVisited = pageNumber * usersPerPage;
     const { addToast } = useToasts();
+    const [isRemove,setIsRemove] = useState(false);
     function openModal(type) {
         setIsOpen(true);
     }
@@ -74,6 +79,7 @@ export default function LearningList() {
             setListLearning(tempLearning);
             setDeleteNumber(tempLearning.filter(x => x.IsDeleted === true).length);
         }
+        if(listLearning.filter(x => x.IsDeleted === true).length === 0){setIsRemove(true)}else{setIsRemove(false)}
     };
 
     const deleteLearning = async (e) => {
@@ -92,7 +98,7 @@ export default function LearningList() {
               closeModal();
             });
         }else{
-            addToast('ไม่สามารถลบข้อมูลได้ เนื่องจากรหัสเส้นทางการเรียนรู้ ถูกนำไปใช้งานที่หน้าจอจัดการหลักสูตรหรือหน้าจอจัดการบัญชีผู้ใช้', { appearance: 'warning', autoDismiss: true });
+            addToast((Storage.GetLanguage() === "th") ? 'ไม่สามารถลบข้อมูลได้ เนื่องจากรหัสเส้นทางการเรียนรู้ ถูกนำไปใช้งานที่หน้าจอจัดการหลักสูตรหรือหน้าจอจัดการบัญชีผู้ใช้' : 'Failed to delete data. because the learning path code are applied to the Curriculum Management or the Account Management' , { appearance: 'warning', autoDismiss: true });
             closeModal();
         }
     }
@@ -135,9 +141,9 @@ export default function LearningList() {
     .slice(pagesVisited, pagesVisited + usersPerPage)
     .map((value) => {
       return (
-        <>
-            <tr key={value.id}>
-                <th className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap">
+
+          <tr role="row" key={value.id }>
+                <th  key={value.id} className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap">
                     <input
                         type="checkbox"
                         name={value.id}
@@ -156,7 +162,7 @@ export default function LearningList() {
                     {value.CoursesCount}
                 </td>
                 <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-3">
-                    <label className="text-red-500 cursor-pointer" onClick={() => {openModal("delete")}}>  <i className="fas fa-trash"></i> ลบ</label>
+                    <label className="text-red-500 cursor-pointer" onClick={() => {openModal("delete")}}>  <i className="fas fa-trash"></i> {locale.t("Button.lblDelete")}</label>
                     <Modal
                         isOpen={modalIsOpen}
                         onAfterOpen={afterOpenModal}
@@ -171,7 +177,7 @@ export default function LearningList() {
                                 <div className="rounded-t bg-white mb-0 px-4 py-4">
                                     <div className="text-center flex justify-between">
                                     <div className="">
-                                        <h6 className="text-blueGray-700 text-base  font-bold mt-2"><i className="fas fa-exclamation-triangle"></i>&nbsp; แจ้งเตือน</h6>
+                                        <h6 className="text-blueGray-700 text-base  font-bold mt-2"><i className="fas fa-exclamation-triangle"></i>&nbsp; {locale.t("Main.lblWarning")}</h6>
                                     </div>
                                     <div className="">
                                     </div>
@@ -183,7 +189,7 @@ export default function LearningList() {
                                         <div className="relative w-full mb-3">
                                             <div className=" align-middle  mb-2">
                                                 <div  className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4">
-                                                    <label className="cursor-pointer">คุณต้องการทำการลบข้อมูลใช่หรือไม่</label>
+                                                    <label className="cursor-pointer">{locale.t("Warning.lblDelete")}</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -192,9 +198,9 @@ export default function LearningList() {
                                                 <div>
                                                 </div>
                                                 <div  className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4">
-                                                    <label className="text-red-500 cursor-pointer" onClick={() => {openModal(deleteLearning(value.id))}}> <i className="fas fa-trash"></i> ลบ</label>
+                                                    <label className="text-red-500 cursor-pointer" onClick={() => {openModal(deleteLearning(value.id))}}> <i className="fas fa-trash"></i> {locale.t("Button.lblDelete")}</label>
                                                     <label className="font-bold">&nbsp;|&nbsp;</label>
-                                                    <label className="cursor-pointer" onClick={closeModal}> <i className="fas fa-times"></i> ยกเลิก</label>
+                                                    <label className="cursor-pointer" onClick={closeModal}> <i className="fas fa-times"></i> {locale.t("Button.lblCancel")}</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -206,7 +212,6 @@ export default function LearningList() {
                     </Modal>
                 </td>
             </tr>
-            </>
         );
     });
 
@@ -220,12 +225,14 @@ export default function LearningList() {
     }
 
     useEffect( ()=>  {
+        setIsLoading(true);
         axios.get(urlPath+"/learning").then( async (response)   =>   {
              for(const learning of response.data.listLearning ){
                 await axios.get(urlPath+`/courses/byLearningId/${learning.id}`).then((res) =>   {
                     learning.CoursesCount = res.data.length;
                 });
             }
+            setIsLoading(false);
             setListLearning(response.data.listLearning);
             setListSerch(response.data.listLearning);
         });
@@ -234,6 +241,7 @@ export default function LearningList() {
 
   return (
     <>
+      {isLoading ? ( <> <Spinner  customText={"Loading"}/></>) : (<></>)}
       <div className="flex flex-wrap mt-4 md:min-h-full ">
         <div className="w-full mb-12 px-4">
             <div className={"relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-2xl bg-white"}>
@@ -241,18 +249,18 @@ export default function LearningList() {
                     <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">
                         {/* Brand */}
                             <h3 className={"font-semibold text-lg text-blueGray-700"}>
-                                จัดการเส้นทางการเรียนรู้
+                                {locale.t("Menu.lblLearning")}
                             </h3>
                             <h3 className={"font-semibold px-2 text-lg text-blueGray-700"}>
                                 |
                             </h3>
                             <h3 className={"font-semibold text-sm text-blueGray-700"}>
-                                {listLearning.length} รายการ
+                                {listLearning.length} {locale.t("Main.lblItem")}
                             </h3>
-                            <h3 className={"font-semibold text-sm text-blueGray-700 leading-2"}>
+                            <h3 className={"font-semibold text-sm text-blueGray-700 leading-2"  + ((isRemove) ? " block" : " hidden")}>
                             &nbsp; <i className="fas fa-trash text-red-500 cursor-pointer" onClick={()=>{openModalSubject()}}></i> &nbsp;
-                                <span>ลบ {deleteNumber} รายการที่เลือก</span>
-                                <ConfirmDialog  showModal={modalIsOpenSubject} message={"จัดการเส้นทางการเรียนรู้"} hideModal={()=>{closeModalSubject()}} confirmModal={() => {deleteByList()}}/>
+                                <span>{locale.t("Button.lblDelete")} {deleteNumber} {locale.t("Main.lblChoose")}</span>
+                                <ConfirmDialog  showModal={modalIsOpenSubject} message={ ((Storage.GetLanguage() === "th") ? "จัดการเส้นทางการเรียนรู้" : "Learning Path Management")} hideModal={()=>{closeModalSubject()}} confirmModal={() => {deleteByList()}}/>
                             </h3>
                         {/* Form */}
                         <form className="md:flex hidden flex-row flex-wrap items-center lg:ml-auto mr-3">
@@ -274,7 +282,7 @@ export default function LearningList() {
                             className="bg-white text-black active:bg-lightBlue-600 font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                             type="button"
                             >
-                            <i className="fas fa-plus text-green-mju"></i> เพิ่ม
+                            <i className="fas fa-plus text-green-mju"></i> {locale.t("Button.lblInsert")}
                             </button></Link>
                         </ul>
                     </div>
@@ -301,28 +309,27 @@ export default function LearningList() {
                             "px-2 align-middle border border-solid py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"
                         }
                         >
-                        ชื่อเส้นทางการเรียนรู้ (ไทย)
+                            {locale.t("Learning.list.lblLearningNameTH")}
                         </th>
                         <th
                         className={
                             "px-2  border border-solid py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"
                         }
                         >
-                        ชื่อเส้นทางการเรียนรู้ (ENG)
+                            {locale.t("Learning.list.lblLearningNameENG")}
                         </th>
                         <th
                         className={
                             "px-2 align-middle border border-solid py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"
                         }
                         >
-                        จำนวนหลักสูตร
+                            {locale.t("Learning.list.lblAmountCourse")}
                         </th>
                         <th
                         className={
                             "px-2 align-middle border border-solid py-3 text-sm uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"
                         }
                         >
-                        สถานะ
                         </th>
                         <th
                         className={

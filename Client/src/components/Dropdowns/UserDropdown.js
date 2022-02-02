@@ -5,6 +5,8 @@ import { AuthContext } from '../../services/AuthContext';
 import axios from "axios";
 import FilesService from "../../services/files";
 import urlPath from "services/urlServer";
+import * as Storage from "../../../src/services/Storage.service";
+const locale = require("react-redux-i18n").I18n;
 const UserDropdown = () => {
   // dropdown props
   const [dropdownPopoverShow, setDropdownPopoverShow] = React.useState(false);
@@ -95,7 +97,7 @@ const UserDropdown = () => {
           onClick={() => {linkAccount()}}
         >
           <i className="fas fa-user" id="accountx"></i> &nbsp;
-          <span className="text-sm" id="accountx" >จัดการบัญชีผู้ใช้</span>
+          <span className="text-sm" id="accountx" >{locale.t("Menu.lblAccount")}</span>
         </div>
 
         <div className="h-0 my-2 border border-solid border-blueGray-100" />
@@ -109,7 +111,7 @@ const UserDropdown = () => {
             onClick={logout}
           >
             <i className="fas fa-sign-out-alt text-red-500"  id="logoutx"></i> &nbsp;
-            <span className="text-sm"  id="logoutx" >ออกจากระบบ</span>
+            <span className="text-sm"  id="logoutx" >{locale.t("Main.lblLogout")}</span>
           </div>
         </Link>
       </div>

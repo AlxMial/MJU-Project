@@ -1,19 +1,30 @@
 /*eslint-disable*/
-import React from "react";
+import React,{useEffect} from "react";
 import { Link } from "react-router-dom";
-
-import NotificationDropdown from "components/Dropdowns/NotificationDropdown.js";
-import UserDropdown from "components/Dropdowns/UserDropdown.js";
+const locale = require("react-redux-i18n").I18n;
 
 export default function Sidebar() {
-
-
-
   const [collapseShow, setCollapseShow] = React.useState("hidden");
   const [enableCollapse, setenableCollapse] = React.useState("hidden");
+
+  useEffect(() => {
+  const checkIfClickedOutside = (e) => {
+      if (e.toElement.id !== "menu" ||  e.toElement.id === ""  ) {
+      {
+        setenableCollapse("hidden");
+        setCollapseShow("hidden");
+      }
+    }
+  };
+
+  document.addEventListener("mousedown", checkIfClickedOutside);
+    return () => { document.removeEventListener("mousedown", checkIfClickedOutside);};
+  }, []);
+
+
   return (
     <>
-      <nav className="md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:overflow-y-auto md:flex-row md:flex-nowrap md:overflow-hidden shadow-xl bg-white flex flex-wrap items-center justify-between relative md:w-64 z-10 py-4 px-6 mt-20">
+      <nav className="md:left-0 md:block md:fixed md:top-0 md:bottom-0 md:overflow-y-auto md:flex-row md:flex-nowrap md:overflow-hidden shadow-xl bg-white flex flex-wrap items-center justify-between relative md:w-64 z-10 pb-4 px-6 mt-20">
         <div className="md:flex-col md:items-stretch md:min-h-full md:flex-nowrap px-0 flex flex-wrap items-center justify-between w-full mx-auto">
           {/* Toggler */}
           <button
@@ -24,7 +35,8 @@ export default function Sidebar() {
                 { 
                   setenableCollapse("block");
                   setCollapseShow("bg-white m-2 py-3 px-6 block");
-                }else if(enableCollapse === "block")
+                }
+                else if(enableCollapse === "block")
                 {
                   setenableCollapse("hidden");
                   setCollapseShow("hidden");
@@ -34,12 +46,11 @@ export default function Sidebar() {
             <i className="fas fa-bars"></i>
           </button>
           {/* Brand */}
-          <Link
+          <div
             className="md:block text-left  text-blueGray-600 mr-0 inline-block whitespace-nowrap text-sm uppercase font-bold px-0"
-          
           >
             Menu
-          </Link>
+          </div>
           {/* User */}
           <ul className="md:hidden items-center flex flex-wrap list-none">
             <li className="inline-block relative">
@@ -55,17 +66,16 @@ export default function Sidebar() {
             }
           >
 
-   
-
             {/* Divider */}
             <hr className="mb-3 md:min-w-full" />
             {/* Heading */}
             {/* Navigation */}
             <ul className="md:flex-col md:min-w-full flex flex-col list-none">
-              <li className="items-center">
+              <li className="items-center" id="menu">
                 <Link
+                  id="menu"
                   className={
-                    "text-sm uppercase py-3 font-bold block " +
+                    "text-sm  py-3 font-bold block " +
                     (window.location.href.includes("members") 
                       ? "text-lightBlue-500 hover:text-lightBlue-600"
                       : "text-blueGray-700 hover:text-blueGray-500")
@@ -80,13 +90,14 @@ export default function Sidebar() {
                         : "text-blueGray-300")
                     }
                   ></i>{" "}
-                  &nbsp;จัดการบัญชีผู้ใช้
+                  &nbsp;{locale.t("Menu.lblAccount")}
                 </Link>
               </li>
-              <li className="items-center">
+              <li className="items-center"  id="menu">
                 <Link
+                  id="menu"
                   className={
-                    "text-sm uppercase py-3 font-bold block " +
+                    "text-sm  py-3 font-bold block " +
                     (window.location.href.includes("learning")
                       ? "text-lightBlue-500 hover:text-lightBlue-600"
                       : "text-blueGray-700 hover:text-blueGray-500")
@@ -101,14 +112,15 @@ export default function Sidebar() {
                         : "text-blueGray-300")
                     }
                   ></i>{" "}
-                  &nbsp;จัดการเส้นทางการเรียนรู้
+                  &nbsp;{locale.t("Menu.lblLearning")}
                 </Link>
               </li>
 
-              <li className="items-center">
+              <li className="items-center"  id="menu">
                 <Link
+                  id="menu"
                   className={
-                    "text-sm uppercase py-3 font-bold block " +
+                    "text-sm  py-3 font-bold block " +
                     (window.location.href.includes("courses")
                       ? "text-lightBlue-500 hover:text-lightBlue-600"
                       : "text-blueGray-700 hover:text-blueGray-500")
@@ -123,7 +135,7 @@ export default function Sidebar() {
                         : "text-blueGray-300")
                     }
                   ></i>{" "}
-                  &nbsp;จัดการหลักสูตร
+                  &nbsp;{locale.t("Menu.lblCourse")}
                 </Link>
               </li>
             </ul>

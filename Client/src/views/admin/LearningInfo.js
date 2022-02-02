@@ -1,13 +1,19 @@
 import React,{useState,useEffect} from "react";
 import { useParams } from "react-router-dom";
 import axios from 'axios'
-import ReactQuill from 'react-quill';
+import ReactQuill,{Quill} from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import {useFormik  } from "formik";
 import * as Yup from "yup";
 import { useToasts } from 'react-toast-notifications';
 import FilesService from 'services/files';
 import urlPath from 'services/urlServer';
+import ImageResize from 'quill-image-resize-module-react';
+import Spinner from '../../components/Loadings/spinner/Spinner'
+import * as Storage from "../../../src/services/Storage.service";
+const locale = require("react-redux-i18n").I18n;
+
+Quill.register('modules/imageResize', ImageResize);
 // components
 
 export default  function Learning() {
@@ -17,7 +23,7 @@ export default  function Learning() {
   const [enableControl,setIsEnableControl] = useState(true);
   const [isNew,setIsNew] = useState(false);
   const [listLearning, setListLearning] = useState([]);
-
+  const [isLoading, setIsLoading] = useState(false);
   const formik = useFormik({
     initialValues : {
       LearningPathCode:'',
@@ -33,12 +39,14 @@ export default  function Learning() {
     DescriptionTH: Yup.string().required('* กรุณากรอก รายละเอียดเส้นทางการเรียนรู้ (ไทย)'),
    }),
    onSubmit: values => {
-    axios.get(urlPath+`/learning/byLearningCode/${values.LearningPathCode}`,{
+    setIsLoading(true);
+    axios.post(urlPath+"/learning/byLearningCode",{code:values.LearningPathCode,name:values.LearningPathNameTH},{
       headers: { 
         'Content-Type': 'application/json; charset=utf-8',
         accessToken : localStorage.getItem("accessToken"),
      },
     },{ }).then((response) => {
+      console.log(response.data)
       if(response.data === null || response.data.id === values.id) {
         if(isNew){
           axios.post(urlPath+"/learning",values).then((response)=>{
@@ -68,13 +76,15 @@ export default  function Learning() {
           });
         }
       } else {
-        addToast('ไม่สามารถบันทึกข้อมูลได้ เนื่องจากรหัสเส้นทางการเรียนรู้ซ้ำ กรุณากรอกรหัสเส้นทางการเรียนรู้ใหม่', { appearance: 'warning', autoDismiss: true });
+        addToast('ไม่สามารถบันทึกข้อมูลได้ เนื่องจากรหัสเส้นทางการเรียนรู้หรือชื่อเส้นทางการเรียนรู้ซ้ำ กรุณากรอกรหัสเส้นทางการเรียนรู้หรือชื่อเส้นทางการเรียนรู้ใหม่', { appearance: 'warning', autoDismiss: true });
       }
     });
+    setIsLoading(false);
    },
  });
 
   async function fetchData() {
+    setIsLoading(true);
     let response = await axios(
       urlPath+`/learning/byId/${id}`
     );
@@ -87,9 +97,11 @@ export default  function Learning() {
       }
       setListLearning(response.data);
       setIsNew(false);
+      setIsLoading(false);
     } else {
       setIsNew(true);
       setIsEnableControl(false);
+      setIsLoading(false);
     }
   }
 
@@ -106,6 +118,7 @@ export default  function Learning() {
 
   return (
     <>
+      {isLoading ? ( <> <Spinner  customText={"Loading"}/></>) : (<></>)}
       <div className="flex flex-wrap mt-4">
         <div className="w-full px-4">
         <>
@@ -114,31 +127,31 @@ export default  function Learning() {
             <div className="rounded-t-2xl bg-white mb-0 px-4 py-4">
               <div className="text-center flex justify-between ">
                 <div>
-                  <h3 className="text-blueGray-700 text-xl font-bold mt-2">จัดการเส้นทางการเรียนรู้</h3>
+                  <h3 className="text-blueGray-700 text-xl font-bold mt-2">{locale.t("Menu.lblLearning")}</h3>
                 </div>
                 <div>
                 {(enableControl && !isNew) ? 
                   <button
-                    className="bg-green-mju text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                    className="bg-green-mju text-white active:bg-lightBlue-600 font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                     type="button"
                     onClick={ () => {EnableControl(false)}}
                   >
-                    <i className="fas fa-pencil-alt"></i>&nbsp;แก้ไข
+                    <i className="fas fa-pencil-alt"></i>&nbsp;{locale.t("Button.lblEdit")}
                   </button> 
                   :
                   <>
                     <button
-                      className={"bg-rose-mju text-white active:bg-rose-mju font-bold uppercase text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" + ((isNew ? " hidden" : " "))}
+                      className={"bg-rose-mju text-white active:bg-rose-mju font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" + ((isNew ? " hidden" : " "))}
                       type="button"
                       onClick={() =>{EnableControl(true)}}
                     >
-                    <i className="fas fa-pencil-alt"></i>&nbsp;ละทิ้ง
+                    <i className="fas fa-pencil-alt"></i>&nbsp;{locale.t("Button.lblDrop")}
                     </button>     
                     <button
-                      className="bg-blue-save-mju text-white active:bg-blueactive-mju font-bold uppercase text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" 
+                      className="bg-blue-save-mju text-white active:bg-blueactive-mju font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" 
                       type="submit"
                       >
-                    <i className="fas fa-save"></i>&nbsp;บันทึก
+                    <i className="fas fa-save"></i>&nbsp;{locale.t("Button.lblSave")}
                     </button>
                   </>
                   }
@@ -149,8 +162,8 @@ export default  function Learning() {
                 <div className="flex flex-wrap  mt-6">
                   <div className="w-full px-4 py-1">
                     <div className="relative w-full mb-3">
-                      <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
-                        รหัสเส้นทางการเรียนรู้<span className="text-red-500"> *</span>
+                      <label className="block  text-blueGray-600 text-sm font-bold mb-2">
+                        {locale.t("Learning.info.lblLearningCode")}<span className="text-red-500"> *</span>
                       </label>
                       <input
                         type="text"
@@ -171,8 +184,8 @@ export default  function Learning() {
                 <div className="flex flex-wrap">
                   <div className="w-full lg:w-6/12 px-4 py-1">
                     <div className="relative w-full mb-3">
-                      <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
-                        ชื่อเส้นทางการเรียนรู้ (ไทย)<span className="text-red-500"> *</span>
+                      <label className="block  text-blueGray-600 text-sm font-bold mb-2">
+                        {locale.t("Learning.list.lblLearningNameTH")}<span className="text-red-500"> *</span>
                       </label>
                       <input
                         type="text"
@@ -191,8 +204,8 @@ export default  function Learning() {
                   </div>
                   <div className="w-full lg:w-6/12 px-4 py-1">
                     <div className="relative w-full mb-3">
-                      <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
-                        ชื้่อเส้นทางการเรียนรู้ (ENG)
+                      <label className="block  text-blueGray-600 text-sm font-bold mb-2">
+                        {locale.t("Learning.list.lblLearningNameENG")}
                       </label>
                       <input
                         type="text"
@@ -210,8 +223,8 @@ export default  function Learning() {
                   </div>
                   <div className="w-full lg:w-6/12 px-4 py-1">
                     <div className="relative w-full mb-3">
-                      <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
-                        รายละเอียดเส้นทางการเรียนรู้ (ไทย)<span className="text-red-500"> *</span>
+                      <label className="block  text-blueGray-600 text-sm font-bold mb-2">
+                        {locale.t("Learning.info.lblDescriptionTH")}<span className="text-red-500"> *</span>
                       </label>
                       <ReactQuill
                         theme="snow"  
@@ -220,21 +233,34 @@ export default  function Learning() {
                         placeholder={"Write something awesome..."}
                         readOnly={enableControl}
                         modules={{
-                          // syntax: true,
-                          toolbar: [ 
-                            [{ 'header': [1, 2, false] }],
-                            ['bold', 'italic', 'underline','strike', 'blockquote'],
-                            [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
-                            [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}], 
-                            ['link', 'image','video'],['code-block']
-                          ]
+                          toolbar: [
+                            ['bold', 'italic', 'underline', 'strike'],
+                            [{ align: [] }],
+                        
+                            [{ list: 'ordered'}, { list: 'bullet' }],
+                            [{ indent: '-1'}, { indent: '+1' }],
+                        
+                            [{ size: ['small', false, 'large', 'huge'] }],
+                            [{ header: [1, 2, 3, 4, 5, 6, false] }],
+                            ['link', 'image', 'video'],
+                            [{ color: [] }, { background: [] }],
+                        
+                            ['clean'],['code']
+                          ],  imageResize: {
+                            parchment: Quill.import('parchment'),
+                            modules: ['Resize', 'DisplaySize', 'Toolbar']
+                          },
+                          clipboard: {
+                            matchVisual: false,
+                          },
                         }}
                         formats={[
-                          'header',
-                          'bold', 'italic', 'underline', 'strike', 'blockquote',
-                          'list', 'bullet', 'indent',
-                          'link', 'image','video',
-                          'align','code-block'
+                          'bold', 'italic', 'underline', 'strike',
+                          'align', 'list', 'indent',
+                          'size', 'header',
+                          'link', 'image', 'video',
+                          'color', 'background',
+                          'clean','code'
                         ]}
                       />
                       {formik.touched.DescriptionTH && formik.errors.DescriptionTH ? (
@@ -245,10 +271,9 @@ export default  function Learning() {
                   <div className="w-full lg:w-6/12 px-4 py-1">
                     <div className="relative w-full mb-3">
                       <label
-                        className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
-                        
+                        className="block  text-blueGray-600 text-sm font-bold mb-2"
                       >
-                        รายละเอียดเส้นทางการเรียนรู้ (ENG)
+                        {locale.t("Learning.info.lblDescriptionENG")}
                       </label>
                       <ReactQuill
                         theme="snow"
@@ -257,23 +282,34 @@ export default  function Learning() {
                         placeholder={"Write something awesome..."}
                         readOnly={enableControl}
                         modules={{
-                          // syntax: true,
-                          toolbar: [ 
-                            [{ 'header': [1, 2, false] }],
-                            ['bold', 'italic', 'underline','strike', 'blockquote'],
-                            [{ align: '' }, { align: 'center' }, { align: 'right' }, { align: 'justify' }],
-                            [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}], 
-                            ['link', 'image','video'], 
-                            ['clean'] 
-                          ]
+                          toolbar: [
+                            ['bold', 'italic', 'underline', 'strike'],
+                            [{ align: [] }],
+                        
+                            [{ list: 'ordered'}, { list: 'bullet' }],
+                            [{ indent: '-1'}, { indent: '+1' }],
+                        
+                            [{ size: ['small', false, 'large', 'huge'] }],
+                            [{ header: [1, 2, 3, 4, 5, 6, false] }],
+                            ['link', 'image', 'video'],
+                            [{ color: [] }, { background: [] }],
+                        
+                            ['clean'],
+                          ],  imageResize: {
+                            parchment: Quill.import('parchment'),
+                            modules: ['Resize', 'DisplaySize', 'Toolbar']
+                          },
+                          clipboard: {
+                            matchVisual: false,
+                          },
                         }}
                         formats={[
-                          'header',
-                          'bold', 'italic', 'underline', 'strike', 'blockquote',
-                          'list', 'bullet', 'indent',
-                          'link', 'image','video',
-                          'align',
-                          'code-block'
+                          'bold', 'italic', 'underline', 'strike',
+                          'align', 'list', 'indent',
+                          'size', 'header',
+                          'link', 'image', 'video',
+                          'color', 'background',
+                          'clean',
                         ]}
 
                       />

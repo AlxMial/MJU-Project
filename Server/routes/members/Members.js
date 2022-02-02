@@ -19,6 +19,15 @@ router.get("/" , validateToken , async (req, res) => {
     res.json({listMembers : listMembers});
 });
 
+router.get("/getid/:id" , async (req, res) => {
+  const id = req.params.id;
+  const member = await Members.findOne({
+     where: {  id: id  },
+    });
+  res.json(member); 
+});
+
+
 router.get("/getemail/:email" ,async (req, res) => {
   const email = req.params.email;
   const member = await Members.findOne({
@@ -68,6 +77,14 @@ router.delete("/multidelete/:memberId", validateToken , (req, res) => {
 
 router.put("/", validateToken , async (req,res) =>{
   await Members.update(req.body,{where : {id: req.body.id }})
+  res.json("SUCCESS");
+});
+
+router.put("/updatePassword" , async (req,res) =>{
+  await Members.update(
+    { password: 'a very different title now' },
+    { where: { id: 1 } }
+  )
   res.json("SUCCESS");
 });
 

@@ -19,13 +19,13 @@ export default function Register() {
   let history = useHistory();
   const [optionsLearning, setOptionsLearning] = useState([])
   const optionsRole = [
-    { value: '3', label: 'วิทยากร' },
-    { value: '4', label: 'เกษตรกร' }
+    { value: '3', label: 'Trainer' },
+    { value: '4', label: 'farmer' }
   ];
 
   const optionsGender = [
-    { value: '1', label: 'ชาย'},
-    { value: '2', label: 'หญิง' },
+    { value: '1', label: 'Male'},
+    { value: '2', label: 'Female' },
   ];
 
     // render regular HTML input element
@@ -68,10 +68,10 @@ export default function Register() {
 
    },
    validationSchema: Yup.object({
-     firstName:Yup.string().required('* กรุณากรอก ชื่อ'),
-     lastName:Yup.string().required('* กรุณากรอก นามสกุล'),
-     email:Yup.string().email('* รูปแบบอีเมลไม่ถูกต้อง').required('* กรุณากรอก อีเมล'),
-     password:Yup.string().required('* กรุณากรอก รหัสผ่าน'),
+     firstName:Yup.string().required('* Please enter your name'),
+     lastName:Yup.string().required('* Please enter your last name'),
+     email:Yup.string().email('* Invalid email format').required('* Please enter email'),
+     password:Yup.string().required('* Please enter your password'),
    }),
 
    onSubmit: values => {
@@ -84,7 +84,7 @@ export default function Register() {
       formik.values.subDistrict = (formik.values.subDistrict === "") ? "100101" : formik.values.subDistrict;
       if(!confirmPassword && isTerm)
       {
-        values.isActivated = true;
+        values.isActivated = false;
         values.IsDeleted = false;
         axios.get(urlPath+`/members/getemail/${values.email}`).then((response) => {
           console.log(response)
@@ -94,13 +94,13 @@ export default function Register() {
                 {
                   addToast(response.data.error, { appearance: 'error', autoDismiss: true });
                 } else {
-                  addToast('ลงทะเบียนสำเร็จ', { appearance: 'success', autoDismiss: true });
+                  addToast('Successful registration', { appearance: 'success', autoDismiss: true });
                   history.push("/auth/login");
                 }
               });
           }
           else {
-            addToast('ไม่สามารถบันทึกข้อมูลได้ เนื่องจากอีเมลที่ใช้งานมีการลงทะเบียนเรียบร้อยแล้ว', { appearance: 'warning', autoDismiss: true });
+            addToast('Can not save data Because the email used is already registered.', { appearance: 'warning', autoDismiss: true });
           }
         });
       }

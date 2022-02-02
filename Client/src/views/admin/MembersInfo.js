@@ -11,10 +11,12 @@ import ValidateService from '../../services/validateValue'
 import urlPath from '../../services/urlServer'
 import 'react-modern-calendar-datepicker/lib/DatePicker.css';
 import DatePicker from 'react-modern-calendar-datepicker';
-import moment from 'moment';
 import api_province from '../../assets/data/api_province.json'
 import api_amphure from '../../assets/data/api_amphure.json'
 import api_tombon from '../../assets/data/api_tombon.json'
+import Spinner from '../../components/Loadings/spinner/Spinner'
+import * as Storage from "../../../src/services/Storage.service";
+const locale = require("react-redux-i18n").I18n;
 // components
 
 export default function Members() {
@@ -31,7 +33,8 @@ export default function Members() {
   const { addToast } = useToasts();
   let { id } = useParams();
   const [optionsLearning, setOptionsLearning] = useState([])
-
+  const [optionsLearningEng, setOptionsLearningEng] = useState([])
+  const [isLoading, setIsLoading] = useState(false);
   const defaultDate = {
     year:  new Date().getFullYear(),
     month: new Date().getMonth()+1,
@@ -41,6 +44,9 @@ export default function Members() {
   const [dataProvice,setDataProvice]=useState([]);
   const [dataDistrict,setDataDistrict]=useState([]);
   const [dataSubDistrict,setSubDistrict] = useState([]);
+  const [dataProviceEng,setDataProviceEng]=useState([]);
+  const [dataDistrictEng,setDataDistrictEng]=useState([]);
+  const [dataSubDistrictEng,setSubDistrictEng] = useState([]);
   const [dayBirth,setDayBirth] = useState(0);
   const handleFileUpload = async (e) => {
     const base64 = await FilesService.convertToBase64(e.target.files[0]);
@@ -52,6 +58,12 @@ export default function Members() {
     { value: '3', label: 'นางสาว' }
   ];
 
+  const optionsEng = [
+      { value: '1', label: 'Mr.' },
+      { value: '2', label: 'Mrs.' },
+      { value: '3', label: 'Miss.' }
+  ];
+
   const optionsRole = [
     { value: '1', label: 'ผู้ดูแลระบบ'},
     { value: '2', label: 'ผู้เยี่ยมชม' },
@@ -59,10 +71,23 @@ export default function Members() {
     { value: '4', label: 'เกษตรกร' }
   ];
 
+  const optionsRoleEng = [
+      { value: '1', label: 'Admin'},
+      { value: '2', label: 'Guest' },
+      { value: '3', label: 'Trainer' },
+      { value: '4', label: 'Farmer' }
+    ];
+
+
   const optionsGender = [
-    { value: '1', label: 'ชาย'},
-    { value: '2', label: 'หญิง' },
-  ];
+      { value: '1', label: 'ชาย'},
+      { value: '2', label: 'หญิง' },
+    ];
+
+    const optionsGenderEng = [
+      { value: '1', label: 'Male'},
+      { value: '2', label: 'Female' },
+    ];
 
   
 
@@ -128,13 +153,13 @@ export default function Members() {
       subDistrict:''
     },
     validationSchema: Yup.object({
-      accountCode:Yup.string().required('* กรุณากรอก รหัสบัญชีผู้ใช้'),
-      firstName:Yup.string().required('* กรุณากรอก ชื่อ'),
-      lastName:Yup.string().required('* กรุณากรอก นามสกุล'),
-      email:Yup.string().email('* รูปแบบอีเมลไม่ถูกต้อง').required('* กรุณากรอก อีเมล'),
-      phoneNumber:Yup.string().matches(phoneRegExp, '* รูปแบบเบอร์โทรศัพท์ ไม่ถูกต้อง').required('* กรุณากรอก เบอร์โทรศัพท์'),
-      birthDate:Yup.string().required('* กรุณากรอก วันเกิด'),
-      password:Yup.string().required('* กรุณากรอก รหัสผ่าน'),
+      accountCode:Yup.string().required((Storage.GetLanguage() === "th") ? '* กรุณากรอก รหัสบัญชีผู้ใช้' : '* Please enter your account code'),
+      firstName:Yup.string().required((Storage.GetLanguage() === "th") ? '* กรุณากรอก ชื่อ' : '* Please enter your first name'),
+      lastName:Yup.string().required((Storage.GetLanguage() === "th") ?'* กรุณากรอก นามสกุล' : '* Please enter your last name'),
+      email:Yup.string().email((Storage.GetLanguage() === "th") ? '* รูปแบบอีเมลไม่ถูกต้อง' : 'Invalid email format').required((Storage.GetLanguage() === "th") ? '* กรุณากรอก อีเมล'  : '* Please enter your email'),
+      phoneNumber:Yup.string().matches(phoneRegExp, (Storage.GetLanguage() === "th") ? '* รูปแบบเบอร์โทรศัพท์ ไม่ถูกต้อง' : '* The phone number format is invalid').required((Storage.GetLanguage() === "th") ? '* กรุณากรอก เบอร์โทรศัพท์' : '* Please enter your phone number' ),
+      birthDate:Yup.string().required((Storage.GetLanguage() === "th") ? '* กรุณากรอก วันเกิด' : '* Please enter your date of birth'),
+      password:Yup.string().required((Storage.GetLanguage() === "th") ? '* กรุณากรอก รหัสผ่าน' : '* Please enter your password'),
     }),
 
     onSubmit: values => {
@@ -149,13 +174,15 @@ export default function Members() {
       if(!isNew)
         if(values.id === undefined)
           values.id = listMembers.filter(x => x.accountCode === formik.values.accountCode )[0].id;
+
+      console.log(formik.values.birthDate)
       axios.get(urlPath+`/members/getAccountCode/${values.accountCode}`,{
         headers: {accessToken : localStorage.getItem("accessToken")}
       }).then((response) => {
         if(response.data === null || response.data.id === values.id) {
           insertAccount(values);
         } else {
-          addToast('ไม่สามารถบันทึกข้อมูลได้ เนื่องจากรหัสบัญชีผู้ใช้ซ้ำ กรุณากรอกรหัสบัญชีผู้ใช้ใหม่', { appearance: 'warning', autoDismiss: true });
+          addToast((Storage.GetLanguage() === "th") ? 'ไม่สามารถบันทึกข้อมูลได้ เนื่องจากรหัสบัญชีผู้ใช้ซ้ำ กรุณากรอกรหัสบัญชีผู้ใช้ใหม่' : 'Can not save data due to duplicate user account password Please enter a new user account password.' , { appearance: 'warning', autoDismiss: true });
         }
 
       });
@@ -163,6 +190,7 @@ export default function Members() {
   });
 
   const insertAccount = (values) => {
+    setIsLoading(true);
     axios.get(urlPath+`/members/getemail/${values.email}`).then((response) => {
       if(response.data === null || (response.data && response.data.id === values.id)) {
         if(!confirmPassword)
@@ -175,7 +203,7 @@ export default function Members() {
               {
                 addToast(response.data.error, { appearance: 'error', autoDismiss: true });
               } else {
-                addToast('บันทึกข้อมูลสำเร็จ', { appearance: 'success', autoDismiss: true });
+                addToast((Storage.GetLanguage() === "th") ? 'บันทึกข้อมูลสำเร็จ' : 'Save data successfully', { appearance: 'success', autoDismiss: true });
                 setIsEnableControl(true);
                 setIsNew(false);
                 axios.get(urlPath+"/members",{
@@ -197,7 +225,7 @@ export default function Members() {
               {
                 addToast(response.data.error, { appearance: 'error', autoDismiss: true });
               } else {
-                addToast('บันทึกข้อมูลสำเร็จ', { appearance: 'success', autoDismiss: true });
+                addToast((Storage.GetLanguage() === "th") ? 'บันทึกข้อมูลสำเร็จ' : 'Save data successfully', { appearance: 'success', autoDismiss: true });
                 setIsEnableControl(true);
               }
             });
@@ -205,12 +233,14 @@ export default function Members() {
         }
       }
       else {
-        addToast('ไม่สามารถบันทึกข้อมูลได้ เนื่องจากอีเมลที่ใช้งานมีการลงทะเบียนเรียบร้อยแล้ว', { appearance: 'warning', autoDismiss: true });
+        addToast( (Storage.GetLanguage() === "th") ?  'ไม่สามารถบันทึกข้อมูลได้ เนื่องจากอีเมลที่ใช้งานมีการลงทะเบียนเรียบร้อยแล้ว' : 'Can not save data Because the email used is already registered.', { appearance: 'warning', autoDismiss: true });
       }
+      setIsLoading(false);
     });
   }
 
   async function fetchData() {
+    setIsLoading(true);
     let response = await axios(
       urlPath+`/members/byId/${id}`,{
         headers: {accessToken : localStorage.getItem("accessToken")}
@@ -220,7 +250,11 @@ export default function Members() {
     if(user !== null) {
       var ProvinceId = "";
       var District = "";
+      var JsonLearning = [];
+      var JsonLearningEng = [];
       for(var columns in response.data) {
+        JsonLearning = [];
+        JsonLearningEng = [];
         if(columns === "province")
           ProvinceId = response.data[columns]
         if(columns === "district")
@@ -228,21 +262,29 @@ export default function Members() {
 
         if(columns === "birthDate")
         {
-
           const obj = JSON.parse(response.data[columns]);
           CalBirthDay(obj);
           setSelectedDay(obj);
-          formik.setFieldValue(columns, obj, false);
+          formik.setFieldValue(columns, obj.toString(), false);
         }else if (columns === "district") {
-          setDataDistrict(api_amphure.filter(e => e.province_id.toString() === ProvinceId));
-          formik.setFieldValue('district',api_amphure.filter(e => (e.value.toString() === response.data[columns]))[0].value);
+          api_amphure.filter(e => e.province_id.toString() === ProvinceId.toString()).forEach(field => { 
+            JsonLearning.push({value: field.value.toString(), label:  field.label });
+            JsonLearningEng.push({value: field.value.toString(), label:  field.name_en });
+          });
+          setDataDistrict(JsonLearning);
+          setDataDistrictEng(JsonLearningEng);
+          formik.setFieldValue('district',response.data[columns]);
         }else if (columns === "subDistrict") {
-          console.log(District)
-          setSubDistrict(api_tombon.filter(e => e.value.toString().substring(0, 4) === District));  
-          formik.setFieldValue('subDistrict',api_tombon.filter(e => e.value.toString() ===  response.data[columns] )[0].value);
+          api_tombon.filter(e => e.value.toString().substring(0, 4) === District.toString()).forEach(field => { 
+            JsonLearning.push({value: field.value.toString(), label:  field.label });
+            JsonLearningEng.push({value: field.value.toString(), label:  field.name_en });
+          });
+          setSubDistrict(JsonLearning)
+          setSubDistrictEng(JsonLearningEng)
+          formik.setFieldValue('subDistrict',response.data[columns]);
         }
         else {
-          formik.setFieldValue(columns, response.data[columns], false);
+          formik.setFieldValue(columns,(( response.data[columns]===null) ? '' : response.data[columns]), false);
         }
       }
 
@@ -252,7 +294,9 @@ export default function Members() {
       setValueConfirm(response.data.password)
       setListMembers(user);
       setIsNew(false);
+      setIsLoading(false);
     } else {
+      setIsLoading(false);
       setIsNew(true);
       setIsEnableControl(false);
     }
@@ -262,24 +306,52 @@ export default function Members() {
     const response = await axios(urlPath+"/learning");
     const body = await response.data.listLearning;
     var JsonLearning = [];
-    body.forEach(field => JsonLearning.push({value: field.id.toString(),label: field.LearningPathNameTH }))
+    body.forEach(field => JsonLearning.push({value: field.id.toString(), label:  field.LearningPathNameTH }))
     setOptionsLearning(JsonLearning)
+    JsonLearning = [];
+    body.forEach(field => JsonLearning.push({value: field.id.toString(), label:  field.LearningPathNameENG }))
+    setOptionsLearningEng(JsonLearning)
   }
 
-  const GetAddress =(type,id)=>{
+  const GetAddress =  async  (type,id)=>{
     if(type === "district"){
       setDataDistrict([]);
-      setDataDistrict(api_amphure.filter(e => e.province_id === id));
-      formik.setFieldValue('district',api_amphure.filter(e => e.province_id === id)[0].value);
+      setDataDistrictEng([]);
+      var JsonLearning = [];
+      var JsonLearningEng = [];
+      await api_amphure.filter(e => e.province_id.toString() === id.toString() ).forEach(field => {
+          JsonLearning.push({value: field.value.toString(), label:  field.label });
+          JsonLearningEng.push({value: field.value.toString(), label:  field.name_en });
+      });
+      setDataDistrict(JsonLearning);
+      setDataDistrictEng(JsonLearningEng);
+      formik.setFieldValue('district',((Storage.GetLanguage() === "th") ? JsonLearning[0].value : JsonLearningEng[0].value ));
+
       setSubDistrict([]);
-      setSubDistrict(api_tombon.filter(e => e.value.toString().substring(0, 4) === (api_amphure.filter(e => e.province_id.toString() === id.toString()))[0].value.toString()));  
-      formik.setFieldValue('subDistrict',api_tombon.filter(e => e.value.toString().substring(0, 4) === (api_amphure.filter(e => e.province_id.toString() === id.toString()))[0].value.toString())[0].value);
+      setSubDistrictEng([]);
+      JsonLearning = [];
+      JsonLearningEng = [];
+      await api_tombon.filter(e => e.value.toString().substring(0, 4) === (api_amphure.filter(e => e.province_id.toString() === id.toString()))[0].value.toString()).forEach(field => { 
+        JsonLearning.push({value: field.value.toString(), label:  field.label });
+        JsonLearningEng.push({value: field.value.toString(), label:  field.name_en });
+      });
+      setSubDistrict(JsonLearning);  
+      setSubDistrictEng(JsonLearningEng);
+      formik.setFieldValue('subDistrict',((Storage.GetLanguage() === "th") ? JsonLearning[0].value : JsonLearningEng[0].value ));
     }
     else if(type==="subDistrict")
     {
       setSubDistrict([]);
-      setSubDistrict(api_tombon.filter(e => e.value.toString().substring(0, 4) === id.toString() ));  
-      formik.setFieldValue('subDistrict',api_tombon.filter(e => e.value.toString().substring(0, 4) === id.toString() )[0].value);
+      setSubDistrictEng([]);
+      var JsonLearning = [];
+      var JsonLearningEng = [];
+      api_tombon.filter(e => e.value.toString().substring(0, 4) === id.toString()).forEach(field => { 
+          JsonLearning.push({value: field.value.toString(), label:  field.label });
+          JsonLearningEng.push({value: field.value.toString(), label:  field.name_en });
+      });
+      setSubDistrict(JsonLearning);  
+      setSubDistrictEng(JsonLearningEng);  
+      formik.setFieldValue('subDistrict',((Storage.GetLanguage() === "th") ? JsonLearning[0].value : JsonLearningEng[0].value ));
     }
   }
 
@@ -290,7 +362,14 @@ export default function Members() {
   }
   
   useEffect(()=>{
-      setDataProvice(api_province);
+      var JsonLearning = [];
+      var JsonLearningEng = [];
+      api_province.forEach(field => { 
+          JsonLearning.push({value: field.value.toString(), label:  field.label });
+          JsonLearningEng.push({value: field.value.toString(), label:  field.name_en });
+      });
+      setDataProvice(JsonLearning)
+      setDataProviceEng(JsonLearningEng)
       GetAddress("district",1);
       GetAddress("subDistrict",1001);
       fetchData();
@@ -306,6 +385,7 @@ export default function Members() {
 
   return (
     <>
+      {isLoading ? ( <> <Spinner  customText={"Loading"}/></>) : (<></>)}
       <div className="flex flex-wrap mt-4">
         <div className="w-full px-4 ">
         <>
@@ -314,29 +394,29 @@ export default function Members() {
             <div className="rounded-t-2xl bg-white mb-0 px-4 py-4">
               <div className="text-center flex justify-between ">
                 <div>
-                  <h3 className="text-blueGray-700 text-lg font-bold mt-2">จัดการบัญชีผู้ใช้</h3>
+                  <h3 className="text-blueGray-700 text-lg font-bold mt-2">{locale.t("Menu.lblAccount")}</h3>
                 </div>
                 <div>
                   {(enableControl && !isNew) ? <button
-                    className="bg-green-mju text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                    className="bg-green-mju text-white active:bg-lightBlue-600 font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                     type="button"
                     onClick={ () => {EnableControl(false)}}
                   >
-                  <i className="fas fa-pencil-alt"></i>&nbsp;แก้ไข
+                  <i className="fas fa-pencil-alt"></i>&nbsp;{locale.t("Button.lblEdit")}
                   </button> :
                   <>
                     <button
-                      className={"bg-rose-mju text-white active:bg-rose-mju font-bold uppercase text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" + ((isNew ? " hidden" : " "))}
+                      className={"bg-rose-mju text-white active:bg-rose-mju font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" + ((isNew ? " hidden" : " "))}
                       type="button"
                       onClick={() =>{EnableControl(true)}}
                     >
-                    <i className="fas fa-pencil-alt"></i>&nbsp;ละทิ้ง
+                    <i className="fas fa-pencil-alt"></i>&nbsp;{locale.t("Button.lblDrop")}
                     </button>     
                     <button
-                      className="bg-blue-save-mju text-white active:bg-blueactive-mju font-bold uppercase text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" 
+                      className="bg-blue-save-mju text-white active:bg-blueactive-mju font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" 
                       type="submit"
                       >
-                    <i className="fas fa-save"></i>&nbsp;บันทึก
+                    <i className="fas fa-save"></i>&nbsp;{locale.t("Button.lblInsert")}
                     </button>
                   </>
                   }
@@ -363,8 +443,8 @@ export default function Members() {
                     <div className="flex flex-wrap">
                       <div className="w-full lg:w-6/12 px-4">
                         <div className="relative lg:w-6/12  mb-3">
-                          <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
-                            รหัสบัญชีผู้ใช้<span className="text-red-500"> *</span>
+                          <label className="block  text-blueGray-600 text-sm font-bold mb-2">
+                            {locale.t("Account.info.lblAccountCode")}<span className="text-red-500"> *</span>
                           </label>
                           <input
                             type="text"
@@ -385,12 +465,12 @@ export default function Members() {
                       <div className="w-full lg:w-6/12 px-4">
                         <div className="float-right">
                           <div className="relative w-full mb-3 text-center flex justify-between">
-                            <span className="text-sm font-bold text-center flex justify-between"><span className="mt-2">เปิดใช้งาน</span> &nbsp; 
+                            <span className="text-sm font-bold text-center flex justify-between"><span className="mt-2">{locale.t("Account.info.lblActive")}</span> &nbsp; 
                             <Switch 
                               isOn={value}
                               id="isActivated"
                               name="isActivated"
-                              onColor="#0EA6E9"
+                              onColor="#69ac2b"
                               float="right"
                               handleToggle={() => {setValue(!value)}}
                               disble={enableControl}
@@ -401,16 +481,16 @@ export default function Members() {
                       </div>
                       <div className="w-full lg:w-3-1/12 px-4 py-1">
                         <div className="relative w-full mb-3">
-                          <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
-                            คำนำหน้า
+                          <label className="block  text-blueGray-600 text-sm font-bold mb-2">
+                          {locale.t("Account.info.lblTitle")}
                           </label>
                             <Select
                               id="title"
                               name="title"
                               onChange={value => {formik.setFieldValue('title',value.value)}}
                               className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" 
-                              options={options}
-                              value={defaultValue(options, formik.values.title)}
+                              options={((Storage.GetLanguage() === "th") ? options : optionsEng)}
+                              value={defaultValue(((Storage.GetLanguage() === "th") ? options : optionsEng), formik.values.title)}
                               isDisabled={enableControl}
                               />
                         </div> 
@@ -418,9 +498,9 @@ export default function Members() {
                       <div className="w-full lg:w-3-2/12 px-4 py-1">
                         <div className="relative w-full mb-3">
                           <label
-                            className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
+                            className="block  text-blueGray-600 text-sm font-bold mb-2"
                           >
-                            ชื่อ<span className="text-red-500"> *</span>
+                            {locale.t("Account.info.lblFirstName")}<span className="text-red-500"> *</span>
                           </label> 
                           <input
                             type="text"
@@ -441,9 +521,9 @@ export default function Members() {
                       <div className="w-full lg:w-3-2/12 px-4 py-1">
                         <div className="relative w-full mb-3">
                           <label
-                            className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
+                            className="block  text-blueGray-600 text-sm font-bold mb-2"
                           >
-                            นามสกุล<span className="text-red-500"> *</span>
+                            {locale.t("Account.info.lblLastName")}<span className="text-red-500"> *</span>
                           </label>
                           <input
                             type="text"
@@ -466,14 +546,14 @@ export default function Members() {
                 </div>
                 {/* <hr className="mt-6 border-b-1 border-blueGray-300" /> */}
 
-                {/* <h6 className="text-blueGray-400 text-sm mt-3 mb-6 font-bold uppercase">
+                {/* <h6 className="text-blueGray-400 text-sm mt-3 mb-6 font-bold ">
                   Contact Information
                 </h6> */}
                 <div className="flex flex-wrap">
                   <div className="w-full lg:w-6/12 px-4 py-1">
                     <div className="relative w-full mb-3">
-                      <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
-                        อีเมล<span className="text-red-500"> *</span>
+                      <label className="block  text-blueGray-600 text-sm font-bold mb-2">
+                      {locale.t("Account.list.lblEmail")}<span className="text-red-500"> *</span>
                       </label>
                       <input
                         type="text"
@@ -494,9 +574,9 @@ export default function Members() {
                   <div className="w-full lg:w-6/12 px-4 py-1">
                     <div className="relative w-full mb-3">
                       <label
-                        className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
+                        className="block  text-blueGray-600 text-sm font-bold mb-2"
                       >
-                        เบอร์โทร<span className="text-red-500"> *</span>
+                        {locale.t("Account.info.lblPhoneNumber")}<span className="text-red-500"> *</span>
                       </label>
                       <input
                         type="text"
@@ -520,60 +600,63 @@ export default function Members() {
                   <div className="w-full lg:w-6/12 px-4 py-1">
                     <div className="flex flex-wrap">
                       <div className="w-full lg:w-4/12">
-                        <label
-                          className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
-                        >
-                          วันเกิด<span className="text-red-500"> *</span>
-                        </label>
-                        <DatePicker
-                          value={selectedDay}
-                          onChange={(e) => {setSelectedDay(e); CalBirthDay(e); }}
-                          renderInput={renderCustomInput} // render a custom input
-                          shouldHighlightWeekends
-                        />
-                        {formik.touched.birthDate && formik.errors.birthDate ? (
-                              <div className="text-sm py-2 px-2 text-red-500">{formik.errors.birthDate}</div>
-                          ) : null}
-                      </div>
-                      <div className="w-full lg:w-4/12">
-                        <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
-                          อายุ
-                        </label>
-                        <input
-                                type="text"
-                                className="border-0 px-2 py-2   mb-4 laceholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
-                                id="NumOfHours"
-                                name="NumOfHours"
-                                value={dayBirth}
-                                onBlur={formik.handleBlur}
-                                readOnly={true}
-                                disabled={enableControl}
-                        
+                        <div className="w-90">
+                          <label
+                            className="block  text-blueGray-600 text-sm font-bold mb-2"
+                          >
+                            {locale.t("Account.info.lblBirthDate")}<span className="text-red-500"> *</span>
+                          </label>
+                          <DatePicker
+                            value={selectedDay}
+                            onChange={(e) => {setSelectedDay(e); CalBirthDay(e); }}
+                            renderInput={renderCustomInput} // render a custom input
+                            shouldHighlightWeekends
                           />
-                         <span className="text-xs font-bold"> &nbsp;ปี</span>
+                          {formik.touched.birthDate && formik.errors.birthDate ? (
+                                <div className="text-sm py-2 px-2 text-red-500">{formik.errors.birthDate}</div>
+                            ) : null}
+                        </div>
                       </div>
                       <div className="w-full lg:w-4/12">
-                        <label
-                          className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
-                        >
-                          เพศ
-                        </label>
-                        <Select
-                              id="gender"
-                              name="gender"
-                              onChange={value => {formik.setFieldValue('gender',value.value)}}
-                              className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" 
-                              options={optionsGender}
-                              value={defaultValue(optionsGender, formik.values.gender)}
-                              isDisabled={enableControl}
-                              />
+                        <div className="w-90">
+                          <label className="block  text-blueGray-600 text-sm font-bold mb-2">
+                            {locale.t("Account.info.lblAge")}
+                          </label>
+                          <input
+                                  type="text"
+                                  className="border-0 px-2 py-2  w-80 mb-4 laceholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                                  id="NumOfHours"
+                                  name="NumOfHours"
+                                  value={dayBirth}
+                                  onBlur={formik.handleBlur}
+                                  readOnly={true}
+                                  disabled={enableControl}
+                            />
+                          <span className="text-xs font-bold"> &nbsp;ปี</span>
+                        </div>
+                      </div>
+                      <div className="w-full lg:w-4/12">
+                          <label
+                            className="block  text-blueGray-600 text-sm font-bold mb-2"
+                          >
+                            {locale.t("Account.info.lblGender")}
+                          </label>
+                          <Select
+                                id="gender"
+                                name="gender"
+                                onChange={value => {formik.setFieldValue('gender',value.value)}}
+                                className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" 
+                                options={((Storage.GetLanguage() === "th") ? optionsGender : optionsGenderEng)}
+                                value={defaultValue(((Storage.GetLanguage() === "th") ? optionsGender : optionsGenderEng), formik.values.gender)}
+                                isDisabled={enableControl}
+                                />
                       </div>
                     </div>
                   </div>
                   <div className="w-full lg:w-6/12 px-4 py-1">
                     <div className="relative w-full mb-3">
-                      <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
-                        ชื่อกลุ่ม
+                      <label className="block  text-blueGray-600 text-sm font-bold mb-2">
+                        {locale.t("Account.info.lblGroup")}
                       </label>
                       <input
                         type="text"
@@ -590,8 +673,8 @@ export default function Members() {
                   </div>
                   <div className="w-full lg:w-6/12 px-4 py-1">
                     <div className="relative w-full mb-3">
-                      <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
-                        บทบาท
+                      <label className="block  text-blueGray-600 text-sm font-bold mb-2">
+                        {locale.t("Account.list.lblRole")}
                       </label>
                       <Select  
                         id="role"
@@ -599,15 +682,15 @@ export default function Members() {
                         onChange={value => {  formik.setFieldValue('role',value.value)}}
                         //value={formik.values.title}
                         className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm-select shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" 
-                        options={optionsRole} 
-                        value={defaultValue(optionsRole, formik.values.role)}
+                        options={((Storage.GetLanguage() === "th") ? optionsRole : optionsRoleEng)} 
+                        value={defaultValue(((Storage.GetLanguage() === "th") ? optionsRole : optionsRoleEng), formik.values.role)}
                         isDisabled={enableControl || formik.values.email === "admin@mju.ac.th"}/>
                     </div>
                   </div>
                   <div className="w-full lg:w-6/12 px-4 py-1">
                     <div className="relative w-full mb-3">
-                      <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
-                        เส้นทางการเรียนรู้ที่สนใจ
+                      <label className="block  text-blueGray-600 text-sm font-bold mb-2">
+                        {locale.t("Account.list.lblLearningPath")}
                       </label>
                       <Select
                         id="learningPathId"
@@ -615,15 +698,15 @@ export default function Members() {
                         onChange={value => {  formik.setFieldValue('learningPathId',value.value)}}
                         //value={formik.values.title}
                         className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm-select shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" 
-                        options={optionsLearning} 
-                        value={defaultValue(optionsLearning, formik.values.learningPathId)}
+                        options={((Storage.GetLanguage() === "th") ? optionsLearning : optionsLearningEng)} 
+                        value={defaultValue(((Storage.GetLanguage() === "th") ? optionsLearning : optionsLearningEng), formik.values.learningPathId)}
                         isDisabled={enableControl}/>
                     </div>
                   </div>
                   <div className="w-full lg:w-6/12 px-4 py-1">
                     <div className="relative w-full mb-4">
-                      <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
-                        รหัสผ่าน<span className="text-red-500"> *</span>
+                      <label className="block  text-blueGray-600 text-sm font-bold mb-2">
+                        {locale.t("Account.info.lblPassword")}<span className="text-red-500"> *</span>
                       </label>
                       <input
                         type="password"
@@ -652,8 +735,8 @@ export default function Members() {
                   </div>
                   <div className="w-full lg:w-6/12 px-4 py-1">
                     <div className="relative w-full mb-4">
-                      <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
-                        ยืนยันรหัสผ่าน
+                      <label className="block  text-blueGray-600 text-sm font-bold mb-2">
+                        {locale.t("Account.info.lblConfirmPassword")}
                       </label>
                       <input
                         type="password"
@@ -671,8 +754,8 @@ export default function Members() {
                   </div>
                   <div className="w-full lg:w-6/12 px-4 py-1">
                     <div className="relative w-full mb-5">
-                      <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
-                        ที่อยู่
+                      <label className="block  text-blueGray-600 text-sm font-bold mb-2">
+                        {locale.t("Account.info.lblAddress")}
                       </label>
                       <input
                         type="text"
@@ -689,8 +772,8 @@ export default function Members() {
                     <div className="relative w-full mb-3">
                       <div className="flex flex-wrap">
                         <div className="w-full lg:w-4/12 mb-4">
-                          <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
-                            จังหวัด
+                          <label className="block  text-blueGray-600 text-sm font-bold mb-2">
+                            {locale.t("Account.info.lblProvince")}
                           </label>
                             <Select  
                               id="province"
@@ -700,14 +783,14 @@ export default function Members() {
                                 GetAddress("district",value.value); 
                               }}
                               className="border-0 placeholder-blueGray-300 w-90 text-blueGray-600 bg-white rounded text-sm-select shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" 
-                              options={dataProvice} 
+                              options={((Storage.GetLanguage() === "th") ? dataProvice : dataProviceEng)} 
                               menuPlacement="top"
-                              value={defaultValue(dataProvice, formik.values.province)}
+                              value={defaultValue(((Storage.GetLanguage() === "th") ? dataProvice : dataProviceEng), formik.values.province)}
                               isDisabled={enableControl}/>
                         </div>
                         <div className="w-full lg:w-4/12 mb-4">
-                          <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
-                            อำเภอ
+                          <label className="block  text-blueGray-600 text-sm font-bold mb-2">
+                            {locale.t("Account.info.lblDistrict")}
                           </label>
                             <Select  
                               id="district"
@@ -715,23 +798,23 @@ export default function Members() {
                               onChange={value => {  formik.setFieldValue('district',value.value);
                               GetAddress("subDistrict",value.value);}}
                               className="border-0 placeholder-blueGray-300 w-90 text-blueGray-600 bg-white rounded text-sm-select shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" 
-                              options={dataDistrict} 
+                              options={((Storage.GetLanguage() === "th") ? dataDistrict : dataDistrictEng)} 
                               menuPlacement="top"
-                              value={defaultValue(dataDistrict, formik.values.district)}
+                              value={defaultValue(((Storage.GetLanguage() === "th") ? dataDistrict : dataDistrictEng), formik.values.district)}
                               isDisabled={enableControl}/>
                         </div>
                         <div className="w-full lg:w-4/12">
-                          <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
-                            ตำบล
+                          <label className="block  text-blueGray-600 text-sm font-bold mb-2">
+                            {locale.t("Account.info.lblSubDistrict")}
                           </label>
                             <Select  
                               id="subDistrict"
                               name="subDistrict"
                               onChange={value => {  formik.setFieldValue('subDistrict',value.value)}}
                               className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm-select shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" 
-                              options={dataSubDistrict} 
+                              options={ ((Storage.GetLanguage() === "th") ? dataSubDistrict : dataSubDistrictEng)} 
                               menuPlacement="top"
-                              value={defaultValue(dataSubDistrict, formik.values.subDistrict)}
+                              value={defaultValue( ((Storage.GetLanguage() === "th") ? dataSubDistrict : dataSubDistrictEng), formik.values.subDistrict)}
                               isDisabled={enableControl}/>
                         </div>
                       </div>
@@ -739,8 +822,8 @@ export default function Members() {
                   </div>
                   <div className="w-full lg:w-6/12 px-4 py-1">
                     <div className="relative w-full mb-3">
-                      <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
-                        รายละเอียด
+                      <label className="block  text-blueGray-600 text-sm font-bold mb-2">
+                        {locale.t("Account.info.lblDescription")}
                       </label>
                       <textarea
                         type="text"
