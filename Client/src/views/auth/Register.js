@@ -28,21 +28,19 @@ export default function Register() {
     { value: '2', label: 'Female' },
   ];
 
-    // render regular HTML input element
-    const renderCustomInput = ({ ref }) => (
-      <>
-        <span className="datepicker-toggle">
-          <span className="datepicker-toggle-button"><i className="far fa-calendar "></i></span>
-          <input ref={ref}
-          type="text"
-    
-          className="datepicker-input cursor-pointer  mb-4  border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" // a styling class
-          value={selectedDay !== null ? `${selectedDay.day}/${selectedDay.month}/${selectedDay.year}` :  new Date().toLocaleDateString('en-GB')} />
-        </span>
-      </>
-    )
+  // render regular HTML input element
+  const renderCustomInput = ({ ref }) => (
+    <>
+      <span className="datepicker-toggle">
+        <span className="datepicker-toggle-button"><i className="far fa-calendar "></i></span>
+        <input ref={ref}
+        type="text"
   
-
+        className="datepicker-input cursor-pointer  mb-4  border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" // a styling class
+        value={selectedDay !== null ? `${selectedDay.day}/${selectedDay.month}/${selectedDay.year}` :  new Date().toLocaleDateString('en-GB')} />
+      </span>
+    </>
+  )
 
   const formik = useFormik({
     initialValues : {
@@ -118,7 +116,7 @@ export default function Register() {
     const response = await axios(urlPath+"/learning");
     const body = await response.data.listLearning;
     var JsonLearning = [];
-    body.forEach(field => JsonLearning.push({value: field.id.toString(),label: field.LearningPathNameTH }))
+    body.forEach(field => JsonLearning.push({value: field.id.toString(),label: field.LearningPathNameENG }))
     setOptionsLearning(JsonLearning)
   }
 
