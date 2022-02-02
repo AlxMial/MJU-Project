@@ -10,7 +10,6 @@ router.post("/",async (req,res)=>{
   const resetUrl = req.body.resetUrl
   var transporter = nodemailer.createTransport({
     service: 'gmail',
-
     auth: {
       user: frommail,
       pass: password
