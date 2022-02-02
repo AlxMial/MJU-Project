@@ -112,6 +112,7 @@ export default function MembersList() {
     };
 
     const ChangeSelect = (options,value,type) =>{
+        if(value=== "") { value = "1"; }
         if(type === "title"){
             return  value  = options.filter(x => x.value === value.toString())[0].label;
         } else if (type === "role") {
