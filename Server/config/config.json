@@ -3,7 +3,7 @@
     "username": "monty",
     "password": "undefined@090421",
     "database": "mjuproject",
-    "host": "184.82.26.230",
+    "host": "undefined.ddns.net",
     "dialect": "mysql"
     
   },
@@ -11,14 +11,14 @@
     "username": "monty",
     "password": "undefined@090421",
     "database": "mjuproject",
-    "host": "184.82.26.230",
+    "host": "undefined.ddns.net",
     "dialect": "mysql"
   },
   "production": {
     "username": "monty",
     "password": "undefined@090421",
     "database": "mjuproject",
-    "host": "184.82.26.230",
+    "host": "undefined.ddns.net",
     "dialect": "mysql"
   }
 }
