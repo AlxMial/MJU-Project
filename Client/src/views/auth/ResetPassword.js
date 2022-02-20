@@ -117,7 +117,7 @@ export default function ResetPassword() {
                         value={valueConfirm}
                       />
                       {confirmPassword ? (
-                              <div className="text-sm py-2 px-2 text-red-500">* รหัสผ่านไม่ตรงกัน</div>
+                              <div className="text-sm py-2 px-2 text-red-500">* Passwords do not match</div>
                           ) : null}
                   </div>
              

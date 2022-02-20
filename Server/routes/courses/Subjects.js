@@ -9,9 +9,9 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-  await Subjects.create(req.body);
-  const subject = await Subjects.findOne({ where : { SubjectCode: req.body.SubjectCode,CourseId: req.body.CourseId}});
-  res.json(subject);
+  const listOfSubjects =  await Subjects.create(req.body);
+  //const subject = await Subjects.findOne({ where : { SubjectCode: req.body.SubjectCode,CourseId: req.body.CourseId}});
+  res.json({listOfSubjects : listOfSubjects});
 });
 
 router.get('/byId/:id', async (req,res) =>{

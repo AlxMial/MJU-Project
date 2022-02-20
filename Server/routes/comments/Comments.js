@@ -6,9 +6,12 @@ const { validateToken } = require("../../middlewares/AuthMiddleware");
 
 router.get('/byCourse/:id',validateToken, async (req,res) => {
     const id = req.params.id;
-    const comment = await Comments.findAll({ where : { CourseId: id}});
+    const comment = await Comments.findAll({ where : { CourseId: id},   
+        order: [
+        // will return `username` DESC
+        ['createdAt', 'DESC']] });
     res.json(comment);
-  });
+});
 
 router.post("/",validateToken, async (req, res) => {
     Comments.create(req.body);

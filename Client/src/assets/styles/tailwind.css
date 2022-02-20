@@ -1172,6 +1172,11 @@ select {
 }
 
 
+.bg-yello-mju {
+  --tw-bg-opacity: 1;
+  background-color: #FADB5E;
+}
+
 
 .bg-purple-mju {
   background-color: #6366f1;
@@ -1196,6 +1201,11 @@ select {
 .active\:bg-rose-mju:active {
   --tw-bg-opacity: 1;
   background-color: #DDADAC;
+}
+
+.active\:bg-yello-mju:active {
+  --tw-bg-opacity: 1;
+  background-color: #FADB5E;
 }
 
 .active\:bg-darkgreenactive-mju:active {
@@ -1734,6 +1744,11 @@ select {
   font-size: 55rem;
 }
 
+.text-validate {
+  font-size:1.15rem;
+  line-height: 1rem;
+}
+
 .text-xs {
   font-size:1.2rem;
   line-height: 1rem;
@@ -2183,6 +2198,10 @@ select {
   overflow-x: hidden;
 }
 
+.p-1 {
+  padding: 0.25rem;
+}
+
 .p-2 {
   padding: 0.5rem;
 }
@@ -2212,6 +2231,18 @@ select {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
 }
+
+.py-1-input {
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
+}
+
+.px-1-input {
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
+}
+
+
 
 .py-2 {
   padding-top: 0.5rem;
@@ -3984,7 +4015,7 @@ input[type=text]:disabled,input[type=password]:disabled,textarea:disabled {
  right: 0;
   text-align: right;
   /* margin: auto; */
-  margin-top: 0.8rem;
+  margin-top: 0.5rem;
   margin-right: 0.8rem;
 }
 
@@ -4007,4 +4038,44 @@ input[type=text]:disabled,input[type=password]:disabled,textarea:disabled {
 }
 .display-inline{
   display: inline-flex;
+}
+
+.TextWordWarp{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width:250px;
+}
+
+.TextWordWarpCode{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
+  /* width:100px; */
+}
+
+.TextWordWarpPath{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width:50px;
+}
+
+.img-member {
+  width: 120px;
+  height: 120px;
+  background-image: cover;
+}
+
+.img-member-login {
+  width: 48px;
+  height: 48px;
+  background-image: cover;
+}
+
+.css-319lph-ValueContainer .css-6j8wv5-Input .css-319lph-ValueContainer{
+  padding-top: 0;
+  padding-bottom: 0;
+  margin: 0;
 }

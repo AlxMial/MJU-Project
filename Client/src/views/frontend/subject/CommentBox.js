@@ -49,7 +49,7 @@ class Post extends React.Component {
                                 <span>{this.props.likes} </span>
                                 Likes
                             </span>
-                            <span className="desc"><i class="far fa-comment"></i><span>{this.props.commentsNumber}</span> Comments</span>
+                            <span className="desc"><i className="far fa-comment"></i><span>{this.props.commentsNumber}</span> Comments</span>
                         </div>
                     </div>
                 </div>
@@ -105,7 +105,8 @@ class CreateComment extends React.Component {
     handleSubmit = (e) => {
         e.preventDefault();
         const fullName = localStorage.getItem('fullName');
-        const profilePicture = localStorage.getItem('profilePicture');
+        const defaultPicture = require("assets/img/noimg.png").default;
+        const profilePicture = ((localStorage.getItem('profilePicture') === "") ?  defaultPicture :  localStorage.getItem('profilePicture'));
         const timeago = moment(new Date()).fromNow();
         this.props.onCommentSubmit({
             user: fullName,
@@ -182,7 +183,9 @@ export default class CommentBox extends Component {
         const newComments = [comment].concat(comments);
         const defaultPicture = require("assets/img/noimg.png").default;
         const fullName = localStorage.getItem('fullName');
+        console.log(localStorage.getItem('profilePicture'))
         const profilePicture = ((localStorage.getItem('profilePicture') === "") ?  defaultPicture :  localStorage.getItem('profilePicture'));
+        console.log(profilePicture)
         const email = localStorage.getItem('email');
         const data = {
             TextComment: comment.content,

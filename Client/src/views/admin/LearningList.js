@@ -38,7 +38,6 @@ export default function LearningList() {
     const [isLoading, setIsLoading] = useState(false);
     const pagesVisited = pageNumber * usersPerPage;
     const { addToast } = useToasts();
-    const [isRemove,setIsRemove] = useState(false);
     function openModal(type) {
         setIsOpen(true);
     }
@@ -79,7 +78,6 @@ export default function LearningList() {
             setListLearning(tempLearning);
             setDeleteNumber(tempLearning.filter(x => x.IsDeleted === true).length);
         }
-        if(listLearning.filter(x => x.IsDeleted === true).length === 0){setIsRemove(true)}else{setIsRemove(false)}
     };
 
     const deleteLearning = async (e) => {
@@ -153,10 +151,10 @@ export default function LearningList() {
                     />
                 </th>
                 <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap cursor-pointer">
-                    <Link to={`/admin/learning/${value.id}`}>{ value.LearningPathNameTH }</Link>
+                    <div className="TextWordWarpCode"><Link to={`/admin/learning/${value.id}`}>{ value.LearningPathNameTH }</Link></div>
                 </td>
                 <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap  cursor-pointer">
-                    <Link to={`/admin/learning/${value.id}`} >{value.LearningPathNameENG}</Link>
+                    <div className="TextWordWarp"><Link to={`/admin/learning/${value.id}`} >{value.LearningPathNameENG}</Link></div>
                 </td>
                 <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap cursor-pointer">
                     {value.CoursesCount}
@@ -257,7 +255,7 @@ export default function LearningList() {
                             <h3 className={"font-semibold text-sm text-blueGray-700"}>
                                 {listLearning.length} {locale.t("Main.lblItem")}
                             </h3>
-                            <h3 className={"font-semibold text-sm text-blueGray-700 leading-2"  + ((isRemove) ? " block" : " hidden")}>
+                            <h3 className={"font-semibold text-sm text-blueGray-700 leading-2"  + ((deleteNumber > 0) ? " block" : " hidden")}>
                             &nbsp; <i className="fas fa-trash text-red-500 cursor-pointer" onClick={()=>{openModalSubject()}}></i> &nbsp;
                                 <span>{locale.t("Button.lblDelete")} {deleteNumber} {locale.t("Main.lblChoose")}</span>
                                 <ConfirmDialog  showModal={modalIsOpenSubject} message={ ((Storage.GetLanguage() === "th") ? "จัดการเส้นทางการเรียนรู้" : "Learning Path Management")} hideModal={()=>{closeModalSubject()}} confirmModal={() => {deleteByList()}}/>

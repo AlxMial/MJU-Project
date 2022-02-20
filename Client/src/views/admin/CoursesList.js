@@ -35,7 +35,6 @@ export default function CoursesList() {
     const usersPerPage = 10;
     const pagesVisited = pageNumber * usersPerPage;
     const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
-    const [isRemove,setIsRemove] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     function openModal(type) {
         setIsOpen(true);
@@ -76,7 +75,6 @@ export default function CoursesList() {
             setListCourses(tempCourses);
             setDeleteNumber(tempCourses.filter(x => x.IsDeleted === true).length);
         }
-        if(listCourses.filter(x => x.IsDeleted === true).length === 0){setIsRemove(true)}else{setIsRemove(false)}
     };
 
     const deleteCourses = (e) => {
@@ -134,13 +132,13 @@ export default function CoursesList() {
                     />
                 </th>
                 <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap cursor-pointer">
-                    <Link to={`/admin/courses/${value.id}`}>{ value.CurriculumCode }</Link>
+                    <div className="TextWordWarpCode"><Link to={`/admin/courses/${value.id}`}>{ value.CurriculumCode }</Link></div>
                 </td>
                 <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap  cursor-pointer">
-                    <Link to={`/admin/courses/${value.id}`} >{ value.CurriculumNameTH }</Link>
+                    <div className="TextWordWarp"><Link to={`/admin/courses/${value.id}`} >{ value.CurriculumNameTH }</Link></div>
                 </td>
                 <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap cursor-pointer">
-                    <Link to={`/admin/courses/${value.id}`} >{ value.CurriculumNameENG }</Link>
+                    <div className="TextWordWarp"><Link to={`/admin/courses/${value.id}`} >{ value.CurriculumNameENG }</Link></div>
                 </td>
                 <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap ">
                     <>{ value.SubjectsCount }</>
@@ -197,6 +195,7 @@ export default function CoursesList() {
                             </div>
                         </div>
                     </Modal>
+                    &nbsp;
                 </td>
             </tr>
         );
@@ -240,7 +239,7 @@ export default function CoursesList() {
                             <h3 className={"font-semibold text-sm text-blueGray-700"}>
                                 {listCourses.length}  {locale.t("Main.lblItem")}
                             </h3>
-                            <h3 className={"font-semibold text-sm text-blueGray-700 leading-2" + ((isRemove) ? " block" : " hidden")}>
+                            <h3 className={"font-semibold text-sm text-blueGray-700 leading-2" + ((deleteNumber > 0) ? " block" : " hidden")}>
                             &nbsp; <i className="fas fa-trash text-red-500 cursor-pointer" onClick={()=>{openModalSubject()}}></i> &nbsp;
                                 <span>{locale.t("Button.lblDelete")} {deleteNumber} {locale.t("Main.lblChoose")}</span>
                                 <ConfirmDialog  showModal={modalIsOpenSubject} message={ ((Storage.GetLanguage() === "th") ? "จัดการหลักสูตร" : "Curriculum Management")} hideModal={()=>{closeModalSubject()}} confirmModal={() => {deleteByList()}}/>

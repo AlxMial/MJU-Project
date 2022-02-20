@@ -6,8 +6,8 @@ const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 
 router.post("/", async (req, res) => {
-    Learning.create(req.body);
-    res.json("SUCCESS");
+    const learn = await Learning.create(req.body);
+    res.json({listLearning : learn} );
 });
 
 router.get("/", async (req, res) => {

@@ -22,6 +22,7 @@ const locale = require("react-redux-i18n").I18n;
 export default function Members() {
 
   const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
+  const EmailRegExp = /^[A-Za-z0-9_.@]+$/;
   const [value, setValue] = useState(false);
   const [postImage, setPostImage] = useState("");
   const [confirmPassword, setConfirmPassword] = useState(false);
@@ -106,6 +107,7 @@ export default function Members() {
         <span className="datepicker-toggle-button"><i className="far fa-calendar "></i></span>
         <input ref={ref}
         type="text"
+        readOnly
         className="datepicker-input cursor-pointer  mb-4 my-custom-input-class border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" // a styling class
         disabled={enableControl}
         value={selectedDay !== null ? `${selectedDay.day}/${selectedDay.month}/${selectedDay.year}` :  new Date().toLocaleDateString('en-GB')} />
@@ -131,6 +133,7 @@ export default function Members() {
 
   const formik = useFormik({
      initialValues : {
+      id:'',
       accountCode:'',
       title:'',
       firstName:'',
@@ -156,7 +159,7 @@ export default function Members() {
       accountCode:Yup.string().required((Storage.GetLanguage() === "th") ? '* กรุณากรอก รหัสบัญชีผู้ใช้' : '* Please enter your account code'),
       firstName:Yup.string().required((Storage.GetLanguage() === "th") ? '* กรุณากรอก ชื่อ' : '* Please enter your first name'),
       lastName:Yup.string().required((Storage.GetLanguage() === "th") ?'* กรุณากรอก นามสกุล' : '* Please enter your last name'),
-      email:Yup.string().email((Storage.GetLanguage() === "th") ? '* รูปแบบอีเมลไม่ถูกต้อง' : 'Invalid email format').required((Storage.GetLanguage() === "th") ? '* กรุณากรอก อีเมล'  : '* Please enter your email'),
+      email:Yup.string().matches(EmailRegExp,(Storage.GetLanguage() === "th") ? '* ขออภัย อนุญาตให้ใช้เฉพาะตัวอักษร (a-z), ตัวเลข (0-9) และเครื่องหมายมหัพภาค (.) เท่านั้น' :'* Sorry, only letters (a-z), numbers (0-9), and periods (.) are allowed.').email((Storage.GetLanguage() === "th") ? '* รูปแบบอีเมลไม่ถูกต้อง' : 'Invalid email format').required((Storage.GetLanguage() === "th") ? '* กรุณากรอก อีเมล'  : '* Please enter your email'),
       phoneNumber:Yup.string().matches(phoneRegExp, (Storage.GetLanguage() === "th") ? '* รูปแบบเบอร์โทรศัพท์ ไม่ถูกต้อง' : '* The phone number format is invalid').required((Storage.GetLanguage() === "th") ? '* กรุณากรอก เบอร์โทรศัพท์' : '* Please enter your phone number' ),
       birthDate:Yup.string().required((Storage.GetLanguage() === "th") ? '* กรุณากรอก วันเกิด' : '* Please enter your date of birth'),
       password:Yup.string().required((Storage.GetLanguage() === "th") ? '* กรุณากรอก รหัสผ่าน' : '* Please enter your password'),
@@ -170,12 +173,11 @@ export default function Members() {
       formik.values.province = (formik.values.province === "") ? "1" : formik.values.province;
       formik.values.district = (formik.values.district === "") ? "1001" : formik.values.district;
       formik.values.subDistrict = (formik.values.subDistrict === "") ? "100101" : formik.values.subDistrict;
+      console.log(selectedDay)
       formik.values.birthDate = selectedDay;
       if(!isNew)
         if(values.id === undefined)
           values.id = listMembers.filter(x => x.accountCode === formik.values.accountCode )[0].id;
-
-      console.log(formik.values.birthDate)
       axios.get(urlPath+`/members/getAccountCode/${values.accountCode}`,{
         headers: {accessToken : localStorage.getItem("accessToken")}
       }).then((response) => {
@@ -203,16 +205,20 @@ export default function Members() {
               {
                 addToast(response.data.error, { appearance: 'error', autoDismiss: true });
               } else {
+                formik.values.birthDate = selectedDay.toString();
                 addToast((Storage.GetLanguage() === "th") ? 'บันทึกข้อมูลสำเร็จ' : 'Save data successfully', { appearance: 'success', autoDismiss: true });
                 setIsEnableControl(true);
                 setIsNew(false);
-                axios.get(urlPath+"/members",{
-                  headers: {accessToken : localStorage.getItem("accessToken")}
-                }).then((response) => {
-                  if(response){
-                      setListMembers(response.data.listMembers);
-                    }
-                  });
+                // axios.get(urlPath+"/members",{
+                //   headers: {accessToken : localStorage.getItem("accessToken")}
+                // }).then((response) => {
+                //   if(response){
+                //       setListMembers(response.data.listMembers);
+                //     }
+                // });
+                formik.setFieldValue('id',response.data.listMembers.id)
+                setListMembers(response.data.listMembers);
+
               }
             });
           } else {
@@ -225,6 +231,8 @@ export default function Members() {
               {
                 addToast(response.data.error, { appearance: 'error', autoDismiss: true });
               } else {
+
+                formik.values.birthDate = selectedDay.toString();
                 addToast((Storage.GetLanguage() === "th") ? 'บันทึกข้อมูลสำเร็จ' : 'Save data successfully', { appearance: 'success', autoDismiss: true });
                 setIsEnableControl(true);
               }
@@ -252,6 +260,11 @@ export default function Members() {
       var District = "";
       var JsonLearning = [];
       var JsonLearningEng = [];
+      const NullDate = {
+        year:  new Date().getFullYear(),
+        month: new Date().getMonth()+1,
+        day: new Date().getDate(),
+      };
       for(var columns in response.data) {
         JsonLearning = [];
         JsonLearningEng = [];
@@ -263,9 +276,16 @@ export default function Members() {
         if(columns === "birthDate")
         {
           const obj = JSON.parse(response.data[columns]);
-          CalBirthDay(obj);
-          setSelectedDay(obj);
-          formik.setFieldValue(columns, obj.toString(), false);
+          if(response.data[columns] === null)
+          {
+            CalBirthDay(selectedDay);
+            setSelectedDay(selectedDay);
+            formik.setFieldValue(columns, selectedDay.toString(), false);
+          } else {
+            CalBirthDay(obj);
+            setSelectedDay(obj);
+            formik.setFieldValue(columns, obj.toString(), false);
+          }
         }else if (columns === "district") {
           api_amphure.filter(e => e.province_id.toString() === ProvinceId.toString()).forEach(field => { 
             JsonLearning.push({value: field.value.toString(), label:  field.label });
@@ -282,12 +302,15 @@ export default function Members() {
           setSubDistrict(JsonLearning)
           setSubDistrictEng(JsonLearningEng)
           formik.setFieldValue('subDistrict',response.data[columns]);
+        }else if (columns === 'year' || columns === 'month' || columns === 'day'){
+          if(response.data[columns] === null )
+            setSelectedDay(NullDate);
         }
-        else {
+        else if (columns !== 'profilePicture'){
           formik.setFieldValue(columns,(( response.data[columns]===null) ? '' : response.data[columns]), false);
         }
       }
-
+    
       if(response.data.profilePicture !== null)
         setPostImage(FilesService.buffer64(response.data.profilePicture));
       setValue(response.data.isActivated);
@@ -356,6 +379,9 @@ export default function Members() {
   }
 
   const CalBirthDay =(e)=>{
+    if(e === null) {
+      e = selectedDay.toString();
+    }
     const diffDays = (date, otherDate) => Math.ceil(Math.abs(date - otherDate) / (1000 * 60 * 60 * 24));
     const day = diffDays(new Date(e.year+'/'+e.month+'/'+e.day), new Date());
     setDayBirth((day > 365 && new Date(e.year+'/'+e.month+'/'+e.day) < new Date()) ? parseInt(day/365) : 0 )
@@ -410,13 +436,13 @@ export default function Members() {
                       type="button"
                       onClick={() =>{EnableControl(true)}}
                     >
-                    <i className="fas fa-pencil-alt"></i>&nbsp;{locale.t("Button.lblDrop")}
+                    <i className="far fa-times-circle"></i>&nbsp;{locale.t("Button.lblDrop")}
                     </button>     
                     <button
-                      className="bg-blue-save-mju text-white active:bg-blueactive-mju font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" 
-                      type="submit"
-                      >
-                    <i className="fas fa-save"></i>&nbsp;{locale.t("Button.lblInsert")}
+                    className="bg-blue-save-mju text-white active:bg-blueactive-mju font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" 
+                    type="submit"
+                    >
+                      <i className="fas fa-save"></i>&nbsp;{locale.t("Button.lblSave")}
                     </button>
                   </>
                   }
@@ -431,7 +457,7 @@ export default function Members() {
                         <label htmlFor="file-input" className="cursor-pointer">
                           <img
                             alt="..."
-                            className="w-full rounded-full align-middle border-none shadow-lg"
+                            className=" img-member  w-full rounded-full align-middle border-none shadow-lg"
                             src={  ((postImage) ? postImage  :  require("assets/img/noimg.png").default) }
                           />
                         </label>
@@ -452,6 +478,7 @@ export default function Members() {
                             autoComplete="off"
                             id="accountCode"
                             name="accountCode"
+                            maxLength={100}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             value={formik.values.accountCode}
@@ -507,6 +534,7 @@ export default function Members() {
                             className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                             id="firstName"
                             name="firstName"
+                            maxLength={255}
                             autoComplete="firstName"
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
@@ -530,6 +558,7 @@ export default function Members() {
                             className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                             id="lastName"
                             name="lastName"
+                            maxLength={255}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             value={formik.values.lastName}
@@ -560,6 +589,7 @@ export default function Members() {
                         className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="email"
                         name="email"
+                        maxLength={255}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         value={formik.values.email}
@@ -623,14 +653,15 @@ export default function Members() {
                             {locale.t("Account.info.lblAge")}
                           </label>
                           <input
-                                  type="text"
-                                  className="border-0 px-2 py-2  w-80 mb-4 laceholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
-                                  id="NumOfHours"
-                                  name="NumOfHours"
-                                  value={dayBirth}
-                                  onBlur={formik.handleBlur}
-                                  readOnly={true}
-                                  disabled={enableControl}
+                              type="text"
+                              className="border-0 px-2 py-2  w-80 mb-4 laceholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                              id="NumOfHours"
+                              name="NumOfHours"
+                              value={dayBirth}
+                              onBlur={formik.handleBlur}
+                              readOnly={true}
+                              maxLength={4}
+                              disabled={enableControl}
                             />
                           <span className="text-xs font-bold"> &nbsp;ปี</span>
                         </div>
@@ -663,6 +694,7 @@ export default function Members() {
                         className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="groupMember"
                         name="groupMember"
+                        maxLength={255}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         value={formik.values.groupMember}
@@ -713,6 +745,7 @@ export default function Members() {
                         className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="password"
                         name="password"
+                        maxLength={255}
                         onChange={(e) => {
                           if(e.target.value !== valueConfirm ) 
                           {
@@ -743,6 +776,7 @@ export default function Members() {
                         className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="confirmPassword"
                         name="confirmPassword"
+                        maxLength={255}
                         onChange={e=>{ validateConfirm(e.target.value); setValueConfirm(e.target.value); }}
                         disabled={enableControl}
                         value={valueConfirm}
@@ -764,6 +798,7 @@ export default function Members() {
                         name="address"
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
+                        maxLength={255}
                         value={formik.values.address}
                         disabled={enableControl}
                         autoComplete="new-password"

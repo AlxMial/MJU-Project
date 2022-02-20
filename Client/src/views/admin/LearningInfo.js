@@ -11,7 +11,11 @@ import urlPath from 'services/urlServer';
 import ImageResize from 'quill-image-resize-module-react';
 import Spinner from '../../components/Loadings/spinner/Spinner'
 import * as Storage from "../../../src/services/Storage.service";
+import CKEditor from 'react-ckeditor-component';
+import SunEditor from 'suneditor-react';
+import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 const locale = require("react-redux-i18n").I18n;
+
 
 Quill.register('modules/imageResize', ImageResize);
 // components
@@ -20,12 +24,16 @@ export default  function Learning() {
 
   const { addToast } = useToasts();
   let { id } = useParams();
-  const [enableControl,setIsEnableControl] = useState(true);
+  const [enableControl,setIsEnableControl] = useState(false);
   const [isNew,setIsNew] = useState(false);
   const [listLearning, setListLearning] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const handleKeyDown = (event) => {
+    event.stopPropagation(); //Get the keydown event
+  }
   const formik = useFormik({
     initialValues : {
+      id:'',
       LearningPathCode:'',
       LearningPathNameTH:'',
       LearningPathNameENG:'',
@@ -39,14 +47,12 @@ export default  function Learning() {
     DescriptionTH: Yup.string().required('* กรุณากรอก รายละเอียดเส้นทางการเรียนรู้ (ไทย)'),
    }),
    onSubmit: values => {
+     console.log(values)
     setIsLoading(true);
     axios.post(urlPath+"/learning/byLearningCode",{code:values.LearningPathCode,name:values.LearningPathNameTH},{
-      headers: { 
-        'Content-Type': 'application/json; charset=utf-8',
-        accessToken : localStorage.getItem("accessToken"),
-     },
-    },{ }).then((response) => {
-      console.log(response.data)
+      headers: {accessToken : localStorage.getItem("accessToken")},
+    }).then((response) => {
+
       if(response.data === null || response.data.id === values.id) {
         if(isNew){
           axios.post(urlPath+"/learning",values).then((response)=>{
@@ -57,9 +63,8 @@ export default  function Learning() {
             addToast('บันทึกข้อมูลสำเร็จ', { appearance: 'success', autoDismiss: true });
             setIsEnableControl(true);
             setIsNew(false)
-            axios.get(urlPath+"/learning").then((response) =>   {
-              setListLearning(response.data.listLearning);
-            });
+            formik.setFieldValue('id',response.data.listLearning.id);
+            setListLearning(response.data.listLearning);
           }
           });
         } else {
@@ -83,6 +88,16 @@ export default  function Learning() {
    },
  });
 
+  const onChangeEvent = (content) => {
+    formik.setFieldValue('DescriptionTH',content);
+    formik.values.DescriptionTH = content;
+  }
+
+  const onChangeEventENG = (content) => {
+    formik.setFieldValue('DescriptionENG',content);
+    formik.values.DescriptionENG = content;
+  }
+
   async function fetchData() {
     setIsLoading(true);
     let response = await axios(
@@ -98,6 +113,7 @@ export default  function Learning() {
       setListLearning(response.data);
       setIsNew(false);
       setIsLoading(false);
+      setIsEnableControl(true);
     } else {
       setIsNew(true);
       setIsEnableControl(false);
@@ -145,13 +161,13 @@ export default  function Learning() {
                       type="button"
                       onClick={() =>{EnableControl(true)}}
                     >
-                    <i className="fas fa-pencil-alt"></i>&nbsp;{locale.t("Button.lblDrop")}
+                    <i className="far fa-times-circle"></i>&nbsp;{locale.t("Button.lblDrop")}
                     </button>     
                     <button
-                      className="bg-blue-save-mju text-white active:bg-blueactive-mju font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" 
-                      type="submit"
-                      >
-                    <i className="fas fa-save"></i>&nbsp;{locale.t("Button.lblSave")}
+                    className="bg-blue-save-mju text-white active:bg-blueactive-mju font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" 
+                    type="submit"
+                    >
+                      <i className="fas fa-save"></i>&nbsp;{locale.t("Button.lblSave")}
                     </button>
                   </>
                   }
@@ -226,7 +242,7 @@ export default  function Learning() {
                       <label className="block  text-blueGray-600 text-sm font-bold mb-2">
                         {locale.t("Learning.info.lblDescriptionTH")}<span className="text-red-500"> *</span>
                       </label>
-                      <ReactQuill
+                      {/* <ReactQuill
                         theme="snow"  
                         value={formik.values.DescriptionTH}
                         onChange={v =>  formik.setFieldValue('DescriptionTH', v)} 
@@ -262,7 +278,48 @@ export default  function Learning() {
                           'color', 'background',
                           'clean','code'
                         ]}
-                      />
+                      /> */}
+                      <SunEditor
+                          disable={enableControl}
+                          setDefaultStyle="font-family: THSarabun; font-size: 18px;" 
+                          width="100%"
+                          height="300px"
+                          onKeyDown={handleKeyDown} 
+                          setContents={formik.values.DescriptionTH}
+                          onChange={onChangeEvent} 
+                          setOptions={{
+                          buttonList: [
+                            [
+                              "undo",
+                              "redo",
+                              "font",
+                              "fontSize",
+                              "formatBlock",
+                              "paragraphStyle",
+                              "blockquote",
+                              "bold",
+                              "underline",
+                              "italic",
+                              "strike",
+                              "fontColor",
+                              "hiliteColor",
+                              "textStyle",
+                              "removeFormat",
+                              "outdent",
+                              "indent",
+                              "align",
+                              "horizontalRule",
+                              "list",
+                              "lineHeight",
+                              "table",
+                              "link",
+                              "image",
+                              "video",
+                              "fullScreen",
+                              "codeView",
+                            ]
+                          ]
+                        }}/>
                       {formik.touched.DescriptionTH && formik.errors.DescriptionTH ? (
                         <div className="text-sm py-2 px-2 text-red-500">{formik.errors.DescriptionTH}</div>
                       ) : null}
@@ -275,7 +332,7 @@ export default  function Learning() {
                       >
                         {locale.t("Learning.info.lblDescriptionENG")}
                       </label>
-                      <ReactQuill
+                      {/* <ReactQuill
                         theme="snow"
                         value={formik.values.DescriptionENG}
                         onChange={v =>  formik.setFieldValue('DescriptionENG', v)} 
@@ -312,7 +369,48 @@ export default  function Learning() {
                           'clean',
                         ]}
 
-                      />
+                      /> */}
+                      <SunEditor
+                          disable={enableControl}
+                          setDefaultStyle="font-family: THSarabun; font-size: 18px;" 
+                          width="100%"
+                          height="300px"
+                          onKeyDown={handleKeyDown} 
+                          setContents={formik.values.DescriptionENG}
+                          onChange={onChangeEventENG} 
+                          setOptions={{
+                          buttonList: [
+                            [
+                              "undo",
+                              "redo",
+                              "font",
+                              "fontSize",
+                              "formatBlock",
+                              "paragraphStyle",
+                              "blockquote",
+                              "bold",
+                              "underline",
+                              "italic",
+                              "strike",
+                              "fontColor",
+                              "hiliteColor",
+                              "textStyle",
+                              "removeFormat",
+                              "outdent",
+                              "indent",
+                              "align",
+                              "horizontalRule",
+                              "list",
+                              "lineHeight",
+                              "table",
+                              "link",
+                              "image",
+                              "video",
+                              "fullScreen",
+                              "codeView",
+                            ]
+                          ]
+                        }}/>
                     </div>
                   </div>
                 </div>

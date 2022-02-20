@@ -56,7 +56,7 @@ export default function Courses() {
     const { addToast } = useToasts();
     const [isLoading, setIsLoading] = useState(false);
     let { id } = useParams();
-    const [enableControl,setIsEnableControl] = useState(true);
+    const [enableControl,setIsEnableControl] = useState(false);
     const [enableSubjectControl,setIsEnableSubjectControl] = useState(true);
     const [isNew,setIsNew] = useState(false);
     const [isNewSubject,setIsNewSubject] = useState(false);
@@ -71,6 +71,7 @@ export default function Courses() {
     const [imageCourses, setImageCourses] = useState("");
     const [imageCoursesName,setImageCourseName] = useState("");
     const [arrayAttach,setArrayAtteach] = useState([]);
+    const [isHourCourse,setIsHourCourse] = useState(false);
     const options = [
       { value: '1', label: 'ปฏิทิน' },
       { value: '2', label: 'การปลูก' },
@@ -81,6 +82,26 @@ export default function Courses() {
   const handleKeyDown = (event) => {
 
     event.stopPropagation(); //Get the keydown event
+  }
+
+  const onChangeEventCourseTH = (content) => {
+    formik.setFieldValue('DescriptionTH',content);
+    formik.values.DescriptionTH = content;
+  }
+
+  const onChangeEventCourseENG = (content) => {
+    formik.setFieldValue('DescriptionENG',content);
+    formik.values.DescriptionENG = content;
+  }
+
+  const onChangeEventSubjectTH = (content) => {
+    formikSubject.setFieldValue('ContentTH',content);
+    formikSubject.values.ContentTH = content;
+  }
+
+  const onChangeEventSubjectENG = (content) => {
+    formikSubject.setFieldValue('ContentENG',content);
+    formikSubject.values.ContentENG = content;
   }
 
   //#region list Subject and Attach
@@ -127,7 +148,7 @@ export default function Courses() {
         <>
         <tr key={value.id}>
           <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4 cursor-pointer">
-            <span onClick={() => {fetchDetailSubject(value.id);  openModal(); } }> {value.SubjectOfHour}  {locale.t("Course.info.lblHour")}</span>
+            <span onClick={() => {fetchDetailSubject(value.id);  openModal(); } }> {value.SubjectOfHour}  {locale.t("Course.info.lblMin")}</span>
           </th>
           <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4 font-bold cursor-pointer">
             <span onClick={() => {fetchDetailSubject(value.id);  openModal(); } }> {((Storage.GetLanguage()==="th") ? value.SubjectNameTH : value.SubjectNameENG)}</span>
@@ -280,6 +301,7 @@ export default function Courses() {
       setListCourse(response.data);
       setIsNew(false);
       setIsLoading(false);
+      setIsEnableControl(true);
     } else {
       setIsNew(true);
       setIsEnableControl(false);
@@ -291,14 +313,14 @@ export default function Courses() {
       let response = await axios(urlPath+`/subjects/byCoursesId/${id}`);
       let subjects = await response.data;
       if(subjects !== null) {
-        for(var columns in response.data) {
-          if(columns === "ContentTH" || columns === "ContentENG")
-          {  
-            formikSubject.setFieldValue(columns,FilesService.buffer64UTF8(response.data[columns]), false) 
-          }
-          else 
-            formikSubject.setFieldValue(columns, response.data[columns], false)
-        }
+        // for(var columns in response.data) {
+        //   if(columns === "ContentTH" || columns === "ContentENG")
+        //   {  
+        //     formikSubject.setFieldValue(columns,FilesService.buffer64UTF8(response.data[columns]), false) 
+        //   }
+        //   else 
+        //     formikSubject.setFieldValue(columns, response.data[columns], false)
+        // }
         setListsubject(response.data);
       } 
     }
@@ -309,12 +331,12 @@ export default function Courses() {
       });
       let attach = await response.data;
       if(attach !== null) {
-        for(var columns in response.data) {
-          if(columns === "FileData")
-            formikSubject.setFieldValue(columns,FilesService.buffer64(response.data[columns]), false) 
-          else 
-            formikSubject.setFieldValue(columns, response.data[columns], false)
-        }
+        // for(var columns in response.data) {
+        //   if(columns === "FileData")
+        //     formikSubject.setFieldValue(columns,FilesService.buffer64(response.data[columns]), false) 
+        //   else 
+        //     formikSubject.setFieldValue(columns, response.data[columns], false)
+        // }
         setListAttach(response.data);
       }
     }
@@ -322,7 +344,7 @@ export default function Courses() {
     async function fetchDetailSubject(SubjectId) {
       setIsLoading(true);
       let response = await axios(urlPath+`/subjects/byId/${SubjectId}`);
-      let subjects = await response.data;
+      let subjects = response.data;
       if(subjects !== null) {
         for(var columns in response.data) {
           if(columns === "ContentTH" || columns === "ContentENG")
@@ -353,6 +375,7 @@ export default function Courses() {
   /****************************formik Course****************************/
   const formik = useFormik({
     initialValues : {
+      id:'',
       CurriculumCode:'',
       CurriculumNameTH:'',
       CurriculumNameENG:'',
@@ -375,53 +398,64 @@ export default function Courses() {
    validationSchema: Yup.object({
       CurriculumCode:Yup.string().required((Storage.GetLanguage() === "th") ? '* กรุณากรอก รหัสหลักสูตร' : '* Please enter Curriculum code'),
       CurriculumNameTH:Yup.string().required((Storage.GetLanguage() === "th") ?'* กรุณากรอก ชื่อหลักสูตร' : '* Please enter Curriculum name' ),
-      NumOfHours:Yup.string().required((Storage.GetLanguage() === "th") ? '* กรุณากรอก จำนวนชั่วโมงหลักสูตร' : '* Please enter Curriculum hours'),
+      NumOfHours: Yup.string().required((Storage.GetLanguage() === "th") ? '* กรุณากรอก จำนวนชั่วโมงหลักสูตร' : '* Please enter Curriculum hours'),
       DescriptionTH:Yup.string().required((Storage.GetLanguage() === "th") ?'* กรุณากรอก ขอบเขตเนื้อหา (ไทย)' : '* Please enter Content scope (Thai)')
    }),
    onSubmit: values => {
     setIsLoading(true);
-    formik.values.CurriculumType = (formik.values.CurriculumType === "") ? "1" : formik.values.CurriculumType ;
-    formik.values.LearningId = (formik.values.LearningId === "") ? "1" : formik.values.LearningId ;
+    setIsHourCourse(false);
+    formik.values.CurriculumType = (formik.values.CurriculumType === "") ? "1" : formik.values.CurriculumType;
+    formik.values.LearningId = (formik.values.LearningId === "") ? "1" : formik.values.LearningId;
     formik.values.CurriculumTag = tags;
     formik.values.ImageCourses = imageCourses;
     formik.values.ImageName = imageCoursesName;
-            axios.get(urlPath+`/courses/ByCurriculum/${values.CurriculumCode}`,{
-              headers: {accessToken : localStorage.getItem("accessToken")}
-            }).then((response) => {
-              if(response.data === null || response.data.id === values.id) {
-                if(isNew) {
-                  axios.post(urlPath+"/courses",values).then((response)=>{
-                  if(response.data.error) 
-                  {
-                    addToast(response.data.error, { appearance: 'error', autoDismiss: true });
-                  } else {
-                    addToast((Storage.GetLanguage() === "th") ? 'บันทึกข้อมูลสำเร็จ' : 'Save data successfully', { appearance: 'success', autoDismiss: true });
-                    setIsEnableControl(true);
-                    setIsNew(false)
-                    axios.get(urlPath+"/courses").then((response) =>   {
-                      setListCourse(response.data.listOfCourses);
-                    });
-                  }
-       
-                });
-                } else {
-                    if(values.id === undefined)
-                      values.id = listCourse.filter(x => x.CurriculumCode === formik.values.CurriculumCode )[0].id;
-                    axios.put(urlPath+"/courses",values).then((response) => {
-                    if(response.data.error) 
-                    {
-                      addToast(response.data.error, { appearance: 'error', autoDismiss: true });
-                    } else {
-                      addToast((Storage.GetLanguage() === "th") ? 'บันทึกข้อมูลสำเร็จ' : 'Save data successfully', { appearance: 'success', autoDismiss: true });
-                      setIsEnableControl(true);
-                    }
-                  });
-                }
+
+    if(formik.values.NumOfHours > 0 || formik.values.NumOfMin > 0)
+    {
+      axios.get(urlPath+`/courses/ByCurriculum/${values.CurriculumCode}`,{
+        headers: {accessToken : localStorage.getItem("accessToken")}
+      }).then((response) => {
+        if(response.data === null || response.data.id === values.id) {
+          if(isNew) {
+            axios.post(urlPath+"/courses",values).then((response)=>{
+            if(response.data.error) 
+            {
+              addToast(response.data.error, { appearance: 'error', autoDismiss: true });
+            } else {
+              addToast((Storage.GetLanguage() === "th") ? 'บันทึกข้อมูลสำเร็จ' : 'Save data successfully', { appearance: 'success', autoDismiss: true });
+              setIsEnableControl(true);
+              setIsNew(false)
+              formik.setFieldValue('id',response.data.listOfCourses.id);
+              setListCourse(response.data.listOfCourses);
+              // axios.get(urlPath+"/courses").then((response) =>   {
+              //   setListCourse(response.data.listOfCourses);
+              // });
+            }
+  
+          });
+          } else {
+              if(values.id === undefined)
+                values.id = listCourse.filter(x => x.CurriculumCode === formik.values.CurriculumCode )[0].id;
+              axios.put(urlPath+"/courses",values).then((response) => {
+              if(response.data.error) 
+              {
+                addToast(response.data.error, { appearance: 'error', autoDismiss: true });
               } else {
-                addToast( (Storage.GetLanguage() === "th") ? 'ไม่สามารถบันทึกข้อมูลได้ เนื่องจากรหัสหลักสูตรซ้ำ กรุณากรอกรหัสหลักสูตรใหม่' : 'Failed to save data. due to duplicate Curriculum code Please enter a new Curriculum code' , { appearance: 'warning', autoDismiss: true });
+                addToast((Storage.GetLanguage() === "th") ? 'บันทึกข้อมูลสำเร็จ' : 'Save data successfully', { appearance: 'success', autoDismiss: true });
+                setIsEnableControl(true);
               }
-              setIsLoading(false);
             });
+          }
+        } else {
+          addToast( (Storage.GetLanguage() === "th") ? 'ไม่สามารถบันทึกข้อมูลได้ เนื่องจากรหัสหลักสูตรซ้ำ กรุณากรอกรหัสหลักสูตรใหม่' : 'Failed to save data. due to duplicate Curriculum code Please enter a new Curriculum code' , { appearance: 'warning', autoDismiss: true });
+        }
+        setIsLoading(false);
+      });
+    } else {
+      setIsHourCourse(true);
+      setIsLoading(false);
+    }
+
    },
  });
 
@@ -441,48 +475,64 @@ export default function Courses() {
     SubjectCode:Yup.string().required((Storage.GetLanguage() === "th") ? '* กรุณากรอก รหัสหัวข้อการเรียนรู้' : 'Please enter the Subject code'),
     SubjectNameTH:Yup.string().required((Storage.GetLanguage() === "th") ?'* กรุณากรอก ชื่อหัวข้อการเรียนรู้' : 'Please enter the Subject name'),
     ContentTH:Yup.string().required((Storage.GetLanguage() === "th") ?'* กรุณากรอก เนื้อหา (ไทย)' : 'Please enter the Content (thai)'),
+    // SubjectOfHour: Yup.number().min(1, ((Storage.GetLanguage() === "th") ? '* จำนวนชั่วโมงหลักสูตรต้องมากกว่า 0' : '* The number of course hours must be greater than 0.'))
   }),
   onSubmit: values => {      
       setIsLoading(true);
       values.CourseId = (id === undefined) ? listCourse.filter(x => x.CurriculumCode === formik.values.CurriculumCode )[0].id : id;
-      if(isNewSubject){
-          axios.post(urlPath+"/subjects",values).then((response)=>{
-          if(response.data === null) 
-          {
-            //addToast(response.data.error, { appearance: 'error', autoDismiss: true });
-          } else {
-            arrayAttach.forEach(value => {
-              const data = {FileName:value.FileName,FileType:value.FileType,FileData:value.FileData,IsDeleted:false,SubjectId:response.data.id}
-              UploadFile(data);
-            });
-            setArrayAtteach([]);
-            addToast((Storage.GetLanguage() === "th") ? 'บันทึกข้อมูลสำเร็จ' : 'Save data successfully', { appearance: 'success', autoDismiss: true });
-            setIsNewSubject(false)
-            setIsEnableSubjectControl(true);
-            axios.get(urlPath+`/subjects/byCoursesId/${values.CourseId}`).then((response) =>   {
-              setListsubject(response.data);
-            });
-          }
-        });
-      } else {
-          if(values.id === undefined)
-            values.id = listSubject.filter(x => x.SubjectCode === formikSubject.values.SubjectCode )[0].id;
-          axios.put(urlPath+"/subjects",values).then((response) => {
+
+    axios.get(urlPath+`/subjects/bySubjectCode/${values.SubjectCode}`,{
+        headers: {accessToken : localStorage.getItem("accessToken")}
+      }).then((response) => {
+        console.log(response.data)
+        if(response.data === null || response.data.id === values.id || response.data.length === 0) {
+
+          if(isNewSubject){
+            axios.post(urlPath+"/subjects",values).then((response)=>{
             if(response.data === null) 
             {
               //addToast(response.data.error, { appearance: 'error', autoDismiss: true });
             } else {
-  
-                arrayAttach.filter(e => e.SubjectId === undefined).forEach(value => {
-                  const data = {FileName:value.FileName,FileType:value.FileType,FileData:value.FileData,IsDeleted:false,SubjectId:response.data.id}
-                  UploadFile(data);
-                })
-                setArrayAtteach([]);
+              arrayAttach.forEach(value => {
+                const data = {FileName:value.FileName,FileType:value.FileType,FileData:value.FileData,IsDeleted:false,SubjectId:response.data.id}
+                UploadFile(data);
+              });
+              setArrayAtteach([]);
               addToast((Storage.GetLanguage() === "th") ? 'บันทึกข้อมูลสำเร็จ' : 'Save data successfully', { appearance: 'success', autoDismiss: true });
+              setIsNewSubject(false)
               setIsEnableSubjectControl(true);
+              formikSubject.setFieldValue('id',response.data.listOfSubjects.id);
+              setListsubject(response.data.listOfSubjects);
+              // axios.get(urlPath+`/subjects/byCoursesId/${values.CourseId}`).then((response) =>   {
+              //   setListsubject(response.data);
+              // });
             }
           });
-      }
+        } else {
+            if(values.id === undefined)
+              values.id = listSubject.filter(x => x.SubjectCode === formikSubject.values.SubjectCode )[0].id;
+            axios.put(urlPath+"/subjects",values).then((response) => {
+              if(response.data === null) 
+              {
+                //addToast(response.data.error, { appearance: 'error', autoDismiss: true });
+              } else {
+    
+                  arrayAttach.filter(e => e.SubjectId === undefined).forEach(value => {
+                    const data = {FileName:value.FileName,FileType:value.FileType,FileData:value.FileData,IsDeleted:false,SubjectId:response.data.id}
+                    UploadFile(data);
+                  })
+                  setArrayAtteach([]);
+                addToast((Storage.GetLanguage() === "th") ? 'บันทึกข้อมูลสำเร็จ' : 'Save data successfully', { appearance: 'success', autoDismiss: true });
+                setIsEnableSubjectControl(true);
+              }
+            });
+        }
+        } else {
+          addToast( (Storage.GetLanguage() === "th") ? 'ไม่สามารถบันทึกข้อมูลได้ เนื่องจากรหัสหัวข้อการเรียนรู้ซ้ำ กรุณากรอกรหัสหัวข้อการเรียนรู้ใหม่' : 'Failed to save data. due to duplicate Subject code Please enter a new Subject code' , { appearance: 'warning', autoDismiss: true });
+        } 
+      });
+
+    
       setIsLoading(false);
     },
   });
@@ -530,7 +580,6 @@ export default function Courses() {
       setName((Storage.GetLanguage() === "th") ? 'หลักสูตร' : 'Curriculum');
     else 
       setName((Storage.GetLanguage() === "th") ? 'หัวข้อการเรียนรู้ / เนื้อหา' : 'Subject / Content');
-    
   }
 
   /* Default Value Option */
@@ -633,7 +682,7 @@ export default function Courses() {
                   }</label></h6>
                 </div>
                 <div className="text-center flex justify-between">
-                  <div>
+                  <div className={(headName === "หลักสูตร") ? 'block' : 'hidden' }>
                     <button
                     className={" text-white active:bg-purple-active font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150 " + ((isNew) ? " btn-purple-mju-disable" : " bg-purple-mju")}
                     type="button"
@@ -643,7 +692,7 @@ export default function Courses() {
                       <i className="fas fa-book-reader"></i> &nbsp;{locale.t("Course.info.lblTabSubject")}
                     </button>
                   </div>
-                  <div>
+                  <div className={(headName === "หลักสูตร") ? 'block' : 'hidden' }>
                     {(enableControl && !isNew) ? 
                       <button
                         className="bg-green-mju text-white active:bg-lightBlue-600 font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
@@ -656,18 +705,15 @@ export default function Courses() {
                       <>
                         <button
                           className={"bg-rose-mju text-white active:bg-rose-mju font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" + ((isNew ? " hidden" : " "))}
-                          type="button"
-                          onClick={() =>{EnableControl(true)}}
-                        >
-                        <i className="fas fa-pencil-alt"></i>&nbsp;{locale.t("Button.lblDrop")}
+                          type="button" onClick={() =>{EnableControl(true)}} >
+                          <i className="far fa-times-circle"></i>&nbsp;{locale.t("Button.lblDrop")}
                         </button>     
-                        <button
-                          className="bg-blue-save-mju text-white active:bg-blueactive-mju font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" 
-                          type="submit"
-                          onClick={formik.handleSubmit}
-                          >
-                        <i className="fas fa-save"></i>&nbsp;{locale.t("Button.lblSave")}
+           
+                        <button className="bg-blue-save-mju text-white active:bg-blueactive-mju font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" 
+                          type="submit" onClick={formik.handleSubmit} >
+                          <i className="fas fa-save"></i>&nbsp;{locale.t("Button.lblSave")}
                         </button>
+                        
                       </>
                       }
                     </div>
@@ -690,6 +736,7 @@ export default function Courses() {
                             className="border-0 w-90 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                             id="CurriculumCode"
                             name="CurriculumCode"
+                            maxLength={100}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
                             value={formik.values.CurriculumCode}
@@ -773,7 +820,9 @@ export default function Courses() {
                             </div>
                             {formik.touched.NumOfHours && formik.errors.NumOfHours ? (
                               <div className="text-sm py-2 px-2 text-red-500">{formik.errors.NumOfHours}</div>
-                            ) : null}
+                            ) : (
+                              (isHourCourse) ? <div className="text-sm py-2 px-2 text-red-500">{Storage.GetLanguage("th") ? '* กรุณากรองชั่วโมงหรือนาทีมากกว่า 0' : 'The hour or minute must be greater than 0.' }</div> : null
+                            )}
                           </div>
                         
                         </div>
@@ -794,6 +843,7 @@ export default function Courses() {
                         className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="CurriculumNameTH"
                         name="CurriculumNameTH"
+                        maxLength={255}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         value={formik.values.CurriculumNameTH}
@@ -816,6 +866,7 @@ export default function Courses() {
                         className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="CurriculumNameENG"
                         name="CurriculumNameENG"
+                        maxLength={255}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         value={formik.values.CurriculumNameENG}
@@ -902,7 +953,8 @@ export default function Courses() {
                           height="300px"
                           onKeyDown={handleKeyDown} 
                           setContents={formik.values.DescriptionTH}
-                          onChange={v =>  formik.setFieldValue('DescriptionTH', v)} 
+                          // onChange={v =>  formik.setFieldValue('DescriptionTH', v)} 
+                          onChange={onChangeEventCourseTH}
                           setOptions={{
                           buttonList: [
                             [
@@ -990,7 +1042,8 @@ export default function Courses() {
                           height="300px"
                           onKeyDown={handleKeyDown} 
                           setContents={formik.values.DescriptionENG}
-                          onChange={v =>  formik.setFieldValue('DescriptionENG', v)} 
+                          // onChange={v =>  formik.setFieldValue('DescriptionENG', v)} 
+                          onChange={onChangeEventCourseENG}
                           setOptions={{
                           buttonList: [
                             [
@@ -1127,7 +1180,7 @@ export default function Courses() {
                   <button
                     className="bg-blue-mju text-white active:bg-lightBlue-600 font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                     type="button"
-                    onClick={() => { setIsNewSubject(true); setIsEnableSubjectControl(false); setListAttach([]); formikSubject.resetForm(); openModal();}}>
+                    onClick={() => { setIsNewSubject(true); setIsEnableSubjectControl(false); setListAttach([]); formikSubject.resetForm(); formikSubject.setFieldValue('ContentTH',null); formikSubject.setFieldValue('ContentENG',null);  openModal(); }}>
                     &nbsp;+ {locale.t("Subject.list.lblAddSubject")}
                   </button>
                     <Modal
@@ -1135,6 +1188,7 @@ export default function Courses() {
                       onRequestClose={closeModal}
                       style={customStyles}
                       contentLabel="Example Modal"
+                      shouldCloseOnOverlayClick={false} 
                     >
                       <div className="flex flex-wrap">
                         <div className="w-full">
@@ -1144,33 +1198,40 @@ export default function Courses() {
                               <div className="rounded-t bg-white mb-0 px-4 py-4">
                                 <div className="text-center flex justify-between">
                                   <div className="">
-                                    <h6 className="text-blueGray-700 text-xl font-bold mt-2">{locale.t("Menu.lblCourse")} {'>'} <label className="text-green-200-mju">{(Storage.GetLanguage() === "th" && headName === "หลักสูตร") ? "หลักสูตร" : "Curriculum"}</label></h6>
+                                    <h6 className="text-blueGray-700 text-xl font-bold mt-2">{locale.t("Menu.lblCourse")} {'>'} <label className="text-green-200-mju">{(Storage.GetLanguage() === "th") ? headName : "Subject / Content"} </label></h6>
                                   </div>
                                   <div className="">
-                                  {(enableSubjectControl && !isNewSubject) ? 
                                     <button
-                                      className="bg-green-mju text-white active:bg-lightBlue-600 font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
-                                      type="button"
-                                      onClick={ () => {EnableControlSubject(false)}}
-                                    >
-                                      <i className="fas fa-pencil-alt"></i>&nbsp;{locale.t("Button.lblEdit")}
-                                    </button> 
-                                    :
-                                    <>
-                                      <button
-                                        className={"bg-rose-mju text-white active:bg-rose-mju font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" + ((isNewSubject ? " hidden" : " "))}
+                                        className={"bg-rose-mju text-white active:bg-rose-mju font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"}
                                         type="button"
-                                        onClick={() =>{EnableControlSubject(true)}}
+                                        onClick={closeModal}
                                       >
-                                      <i className="fas fa-pencil-alt"></i>&nbsp;{locale.t("Button.lblDrop")}
-                                      </button>     
+                                        <i className="fas fa-arrow-left"></i>&nbsp;&nbsp;{locale.t("Button.lblBack")}
+                                    </button>    
+                                    {(enableSubjectControl && !isNewSubject) ? 
                                       <button
-                                        className="bg-blue-save-mju text-white active:bg-blueactive-mju font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" 
-                                        type="submit"
+                                        className="bg-green-mju text-white active:bg-lightBlue-600 font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                                        type="button"
+                                        onClick={ () => {EnableControlSubject(false)}}
+                                      >
+                                        <i className="fas fa-pencil-alt"></i>&nbsp;{locale.t("Button.lblEdit")}
+                                      </button> 
+                                      :
+                                      <>
+                                        <button
+                                          className={"bg-yello-mju text-white active:bg-yello-mju font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" + ((isNewSubject ? " hidden" : " "))}
+                                          type="button"
+                                          onClick={() =>{EnableControlSubject(true)}}
                                         >
-                                      <i className="fas fa-save"></i>&nbsp;{locale.t("Button.lblSave")}
-                                      </button>
-                                    </>
+                                          <i className="far fa-times-circle"></i>&nbsp;{locale.t("Button.lblDrop")}
+                                        </button>     
+                                        <button
+                                          className="bg-blue-save-mju text-white active:bg-blueactive-mju font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" 
+                                          type="submit"
+                                          >
+                                        <i className="fas fa-save"></i>&nbsp;{locale.t("Button.lblSave")}
+                                        </button>
+                                      </>
                                     }
                                   </div>
                                 </div>
@@ -1217,7 +1278,7 @@ export default function Courses() {
                                               value={formikSubject.values.SubjectOfHour}
                                               disabled={enableSubjectControl}
                                             />
-                                            <span className="text-xs font-bold"> &nbsp;{locale.t("Course.info.lblHour")}</span>
+                                            <span className="text-xs font-bold"> &nbsp;{locale.t("Course.info.lblMin")}</span>
                                           </div>
                                         </div>
                                     </div>
@@ -1310,10 +1371,11 @@ export default function Courses() {
                                           disable={enableSubjectControl}
                                           setDefaultStyle="font-family: THSarabun; font-size: 18px;" 
                                           width="100%"
-                                          height="400px"
+                                          height="600px"
                                           onKeyDown={handleKeyDown} 
                                           setContents={formikSubject.values.ContentTH}
-                                          onChange={v =>  formikSubject.setFieldValue('ContentTH', v)} 
+                                          // onChange={v =>  formikSubject.setFieldValue('ContentTH', v)} 
+                                          onChange={onChangeEventSubjectTH}
                                           setOptions={{
                                           buttonList: [
                                             [
@@ -1399,10 +1461,11 @@ export default function Courses() {
                                           disable={enableSubjectControl}
                                           setDefaultStyle="font-family: THSarabun; font-size: 18px;" 
                                           width="100%"
-                                          height="400px"
+                                          height="600px"
                                           onKeyDown={handleKeyDown} 
                                           setContents={formikSubject.values.ContentENG}
-                                          onChange={v =>  formikSubject.setFieldValue('ContentENG', v)} 
+                                          // onChange={v =>  formikSubject.setFieldValue('ContentENG', v)} 
+                                          onChange={onChangeEventSubjectENG}
                                           setOptions={{
                                           buttonList: [
                                             [

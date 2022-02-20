@@ -7,10 +7,10 @@ const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 
 router.post("/",async (req, res) => {
-    bcrypt.hash(req.body.password, 10).then((hash) => {
+    bcrypt.hash(req.body.password, 10).then( async (hash) => {
         req.body.password = hash;
-        Members.create(req.body);
-        res.json("SUCCESS");
+        const listMembers = await Members.create(req.body);
+        res.json({listMembers : listMembers});
     });
 });
 
@@ -76,16 +76,32 @@ router.delete("/multidelete/:memberId", validateToken , (req, res) => {
 });
 
 router.put("/", validateToken , async (req,res) =>{
-  await Members.update(req.body,{where : {id: req.body.id }})
-  res.json("SUCCESS");
+  const user = await Members.findOne({ where: { id: req.body.id } });
+  if(!user) {
+    res.json({ error: "User Doesn't Exist" });
+  } else {
+    if(user.password === req.body.password){
+      Members.update(req.body,{where : {id: req.body.id }})
+      res.json("SUCCESS");
+    } else {
+      bcrypt.hash(req.body.password, 10).then((hash) => {
+        req.body.password = hash;
+        Members.update(req.body,{where : {id: req.body.id }})
+        res.json("SUCCESS");
+      });
+    }
+  }
 });
 
-router.put("/updatePassword" , async (req,res) =>{
-  await Members.update(
-    { password: 'a very different title now' },
-    { where: { id: 1 } }
-  )
-  res.json("SUCCESS");
+router.put("/updatePassword" ,  (req,res) =>{
+  bcrypt.hash(req.body.password, 10).then((hash) => {
+    req.body.password = hash;
+     Members.update(
+      { password: req.body.password },
+      { where: { id: req.body.id } }
+    )
+    res.json("SUCCESS");
+  });
 });
 
 module.exports = router;

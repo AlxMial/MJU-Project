@@ -210,7 +210,7 @@ export default function Subject() {
                             
                         </div>
 
-                        <div className='subject-content px-4 py-1 rounded-lg lg:w-8/12 mx-auto mt-3 mb-3'>
+                        <div className={'subject-content px-4 py-1 rounded-lg lg:w-8/12 mx-auto mt-3 mb-3' + ((listSubject.length > 0) ? ' block' : ' hidden') }>
                             {
                                 listSubject.map((item) => {
                                     return (

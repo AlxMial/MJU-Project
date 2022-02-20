@@ -8,13 +8,13 @@ import { connect } from "react-redux";
 import { setLocale } from "react-redux-i18n";
 import * as Storage from "../../services/Storage.service";
 
+
 const AdminTopNavBar = ({ setLocale }) => {
   const [navbarOpen, setNavbarOpen] = React.useState(false);
   const [isThai,setIsThai] = React.useState(true);
   const [windowWidth, setWindowWidth] = useState(0);
   const [windowHeight, setWindowHeight] = useState(0);
   const history = useHistory();
-
   let resizeWindow = () => {
     setWindowWidth(window.innerWidth);
     setWindowHeight(window.innerHeight);
@@ -78,7 +78,8 @@ const AdminTopNavBar = ({ setLocale }) => {
   }, []);
 
   const ClickHome = () =>{
-    if(window.location.href.includes("admin"))
+    const RoleUser = localStorage.getItem('roleUser');
+    if(window.location.href.includes("admin") || RoleUser === '1')
     {
       history.push("/admin");
     }else{
@@ -121,12 +122,12 @@ const AdminTopNavBar = ({ setLocale }) => {
                 }}
               >
                 <div className={"items-center flex cursor-pointer" + (windowWidth < 1024 ? " block" : " hidden")}>
-                  <span className="w-12 h-12 text-sm bg-blueGray-200 inline-flex items-center justify-center rounded-lg">
+                  <span className="p-1 text-sm bg-blueGray-200 inline-flex items-center justify-center rounded-lg">
                     <i className="fas fa-bars"></i>
                   </span>
                 </div>
               </a>
-              <span className={"w-12 h-12 text-sm bg-blueGray-200 inline-flex ml-3 items-center justify-center rounded-full" + (windowWidth < 1024 ? " block" : " hidden")}>
+              <span className={"w-6 h-6 text-sm bg-blueGray-200 inline-flex ml-3 items-center justify-center rounded-full" + (windowWidth < 1024 ? " block" : " hidden")}>
                 <UserDropdown /> 
               </span>
 

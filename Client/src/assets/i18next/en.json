@@ -126,7 +126,8 @@
     "lblDelete":"Delete",
     "lblDrop":"Cancel",
     "lblSave":"Save",
-    "lblCancel":"Cancel"
+    "lblCancel":"Cancel",
+    "lblBack":"Back"
   },
   "Warning":{
     "lblDelete":"Do you want to delete the data?"

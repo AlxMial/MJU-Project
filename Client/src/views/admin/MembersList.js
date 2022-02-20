@@ -35,7 +35,6 @@ export default function MembersList() {
     const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
     const [optionsLearning, setOptionsLearning] = useState([]);
     const [optionsLearningEng, setOptionsLearningEng] = useState([]);
-    const [isRemove,setIsRemove] = useState(false);
     const usersPerPage = 10;
     const pagesVisited = pageNumber * usersPerPage;
     const [isLoading, setIsLoading] = useState(false);
@@ -107,8 +106,6 @@ export default function MembersList() {
             setListMembers(tempMember);
             setDeleteNumber(tempMember.filter(x => x.IsDeleted === true).length);
         }
-        
-        if(listMembers.filter(x => x.IsDeleted === true).length === 0){setIsRemove(true)}else{setIsRemove(false)}
     };
 
     const ChangeSelect = (options,value,type) =>{
@@ -182,7 +179,7 @@ export default function MembersList() {
     .map(function(value){
       return (
 
-            <tr role="row" key={value.id }>
+            <tr role="row" key={value.id}>
                 <th className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap">
                     <input
                         type="checkbox"
@@ -193,16 +190,16 @@ export default function MembersList() {
                     />
                 </th>
                 <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap cursor-pointer">
-                    <Link to={`/admin/members/${value.id}`}>{ ((Storage.GetLanguage() === "th") ? ChangeSelect(options,value.title,"title") : ChangeSelect(optionsEng,value.title,"title")) + ' ' + value.firstName + ' ' + value.lastName }</Link>
+                    <div className="TextWordWarpCode"><Link to={`/admin/members/${value.id}`}>{ ((Storage.GetLanguage() === "th") ? ChangeSelect(options,value.title,"title") : ChangeSelect(optionsEng,value.title,"title")) + ' ' + value.firstName + ' ' + value.lastName }</Link></div>
                 </td>
                 <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap  cursor-pointer">
-                    <Link to={`/admin/members/${value.id}`} >{value.email}</Link>
+                    <div className="TextWordWarp"><Link to={`/admin/members/${value.id}`} >{value.email}</Link></div>
                 </td>
                 <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap cursor-pointer">
-                    <Link to={`/admin/members/${value.id}`} >{ ((Storage.GetLanguage() === "th") ? ChangeSelect(optionsRole,value.role,"role") : ChangeSelect(optionsRoleEng,value.role,"role")) }</Link>
+                    <div className="TextWordWarpCode"><Link to={`/admin/members/${value.id}`} >{ ((Storage.GetLanguage() === "th") ? ChangeSelect(optionsRole,value.role,"role") : ChangeSelect(optionsRoleEng,value.role,"role")) }</Link></div>
                 </td>
                 <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap ">
-                    { (Storage.GetLanguage() === "th") ? ChangeLearning(optionsLearning,value.learningPathId) :  ChangeLearning(optionsLearningEng,value.learningPathId) }
+                    <div className="TextWordWarpPath">{ (Storage.GetLanguage() === "th") ? ChangeLearning(optionsLearning,value.learningPathId) :  ChangeLearning(optionsLearningEng,value.learningPathId) }</div>
                 </td>
                 <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap ">
                     { value.isActivated ? 
@@ -331,7 +328,7 @@ export default function MembersList() {
                             <h3 className={"font-semibold text-sm text-blueGray-700"}>
                                 {listMembers.length} {locale.t("Main.lblItem")}
                             </h3>
-                            <h3 className={"font-semibold text-sm text-blueGray-700 leading-2" + ((isRemove) ? " block" : " hidden")} >
+                            <h3 className={"font-semibold text-sm text-blueGray-700 leading-2" + ((deleteNumber > 0) ? " block" : " hidden")} >
                             &nbsp; <i className="fas fa-trash text-red-500 cursor-pointer" onClick={()=>{openModalSubject()}}></i> &nbsp;
                                 <span>{locale.t("Button.lblDelete")} {deleteNumber} {locale.t("Main.lblChoose")}</span>
                                 <ConfirmDialog  showModal={modalIsOpenSubject} message={((Storage.GetLanguage() === "th") ? "จัดการบัญชีผู้ใช้" : "Account Management") } hideModal={()=>{closeModalSubject()}} confirmModal={() => {deleteByList()}}/>
@@ -383,7 +380,7 @@ export default function MembersList() {
                             "px-2 align-middle border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"
                         }
                         >
-                        {locale.t("Account.list.lblFullName")}
+                            {locale.t("Account.list.lblFullName")}
                         </th>
                         <th
                         className={

@@ -19,8 +19,8 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-  Courses.create(req.body);
-  res.json("SUCCESS");
+  const listOfCourses = await Courses.create(req.body);
+  res.json({listOfCourses : listOfCourses});
 });
 
 

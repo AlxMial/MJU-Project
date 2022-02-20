@@ -8,6 +8,7 @@ import { useFormik  } from "formik";
 import * as Yup from "yup";
 import urlPath from 'services/urlServer';
 import FilesService from 'services/files';
+import { isMobile } from 'react-device-detect';
 
 export default function Login() {
   const { setAuthState } = useContext(AuthContext); 
@@ -31,7 +32,13 @@ export default function Login() {
     {  
       addToast("Can't login because Invalid email or password", { appearance: 'error', autoDismiss: true });
     }
-    else{
+    /*ปรับการ Login Mobile ให้ตรวจสอบเฉพาะ Admin*/
+    else if (isMobile &&  response.data.role === 1)
+    {
+      addToast("Can't open Adminstrator management page, must use on Computer only.", { appearance: 'error', autoDismiss: true });
+    }
+    else
+    {
         if(response.data.isActivated){
           if(formik.values.isRemember)
             localStorage.setItem('login', JSON.stringify( { email: values.email, password: values.password }));
@@ -55,7 +62,7 @@ export default function Login() {
           if(response.data.role === "1")
             history.push("/admin");
           else 
-          history.push("/home");
+            history.push("/home");
         } else {
           addToast("Unable to login because the email for access to the system has been deactivated.", { appearance: 'error', autoDismiss: true });
         }
@@ -76,18 +83,19 @@ export default function Login() {
 
   return (
     <>
-      <div className="container mx-auto px-4 h-full">
+      <div className={"container px-4 h-full" + ((isMobile) ? " " : " mx-auto")} >
         <div className="flex content-center items-center justify-center h-full">
           <div className="w-full lg:w-8/12 px-4">
             <div className="relative flex flex-col min-w-0 break-words w-full  mb-6 shadow-lg rounded-lg bg-white border-0">
-              <div className="rounded-t mb-0 px-6 py-6">
+              <div className="rounded-t mb-0 mt-4 ">
                 <div className="text-center mb-3">
                   <h6 className="text-green-mju text-3xl font-bold">
                     SIGN IN
                   </h6>
                 </div>
               </div>
-              <div className="flex-auto px-4 lg:w-9/12 lg:px-10 py-10 pt-0 mx-auto">
+              <div className={
+                "flex-auto px-4 lg:w-9/12 lg:px-10 py-10 pt-0" + ((isMobile) ? " " : " mx-auto")}>
                 <form onSubmit={formik.handleSubmit}>
                   <div className="relative w-full mb-3">
                     <label className="block uppercase text-blueGray-600 text-xs font-bold mb-2">

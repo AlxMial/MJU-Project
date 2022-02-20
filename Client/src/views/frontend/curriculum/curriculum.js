@@ -158,7 +158,7 @@ export default function Curriculum() {
                             }
                           
                         }).map((item) =>
-                            <Link to={`/home/subject/${item.id}`} key={item.id} className="card px-4 md:w-4/12 relative flex flex-col min-w-0 break-words bg-white  mb-6 rounded-lg">
+                            <Link to={`/home/subject/${item.id}`} key={item.CoursesID} className="card px-4 md:w-4/12 relative flex flex-col min-w-0 break-words bg-white  mb-6 rounded-lg">
                                 <img
                                     alt="..."
                                     src={item.ImageCourses}

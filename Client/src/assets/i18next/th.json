@@ -124,7 +124,8 @@
     "lblDelete":"ลบ",
     "lblDrop":"ละทิ้ง",
     "lblSave":"บันทึก",
-    "lblCancel":"ยกเลิก"
+    "lblCancel":"ยกเลิก",
+    "lblBack":"ย้อนกลับ"
   },
   "Warning":{
     "lblDelete":"คุณต้องการทำการลบข้อมูลใช่หรือไม่"

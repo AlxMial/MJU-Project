@@ -1,6 +1,6 @@
 import React,{useState,useEffect} from "react";
 import Switch from "components/Toggles/Switch";
-import { useParams, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import FilesService from '../../../services/files'
 import { useFormik  } from "formik";
 import * as Yup from "yup";
@@ -22,6 +22,7 @@ const locale = require("react-redux-i18n").I18n;
 export default function Account() {
 
     const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
+    const EmailRegExp = /^[A-Za-z0-9_.@]+$/;
     const [value, setValue] = useState(false);
     const [postImage, setPostImage] = useState("");
     const [confirmPassword, setConfirmPassword] = useState(false);
@@ -37,12 +38,11 @@ export default function Account() {
     const [dataProviceEng,setDataProviceEng]=useState([]);
     const [dataDistrictEng,setDataDistrictEng]=useState([]);
     const [dataSubDistrictEng,setSubDistrictEng] = useState([]);
-    let { id } = useParams();
     const history = useHistory();
     const [isLoading, setIsLoading] = useState(false);
     const [optionsLearning, setOptionsLearning] = useState([]);
     const [optionsLearningEng, setOptionsLearningEng] = useState([]);
-    var MJUId="MJU";
+    const [RoleUser,setRoleUser] = useState("");
     const defaultDate = {
         year:  new Date().getFullYear(),
         month: new Date().getMonth()+1,
@@ -140,13 +140,13 @@ export default function Account() {
         subDistrict:''
       },
       validationSchema: Yup.object({
-        accountCode:Yup.string().required('* กรุณากรอก รหัสบัญชีผู้ใช้'),
-        firstName:Yup.string().required('* กรุณากรอก ชื่อ'),
-        lastName:Yup.string().required('* กรุณากรอก นามสกุล'),
-        email:Yup.string().email('* รูปแบบอีเมลไม่ถูกต้อง').required('* กรุณากรอก อีเมล'),
-        phoneNumber:Yup.string().matches(phoneRegExp, '* รูปแบบเบอร์โทรศัพท์ ไม่ถูกต้อง'),
-        birthDate:Yup.string().required('* กรุณากรอก วันเกิด'),
-        password:Yup.string().required('* กรุณากรอก รหัสผ่าน'),
+        accountCode:Yup.string().required((Storage.GetLanguage() === "th") ? '* กรุณากรอก รหัสบัญชีผู้ใช้' : '* Please enter your account code'),
+        firstName:Yup.string().required((Storage.GetLanguage() === "th") ? '* กรุณากรอก ชื่อ' : '* Please enter your first name'),
+        lastName:Yup.string().required((Storage.GetLanguage() === "th") ?'* กรุณากรอก นามสกุล' : '* Please enter your last name'),
+        email:Yup.string().matches(EmailRegExp,(Storage.GetLanguage() === "th") ? '* ขออภัย อนุญาตให้ใช้เฉพาะตัวอักษร (a-z), ตัวเลข (0-9) และเครื่องหมายมหัพภาค (.) เท่านั้น' :'* Sorry, only letters (a-z), numbers (0-9), and periods (.) are allowed.').email((Storage.GetLanguage() === "th") ? '* รูปแบบอีเมลไม่ถูกต้อง' : 'Invalid email format').required((Storage.GetLanguage() === "th") ? '* กรุณากรอก อีเมล'  : '* Please enter your email'),
+        phoneNumber:Yup.string().matches(phoneRegExp, (Storage.GetLanguage() === "th") ? '* รูปแบบเบอร์โทรศัพท์ ไม่ถูกต้อง' : '* The phone number format is invalid').required((Storage.GetLanguage() === "th") ? '* กรุณากรอก เบอร์โทรศัพท์' : '* Please enter your phone number' ),
+        birthDate:Yup.string().required((Storage.GetLanguage() === "th") ? '* กรุณากรอก วันเกิด' : '* Please enter your date of birth'),
+        password:Yup.string().required((Storage.GetLanguage() === "th") ? '* กรุณากรอก รหัสผ่าน' : '* Please enter your password'),
       }),
   
       onSubmit: values => {
@@ -158,6 +158,7 @@ export default function Account() {
         formik.values.district = (formik.values.district === "") ? "1001" : formik.values.district;
         formik.values.subDistrict = (formik.values.subDistrict === "") ? "100101" : formik.values.subDistrict;
         formik.values.birthDate = selectedDay;
+        formik.values.profilePicture = postImage;
         if(!isNew)
           if(values.id === undefined)
             values.id = listMembers.filter(x => x.accountCode === formik.values.accountCode )[0].id;
@@ -169,7 +170,6 @@ export default function Account() {
           } else {
             addToast('ไม่สามารถบันทึกข้อมูลได้ เนื่องจากรหัสบัญชีผู้ใช้ซ้ำ กรุณากรอกรหัสบัญชีผู้ใช้ใหม่', { appearance: 'warning', autoDismiss: true });
           }
-  
         });
       },
     });
@@ -204,6 +204,7 @@ export default function Account() {
                 {
                   addToast(response.data.error, { appearance: 'error', autoDismiss: true });
                 } else {
+                  formik.values.birthDate = selectedDay.toString();
                   addToast('บันทึกข้อมูลสำเร็จ', { appearance: 'success', autoDismiss: true });
                   setIsEnableControl(true);
                   setIsLoading(false);
@@ -225,6 +226,7 @@ export default function Account() {
             <span className="datepicker-toggle-button-account"><i className="far fa-calendar "></i></span>
             <input ref={ref}
             type="text"
+            readOnly
             className="datepicker-input cursor-pointer w-80  mb-4 my-custom-input-class border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" // a styling class
             disabled={enableControl}
             value={selectedDay !== null ? `${selectedDay.day}/${selectedDay.month}/${selectedDay.year}` :  new Date().toLocaleDateString('en-GB')} />
@@ -239,11 +241,12 @@ export default function Account() {
     }
   
     async function fetchData() {
+        setIsLoading(true);
       const email = localStorage.getItem('email');
       let response = await axios(
         urlPath+`/members/getemail/${email}`
       );
-      let user = await response.data;
+      let user = response.data;
       if(user !== null) {
         var ProvinceId = "";
         var District = "";
@@ -256,14 +259,13 @@ export default function Account() {
             ProvinceId = response.data[columns]
           if(columns === "district")
             District = response.data[columns]
-        
           if(columns === "birthDate")
           {
             const obj = JSON.parse(response.data[columns]);
             CalBirthDay(obj);
             setSelectedDay(obj);
             formik.setFieldValue(columns, obj.toString(), false);
-          }else if (columns === "district") {
+          } else if (columns === "district") {
             api_amphure.filter(e => e.province_id.toString() === ProvinceId).forEach(field => { 
                 JsonLearning.push({value: field.value.toString(), label:  field.label });
                 JsonLearningEng.push({value: field.value.toString(), label:  field.name_en });
@@ -271,7 +273,7 @@ export default function Account() {
             setDataDistrict(JsonLearning)
             setDataDistrictEng(JsonLearningEng)
             formik.setFieldValue('district',response.data[columns]);
-          }else if (columns === "subDistrict") {
+          } else if (columns === "subDistrict") {
             api_tombon.filter(e => e.value.toString().substring(0, 4) === District).forEach(field => { 
                 JsonLearning.push({value: field.value.toString(), label:  field.label });
                 JsonLearningEng.push({value: field.value.toString(), label:  field.name_en });
@@ -280,20 +282,23 @@ export default function Account() {
             setSubDistrictEng(JsonLearningEng)
             
             formik.setFieldValue('subDistrict',response.data[columns]);
-          }
-          else {
-            formik.setFieldValue(columns,(( response.data[columns]===null) ? '' : response.data[columns]), false);
+          
+          } else  if (columns !== "profilePicture") {
+            formik.setFieldValue(columns,response.data[columns]);
           }
         }
-  
+        
         if(response.data.profilePicture !== null)
           setPostImage(FilesService.buffer64(response.data.profilePicture));
         setValue(response.data.isActivated);
         setValueConfirm(response.data.password)
-        setListMembers(user);
+        //setListMembers(user);
         setIsNew(false);
+        setIsLoading(false);
+        setRoleUser(response.data.role);
       } else {
         setIsNew(true);
+        setIsLoading(false);
         setIsEnableControl(false);
       }
     }
@@ -307,8 +312,6 @@ export default function Account() {
         });
         setDataProvice(JsonLearning)
         setDataProviceEng(JsonLearningEng)
-        // GetAddress("district",1);
-        // GetAddress("subDistrict",1001);
         fetchData();
         fetchLearning();
         
@@ -368,8 +371,8 @@ export default function Account() {
              <div className="relative pt-20 flex max-h-screen-37 bg-darkgreen-mju">
                 <div className="container px-4 relative mx-auto lg:w-10/12 mt-2 flex flex-wrap">
                     <div className="w-full lg:w-3/12 mb-2 mt-2">
-                        <i className="fas fa-arrow-left text-white text-sm cursor-pointer " onClick={() => history.push("/home")} >
-                            <span className='THSarabun text-2xl'>&nbsp;{locale.t("Main.lblBack")}</span>
+                        <i className="fas fa-arrow-left text-white text-sm cursor-pointer " onClick={() => { (RoleUser === '1') ? history.push("/admin/memberslist") : history.push("/home") }} >
+                            <span className='THSarabun text-2xl'>&nbsp;{locale.t("Main.lblBack") }</span>
                         </i>
                     </div>
                     <div className='w-full lg:w-6/12'>
@@ -421,7 +424,7 @@ export default function Account() {
                                             <label htmlFor="file-input" className="cursor-pointer">
                                             <img
                                                 alt="..."
-                                                className="w-full rounded-full align-middle border-none shadow-lg"
+                                                className="img-member w-full rounded-full align-middle border-none shadow-lg"
                                                 src={  ((postImage) ? postImage  :  require("assets/img/noimg.png").default) }
                                             />
                                             </label>
@@ -434,7 +437,7 @@ export default function Account() {
                                         <div className="w-full lg:w-6/12 px-4">
                                             <div className="relative lg:w-6/12  mb-3">
                                             <label className="block  text-blueGray-600 text-sm font-bold mb-2">
-                                                {locale.t("Account.info.lblAccountCode")}
+                                                {locale.t("Account.info.lblAccountCode")}<span className="text-red-500"> *</span>
                                             </label>
                                             <input
                                                 type="text"
@@ -490,7 +493,7 @@ export default function Account() {
                                             <label
                                                 className="block  text-blueGray-600 text-sm font-bold mb-2"
                                             >
-                                                {locale.t("Account.info.lblFirstName")}
+                                                {locale.t("Account.info.lblFirstName")}<span className="text-red-500"> *</span>
                                             </label>
                                             <input
                                                 type="text"
@@ -513,7 +516,7 @@ export default function Account() {
                                             <label
                                                 className="block  text-blueGray-600 text-sm font-bold mb-2"
                                             >
-                                                {locale.t("Account.info.lblLastName")}
+                                                {locale.t("Account.info.lblLastName")}<span className="text-red-500"> *</span>
                                             </label>
                                             <input
                                                 type="text"
@@ -543,7 +546,7 @@ export default function Account() {
                                     <div className="w-full lg:w-6/12 px-4 py-1">
                                         <div className="relative w-full mb-3">
                                         <label className="block  text-blueGray-600 text-sm font-bold mb-2">
-                                            {locale.t("Account.list.lblEmail")}
+                                            {locale.t("Account.list.lblEmail")}<span className="text-red-500"> *</span>
                                         </label>
                                         <input
                                             type="text"
@@ -566,7 +569,7 @@ export default function Account() {
                                         <label
                                             className="block  text-blueGray-600 text-sm font-bold mb-2"
                                         >
-                                            {locale.t("Account.info.lblPhoneNumber")}
+                                            {locale.t("Account.info.lblPhoneNumber")}<span className="text-red-500"> *</span>
                                         </label>
                                         <input
                                             type="text"
