@@ -22,6 +22,7 @@ export default function Curriculum() {
     const [optionsLearningEng, setOptionsLearningEng] = useState([]);
     const [listCourses, setListCourses] = useState([]);
     const [listCoursesSearch, setListCoursesSearch] = useState([]);
+    const [listCoursesFilter, setListCoursesFilter] = useState([]);
     const [tags, setTags] = useState([]);
     const [tagsSearch, settagsSearch] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -106,15 +107,26 @@ export default function Curriculum() {
     //     }
     // }
 
-    const SearchCurriculum = (searchText,tagsSearch) => {
+    const SearchCurriculum = async (searchText,tagsSearch) => {
+        setListCourses(listCoursesSearch);
         setValueSearch(searchText)
+
         if(tagsSearch.length > 0) {
             setListCourses([]);
-            tagsSearch.forEach(value => {   setListCourses(listCoursesSearch.filter(valueSearch => { if(valueSearch.CurriculumTag.toString().includes(value.name)) return true }));  });
+            var JsonLearning = [];
+            tagsSearch.forEach(value => { 
+                listCoursesSearch.filter(valueSearch => { 
+                    if(valueSearch.CurriculumTag.toString().includes(value.name))
+                    { 
+                        if(JsonLearning.filter(val => val.id === valueSearch.id ).length === 0)
+                        {
+                            JsonLearning.push(valueSearch);
+                        }
+                    }
+                });
+            });
+            setListCourses(JsonLearning);
         }
-        // var textSearch;
-        // tagsSearch.forEach(value => {textSearch += value.name + ' , ' });
-        // setValueSearchTag(textSearch)
     }
 
     useEffect(() => {
