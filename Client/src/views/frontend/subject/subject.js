@@ -216,7 +216,7 @@ export default function Subject() {
                                     return (
                                         <Link to={'/home/content/'+item.id} key={item.id}>
                                             <div className='font-bold subjectName'>{(Storage.GetLanguage() === "th") ?  <span>{ item.SubjectNameTH }</span> : <span>{ item.SubjectNameENG }</span> } </div>
-                                            <div className='text-mute subjectOfHour'>
+                                            <div className='text-xs subjectOfHour'>
                                                 {item.SubjectOfHour} {locale.t("Main.lblMinute")}
                                             </div>
                                         </Link>

@@ -1,16 +1,15 @@
-import React, { useState,useContext,useEffect } from 'react'
+import React, { useState,useEffect } from 'react'
 import axios from 'axios';
 import { useHistory,useParams } from 'react-router-dom';
 import { Link } from "react-router-dom";
-import { AuthContext } from '../../services/AuthContext';
 import { useToasts } from 'react-toast-notifications';
 import { useFormik  } from "formik";
 import * as Yup from "yup";
 import urlPath from 'services/urlServer';
-import FilesService from 'services/files';
+import { isMobile } from 'react-device-detect';
+
 
 export default function ResetPassword() {
-  const { setAuthState } = useContext(AuthContext); 
   const { addToast } = useToasts();
   const [confirmPassword, setConfirmPassword] = useState(false);
   const [valueConfirm, setValueConfirm] = useState("");
@@ -60,26 +59,26 @@ export default function ResetPassword() {
 
   return (
     <>
-      <div className="container pt-20 mx-auto px-4 h-full">
+      <div className={"container px-4 h-full"  + ((isMobile) ? ' ' : ' mx-auto')}>
         <div className="flex content-center items-center justify-center h-full">
-          <div className="w-full lg:w-8/12 px-4">
+          <div className="w-full lg:w-8/12 px-4 vertical-center">
             <div className="relative flex flex-col min-w-0 break-words w-full  mb-6 shadow-lg rounded-lg bg-white border-0">
               <div className="rounded-t mb-0 px-6 py-6">
                 <div className="text-center mb-3">
-                  <h6 className="text-green-mju text-3xl font-bold">
+                  <h6 className="text-green-mju text-4xl font-bold">
                     RESET PASSWORD
                   </h6>
                 </div>
               </div>
-              <div className="flex-auto px-4 lg:w-9/12 lg:px-10 py-10 pt-0 mx-auto">
+              <div className={"flex-auto px-4 lg:w-9/12 lg:px-10 py-10 pt-0 " + ((isMobile) ? ' ' : ' mx-auto')}>
                 <form onSubmit={formik.handleSubmit}>
                   <div className="relative w-full mb-3">
-                    <label className="block uppercase text-blueGray-600 text-xs font-bold mb-2">
+                    <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
                       New Password
                     </label>
                     <input
                         type="password"
-                        className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         placeholder="Password"
                         id="password"
                         name="password"
@@ -103,7 +102,7 @@ export default function ResetPassword() {
                   </div>
                   <div className="relative w-full mb-3">
                     <label
-                      className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
+                      className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
                     >
                       Confirm New Password
                     </label>
@@ -125,7 +124,7 @@ export default function ResetPassword() {
                   <div className="">
                     <div className="flex flex-wrap relative">
                       <div className="w-1/2 mt-4">
-                        <Link className="cursor-pointer text-xs font-bold text-blue-mju" to="/auth/login"> go to sign in</Link>
+                        <Link className="cursor-pointer text-sm font-bold text-blue-mju" to="/auth/login"> go to sign in</Link>
                       </div>
                       <div className="w-1/2 text-right">
                         <button

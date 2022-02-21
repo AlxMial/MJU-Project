@@ -57,10 +57,11 @@ footer {
     height: 40% !important;
     width: 100%;
     text-overflow: ellipsis !important;
+    
 }
 
 .backScreen-pb{
-    padding-bottom: 20rem !important;
+    padding-bottom: 16rem !important;
 }
 @media (min-width: 390px) {
     .text-editor{
@@ -68,7 +69,7 @@ footer {
     }
     
     .backScreen-pb{
-        padding-bottom: 22rem !important;
+        padding-bottom: 18rem !important;
     }
     
     .Block-curriculum img {
@@ -81,7 +82,7 @@ footer {
         height: 39% !important;
     }
     .backScreen-pb{
-        padding-bottom: 20rem !important;
+        padding-bottom: 16rem !important;
     }
     .Block-curriculum img {
         max-height: 120px;
@@ -93,7 +94,7 @@ footer {
         height: 50% !important;
     }
     .backScreen-pb{
-        padding-bottom: 20rem !important;
+        padding-bottom: 16rem !important;
     }
     .Block-curriculum img {
         max-height: 150px;

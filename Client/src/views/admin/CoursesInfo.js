@@ -183,16 +183,16 @@ export default function Courses() {
       return (
         <>
           <tr key={value.id}>
-            <td className=" float-right border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 font-bold">
+            <td className=" float-right border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-2 font-bold">
               <img src={require("assets/img/"+FilesService.changeImageType(value.FileType)).default} className="CourseFilePic" alt="user Pic" />
             </td>
-            <td  className="text-left border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 font-bold">
+            <td  className="text-left border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-2 font-bold">
               <span className="cursor-pointer" onClick= {() => {DownloadFile(value.FileData,value.FileName)}} >{value.FileName}</span>
             </td>
-            <th className="text-left  border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 ">
+            <th className="text-left  border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-2 ">
               { DateTimesService.formatDate(value.createdAt) }
             </th>
-            <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 font-bold">
+            <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-2 font-bold">
               <label className="text-red-500 cursor-pointer" onClick={()=>{openModalAttach()}}> <i className="fas fa-trash"></i> {locale.t("Button.lblDelete")}</label>
               <ConfirmDialog  showModal={modalIsOpenAttach} message={"ไฟล์แนบ"} hideModal={()=>{closeModalAttach()}} confirmModal={() => {DeletedFile(value.id)}} type={value.FileType} id={value.Id}/>
             </td>
@@ -673,7 +673,7 @@ export default function Courses() {
         <>
           <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0">
             <form  onKeyDown={(e) => checkKeyDown(e)}>
-            <div className="rounded-t bg-white mb-0 px-4 py-4">
+            <div className="rounded-t bg-white mb-0 px-3 py-3">
               <div className="text-center flex justify-between">
                 <div className="">
                   <h6 className="text-blueGray-700 text-xl font-bold mt-2">{locale.t("Menu.lblCourse")} {'>'} <label className="text-green-200-mju">
@@ -684,7 +684,7 @@ export default function Courses() {
                 <div className="text-center flex justify-between">
                   <div className={(headName === "หลักสูตร") ? 'block' : 'hidden' }>
                     <button
-                    className={" text-white active:bg-purple-active font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150 " + ((isNew) ? " btn-purple-mju-disable" : " bg-purple-mju")}
+                    className={" text-white active:bg-purple-active font-bold  text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150 " + ((isNew) ? " btn-purple-mju-disable" : " bg-purple-mju")}
                     type="button"
                     disabled={isNew}
                     onClick ={() => {PageChange("หัวข้อการเรียนรู้ / เนื้อหา")}}
@@ -695,7 +695,7 @@ export default function Courses() {
                   <div className={(headName === "หลักสูตร") ? 'block' : 'hidden' }>
                     {(enableControl && !isNew) ? 
                       <button
-                        className="bg-green-mju text-white active:bg-lightBlue-600 font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                        className="bg-green-mju text-white active:bg-lightBlue-600 font-bold  text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                         type="button"
                         onClick={ () => {EnableControl(false)}}
                       >
@@ -704,12 +704,12 @@ export default function Courses() {
                       :
                       <>
                         <button
-                          className={"bg-rose-mju text-white active:bg-rose-mju font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" + ((isNew ? " hidden" : " "))}
+                          className={"bg-rose-mju text-white active:bg-rose-mju font-bold  text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" + ((isNew ? " hidden" : " "))}
                           type="button" onClick={() =>{EnableControl(true)}} >
                           <i className="far fa-times-circle"></i>&nbsp;{locale.t("Button.lblDrop")}
                         </button>     
            
-                        <button className="bg-blue-save-mju text-white active:bg-blueactive-mju font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" 
+                        <button className="bg-blue-save-mju text-white active:bg-blueactive-mju font-bold  text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" 
                           type="submit" onClick={formik.handleSubmit} >
                           <i className="fas fa-save"></i>&nbsp;{locale.t("Button.lblSave")}
                         </button>
@@ -733,7 +733,7 @@ export default function Courses() {
                           </label>
                           <input
                             type="text"
-                            className="border-0 w-90 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                            className="border-0 w-90 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                             id="CurriculumCode"
                             name="CurriculumCode"
                             maxLength={100}
@@ -795,7 +795,7 @@ export default function Courses() {
                               <input
                                 type="text"
                                 maxLength="4"
-                                className="border-0 px-2 py-2  laceholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear w-60 transition-all duration-150"
+                                className="border-0 px-2 py-1  laceholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear w-60 transition-all duration-150"
                                 id="NumOfHours"
                                 name="NumOfHours"
                                 onChange={ (e) => { onHandleHourChange(e);}}
@@ -803,20 +803,20 @@ export default function Courses() {
                                 value={formik.values.NumOfHours}
                                 disabled={enableControl}
                               />
-                              <span className="text-xs font-bold"> &nbsp;{locale.t("Course.info.lblHour")}</span>
+                              <span className="text-sm font-bold"> &nbsp;{locale.t("Course.info.lblHour")}</span>
                             </div>
                             <div className="w-full lg:w-6/12 mb-3">
                               <input
                                 type="text"
                                 maxLength="2"
-                                className="border-0 px-2 py-2  laceholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear w-60 transition-all duration-150"
+                                className="border-0 px-2 py-1  laceholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear w-60 transition-all duration-150"
                                 id="NumOfMin"
                                 name="NumOfMin"
                                 onChange={(e) => {onHandleTelephoneChange(e);}}
                                 onBlur={formik.handleBlur}
                                 value={formik.values.NumOfMin}
                                 disabled={enableControl}
-                              /><span className="text-xs font-bold"> &nbsp;{locale.t("Course.info.lblMin")}</span>
+                              /><span className="text-sm font-bold"> &nbsp;{locale.t("Course.info.lblMin")}</span>
                             </div>
                             {formik.touched.NumOfHours && formik.errors.NumOfHours ? (
                               <div className="text-sm py-2 px-2 text-red-500">{formik.errors.NumOfHours}</div>
@@ -840,7 +840,7 @@ export default function Courses() {
                       </label>
                       <input
                         type="text"
-                        className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="CurriculumNameTH"
                         name="CurriculumNameTH"
                         maxLength={255}
@@ -863,7 +863,7 @@ export default function Courses() {
                       </label>
                       <input
                         type="text"
-                        className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="CurriculumNameENG"
                         name="CurriculumNameENG"
                         maxLength={255}
@@ -888,14 +888,14 @@ export default function Courses() {
                         <label htmlFor="file-input" className="cursor-pointer">
                           <input
                             type="text"
-                            className={"  border-0 px-2 py-2  placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" + ((!enableControl) ? " inputNoneDisable" : "")} 
+                            className={"  border-0 px-2 py-1  placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" + ((!enableControl) ? " inputNoneDisable" : "")} 
                             id="CurriculumNameENG"
                             name="CurriculumNameENG"
                             value={formik.values.ImageName}
                             readOnly
                             disabled={true}
                           />
-                            <span className={"spanUpload px-2 py-2 mt-1 mr-2 text-sm font-bold bg-green-mju " + ((enableControl) ? "opacity-50" : "")} >เลือกรูปภาพ</span>
+                            <span className={"spanUpload px-2 py-1 mt-1 mr-2 text-sm font-bold bg-green-mju " + ((enableControl) ? "opacity-50" : "")} >เลือกรูปภาพ</span>
                           </label>
                           <input id="file-input" type="file" accept="image/jpg, image/jpeg, image/png"  onChange={(e) => handlePictureCourseUpload(e)}       disabled={enableControl}/>
                         </div>
@@ -1171,17 +1171,17 @@ export default function Courses() {
                 </div>
               </div>
             </form>
-            <div className={"flex-auto px-4 py-4 pt-4 "   + ((headName === "หลักสูตร") ? "hidden" : "block") }>
+            <div className={"flex-auto px-2 py-2 pt-4 "   + ((headName === "หลักสูตร") ? "hidden" : "block") }>
               <div className="text-center flex justify-between">
                 <div className="py-2">
                   <span className="text-blueGray-700 text-base font-bold py-2">{locale.t("Course.info.lblCourse")} : <label className="text-blue-mju "> {(Storage.GetLanguage() === "th") ? formik.values.CurriculumNameTH : formik.values.CurriculumNameENG} ( {formik.values.NumOfHours} {locale.t("Course.info.lblHour")} {formik.values.NumOfMin} {locale.t("Course.info.lblMin")} ) </label></span>
                 </div>
                 <div>
                   <button
-                    className="bg-blue-mju text-white active:bg-lightBlue-600 font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                    className="bg-blue-mju text-white active:bg-lightBlue-600 font-bold text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none ease-linear transition-all duration-150"
                     type="button"
                     onClick={() => { setIsNewSubject(true); setIsEnableSubjectControl(false); setListAttach([]); formikSubject.resetForm(); formikSubject.setFieldValue('ContentTH',null); formikSubject.setFieldValue('ContentENG',null);  openModal(); }}>
-                    &nbsp;+ {locale.t("Subject.list.lblAddSubject")}
+                    <i class="fas fa-plus"></i>&nbsp;&nbsp;{locale.t("Subject.list.lblAddSubject")}
                   </button>
                     <Modal
                       isOpen={modalIsOpen}
@@ -1195,14 +1195,14 @@ export default function Courses() {
                           <>
                             <div className="relative flex flex-col min-w-0 break-words w-full  rounded-lg bg-blueGray-100 border-0">
                               <form onSubmit={formikSubject.handleSubmit}>
-                              <div className="rounded-t bg-white mb-0 px-4 py-4">
+                              <div className="rounded-t bg-white mb-0 px-2 py-2">
                                 <div className="text-center flex justify-between">
                                   <div className="">
                                     <h6 className="text-blueGray-700 text-xl font-bold mt-2">{locale.t("Menu.lblCourse")} {'>'} <label className="text-green-200-mju">{(Storage.GetLanguage() === "th") ? headName : "Subject / Content"} </label></h6>
                                   </div>
                                   <div className="">
                                     <button
-                                        className={"bg-rose-mju text-white active:bg-rose-mju font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"}
+                                        className={"bg-rose-mju text-white active:bg-rose-mju font-bold  text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"}
                                         type="button"
                                         onClick={closeModal}
                                       >
@@ -1210,7 +1210,7 @@ export default function Courses() {
                                     </button>    
                                     {(enableSubjectControl && !isNewSubject) ? 
                                       <button
-                                        className="bg-green-mju text-white active:bg-lightBlue-600 font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                                        className="bg-green-mju text-white active:bg-lightBlue-600 font-bold  text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                                         type="button"
                                         onClick={ () => {EnableControlSubject(false)}}
                                       >
@@ -1219,14 +1219,14 @@ export default function Courses() {
                                       :
                                       <>
                                         <button
-                                          className={"bg-yello-mju text-white active:bg-yello-mju font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" + ((isNewSubject ? " hidden" : " "))}
+                                          className={"bg-yello-mju text-white active:bg-yello-mju font-bold  text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" + ((isNewSubject ? " hidden" : " "))}
                                           type="button"
                                           onClick={() =>{EnableControlSubject(true)}}
                                         >
                                           <i className="far fa-times-circle"></i>&nbsp;{locale.t("Button.lblDrop")}
                                         </button>     
                                         <button
-                                          className="bg-blue-save-mju text-white active:bg-blueactive-mju font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" 
+                                          className="bg-blue-save-mju text-white active:bg-blueactive-mju font-bold  text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" 
                                           type="submit"
                                           >
                                         <i className="fas fa-save"></i>&nbsp;{locale.t("Button.lblSave")}
@@ -1236,7 +1236,7 @@ export default function Courses() {
                                   </div>
                                 </div>
                               </div>
-                              <div className={"flex-auto px-2 py-4"}>
+                              <div className={"flex-auto px-2 py-2"}>
                                   <div className="flex flex-wrap">
                                     <div className="w-full lg:w-6/12 px-4 py-1">
                                       <div className="relative w-full mb-3">
@@ -1247,7 +1247,7 @@ export default function Courses() {
                                         </label>
                                         <input
                                           type="text"
-                                          className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                                          className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                                           id="SubjectCode"
                                           name="SubjectCode"
                                           onChange={formikSubject.handleChange}
@@ -1270,7 +1270,7 @@ export default function Courses() {
                                             <input
                                               type="text"
                                               maxLength="4"
-                                              className="border-0 px-2 py-2  laceholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear w-60 transition-all duration-150"
+                                              className="border-0 px-2 py-1  laceholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear w-60 transition-all duration-150"
                                               id="SubjectOfHour"
                                               name="SubjectOfHour"
                                               onChange={ (e) => { onHandleSubjectHourChange(e);}}
@@ -1278,7 +1278,7 @@ export default function Courses() {
                                               value={formikSubject.values.SubjectOfHour}
                                               disabled={enableSubjectControl}
                                             />
-                                            <span className="text-xs font-bold"> &nbsp;{locale.t("Course.info.lblMin")}</span>
+                                            <span className="text-sm font-bold"> &nbsp;{locale.t("Course.info.lblMin")}</span>
                                           </div>
                                         </div>
                                     </div>
@@ -1292,7 +1292,7 @@ export default function Courses() {
                                         </label>
                                         <input
                                           type="text"
-                                          className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                                          className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                                           id="SubjectNameTH"
                                           name="SubjectNameTH"
                                           onChange={formikSubject.handleChange}
@@ -1314,7 +1314,7 @@ export default function Courses() {
                                         </label>
                                         <input
                                           type="text"
-                                          className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                                          className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                                           id="SubjectNameENG"
                                           name="SubjectNameENG"
                                           onChange={formikSubject.handleChange}
@@ -1515,7 +1515,7 @@ export default function Courses() {
                                           <div>
                                             <div className="imageUpload" style={ (!enableSubjectControl) ? {} :  {pointerEvents: "none", opacity: "0.4"}}>
                                               <label
-                                                className="bg-purple-mju cursor-pointer text-white mb-2 px-2 py-2 active:bg-purple-active font-bold  text-xs rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                                                className="bg-purple-mju cursor-pointer text-white mb-2 px-2 py-1 active:bg-purple-active font-bold  text-sm rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                                                 htmlFor="file-input2">
                                                   <i className="fas fa-book-reader"></i> {locale.t("Main.lblAttach")}
                                               </label>
@@ -1533,22 +1533,22 @@ export default function Courses() {
                                               <thead>
                                                 <tr>
                                                   <th
-                                                  className={" px-6 align-middle border border-solid py-3 text-xs  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"}
+                                                  className={" px-6 align-middle border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"}
                                                   >
                                                   </th>
                                                   <th
-                                                  className={" px-6 align-middle border border-solid py-3 text-xs  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"}
+                                                  className={" px-6 align-middle border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"}
                                                   >
                                                     {locale.t("Subject.info.FileName")}
                                                   </th>
                                                   <th
-                                                  className={"px-6 align-middle border border-solid py-3 text-xs  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"}
+                                                  className={"px-6 align-middle border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"}
                                                   >
                                                     {locale.t("Subject.info.lblFileDate")}
                                                   </th>
                                                   <th
                                                   className={
-                                                      "px-6 align-middle border border-solid py-3 text-xs  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"
+                                                      "px-6 align-middle border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 border-blueGray-100"
                                                   }
                                                   >
                                                   </th>

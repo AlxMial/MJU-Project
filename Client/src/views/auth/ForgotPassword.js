@@ -1,16 +1,14 @@
-import React, { useState,useContext,useEffect } from 'react'
+import React, { useEffect } from 'react'
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
-import { Link } from "react-router-dom";
-import { AuthContext } from '../../services/AuthContext';
 import { useToasts } from 'react-toast-notifications';
 import { useFormik  } from "formik";
 import * as Yup from "yup";
 import urlPath from 'services/urlServer';
 import urlForgot from 'services/urlForgot';
+import { isMobile } from 'react-device-detect';
 
 export default function ForgotPassword() {
-  const { setAuthState } = useContext(AuthContext); 
   const { addToast } = useToasts();
   let history = useHistory();
 
@@ -50,13 +48,13 @@ export default function ForgotPassword() {
 
   return (
     <>
-      <div className="container pt-20 mx-auto px-4 h-full">
+      <div className={"container px-4 h-full" + ((isMobile) ? ' ' : ' mx-auto')}>
         <div className="flex content-center items-center justify-center h-full">
-          <div className="w-full lg:w-8/12 px-4">
+          <div className="w-full lg:w-8/12 px-4 vertical-center">
             <div className="relative flex flex-col min-w-0 break-words w-full  mb-6 shadow-lg rounded-lg bg-white border-0">
               <div className="rounded-t mb-0 px-6 py-6">
                 <div className="text-left mb-3">
-                  <h6 className="text-green-mju text-3xl font-bold">
+                  <h6 className="text-green-mju text-4xl font-bold">
                     Forgot Password?
                   </h6>
                 </div>
@@ -67,15 +65,15 @@ export default function ForgotPassword() {
                   </span>
                 </div>
               </div>
-              <div className="flex-auto px-4 lg:w-9/12 lg:px-10 py-10 pt-0 mx-auto">
+              <div className={"flex-auto px-4 lg:w-9/12 lg:px-10 py-10 pt-0" + ((isMobile) ? ' ' : ' mx-auto')}>
                 <form onSubmit={formik.handleSubmit}>
                   <div className="relative w-full mb-3">
-                    <label className="block uppercase text-blueGray-600 text-xs font-bold mb-2">
+                    <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
                       Email
                     </label>
                     <input
                       type="email"
-                      className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-xs shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                      className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                       placeholder="Email"
                       id="email"
                       name="email"

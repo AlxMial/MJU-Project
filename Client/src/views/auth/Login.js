@@ -85,11 +85,11 @@ export default function Login() {
     <>
       <div className={"container px-4 h-full" + ((isMobile) ? " " : " mx-auto")} >
         <div className="flex content-center items-center justify-center h-full">
-          <div className="w-full lg:w-8/12 px-4">
+          <div className="w-full lg:w-8/12 px-4 vertical-center">
             <div className="relative flex flex-col min-w-0 break-words w-full  mb-6 shadow-lg rounded-lg bg-white border-0">
               <div className="rounded-t mb-0 mt-4 ">
                 <div className="text-center mb-3">
-                  <h6 className="text-green-mju text-3xl font-bold">
+                  <h6 className="text-green-mju text-4xl font-bold">
                     SIGN IN
                   </h6>
                 </div>
@@ -98,12 +98,12 @@ export default function Login() {
                 "flex-auto px-4 lg:w-9/12 lg:px-10 py-10 pt-0" + ((isMobile) ? " " : " mx-auto")}>
                 <form onSubmit={formik.handleSubmit}>
                   <div className="relative w-full mb-3">
-                    <label className="block uppercase text-blueGray-600 text-xs font-bold mb-2">
+                    <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">
                       Email
                     </label>
                     <input
                       type="email"
-                      className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-xs shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                      className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                       placeholder="Email"
                       id="email"
                       name="email"
@@ -117,13 +117,13 @@ export default function Login() {
                   </div>
                   <div className="relative w-full mb-3">
                     <label
-                      className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
+                      className="block uppercase text-blueGray-600 text-sm font-bold mb-2"
                     >
                       Password
                     </label>
                     <input
                       type="password"
-                      className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-xs shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                      className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                       placeholder="Password"
                       id="password"
                       name="password"
@@ -149,15 +149,15 @@ export default function Login() {
                             onBlur={formik.handleBlur}
                             checked={formik.values.isRemember}
                           />
-                          <span className="ml-2 text-xs font-semibold text-blueGray-600">
+                          <span className="ml-2 text-sm font-semibold text-blueGray-600">
                             Remember me
                           </span>
                         </label>
                       </div>
                       <div>
                       <label className="inline-flex items-center cursor-pointer mt-2">
-                          <span className="ml-2 text-xs font-semibold text-blueGray-600">
-                            <Link className="cursor-pointer text-xs font-bold text-blue-mju" to="/auth/forgotpassword"> Forgot Password? </Link>
+                          <span className="ml-2 text-sm font-semibold text-blueGray-600">
+                            <Link className="cursor-pointer text-sm font-bold text-blue-mju" to="/auth/forgotpassword"> Forgot Password? </Link>
                           </span>
                         </label>
                       </div>
@@ -167,10 +167,10 @@ export default function Login() {
                   <div className="">
                     <div className="flex flex-wrap relative">
                       <div className="w-1/2 mt-4">
-                        <span className="ml-2 text-xs font-semibold text-blueGray-600 text-left">
+                        <span className="ml-2 text-sm font-semibold text-blueGray-600 text-left">
                         No Account? 
                         </span>
-                        <Link className="cursor-pointer text-xs font-bold text-blue-mju" to="/auth/register"> Signup</Link>
+                        <Link className="cursor-pointer text-sm font-bold text-blue-mju" to="/auth/register"> Signup</Link>
                       </div>
                       <div className="w-1/2 text-right">
                         <button

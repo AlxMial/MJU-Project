@@ -97,7 +97,7 @@ export default function Curriculum() {
     return (
         <>
             {isLoading ? ( <> <Spinner  customText={"Loading"}/></>) : (<></>)}
-            <div className="relative pt-20 backScreen-pb flex max-h-screen-37 bg-darkgreen-mju">
+            <div className="relative pt-20 backScreen-pb flex max-h-screen-35 bg-darkgreen-mju">
                 <div className="container px-12 relative mx-auto lg:w-10/12 mt-2 flex flex-wrap">
                     <div className="w-full lg:w-3/12 mb-2 mt-2">
                         <i className="fas fa-arrow-left text-white text-sm cursor-pointer " onClick={() => history.goBack()}>
@@ -111,29 +111,29 @@ export default function Curriculum() {
                                     {locale.t("Main.lblCourseSearch")}
                                 </h1>
                                 <div className='flex mt-4'>
-                                    <label className="block uppercase text-white text-sm font-bold mb-2 label-form"> {locale.t("Main.lblSearch")} </label >
-                                    <input className='text-form border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150'
+                                    <label className="block text-white text-sm font-bold mb-2 label-form"> {locale.t("Main.lblSearch")} </label >
+                                    <input className='text-form border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150'
                                         type="text"
                                         value={searchText}
                                         onChange={(e) => { setSearchText(e.target.value) }}
                                     />
                                 </div>
                                 <div className='flex mt-2'>
-                                    <label className="block uppercase text-white text-sm font-bold mb-2 label-form"> {locale.t("Main.lblTag")} </label >
+                                    <label className="block text-white text-sm font-bold mb-2 label-form"> {locale.t("Main.lblTag")} </label >
                                     <textarea value={tagText} rows="4" onChange={e => setTagText(e.target.value)}
                                         className='text-form border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150' />
                                 </div>
                                 <div className='flex flex-wrap mt-2'>
                                     <label className='label-form'></label>
                                     <button onClick={() => clearSearch()}
-                                        className="w-3/12 lg:w-3/12 bg-green-mju text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-2 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-2 ease-linear transition-all duration-150"
+                                        className="w-3/12 lg:w-3/12 bg-green-mju text-white active:bg-lightBlue-600 font-bold text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-2 ease-linear transition-all duration-150"
                                         type="button">
                                         <i className="fas fa-redo-alt"></i>&nbsp;{locale.t("Main.lblClear")}
                                     </button>
                                     <button onClick={() => { 
                                         setValueSearch(searchText)
                                         setValueSearchTag(tagText)}}
-                                        className="w-6/12 lg:w-3/12 bg-green-mju text-white active:bg-lightBlue-600 font-bold uppercase text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none ease-linear transition-all duration-150"
+                                        className="w-6/12 lg:w-3/12 bg-green-mju text-white active:bg-lightBlue-600 font-bold text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none ease-linear transition-all duration-150"
                                         type="button">
                                         <i className="fas fa-filter"></i>&nbsp;{locale.t("Main.lblFilter")}
                                     </button>
@@ -165,9 +165,9 @@ export default function Curriculum() {
                                     className="w-full align-middle rounded-t-lg"
                                 />
                                 <blockquote className="blockquote relative p-4 mb-4 shadow-lg rounded-b-lg">
-                                    {(Storage.GetLanguage() === "th") ? <h4 className="text-base font-bold ">{item.CurriculumNameTH}</h4> :  <h4 className="text-base font-bold ">{item.CurriculumNameENG}</h4> }
-                                    <div className='mt-2  text-editor THSarabunBold text-sm-texteditor'>
-                                        {(Storage.GetLanguage() === "th") ? <div dangerouslySetInnerHTML={{ __html: FilesServices.buffer64UTF8(item.DescriptionTH) }}></div> : <div dangerouslySetInnerHTML={{ __html: FilesServices.buffer64UTF8(item.DescriptionENG) }}></div> }
+                                    {(Storage.GetLanguage() === "th") ? <h4 className="text-sm font-bold ">{item.CurriculumNameTH}</h4> :  <h4 className="text-base font-bold ">{item.CurriculumNameENG}</h4> }
+                                    <div className='mt-2  text-editor THSarabunBold'>
+                                        {(Storage.GetLanguage() === "th") ? <div className='text-2xs' dangerouslySetInnerHTML={{ __html: FilesServices.buffer64UTF8(item.DescriptionTH) }}></div> : <div dangerouslySetInnerHTML={{ __html: FilesServices.buffer64UTF8(item.DescriptionENG) }}></div> }
                                     </div>
                                     <footer>
                                         <div>
@@ -176,7 +176,7 @@ export default function Curriculum() {
                                         <div className='mt-4'>
                                         {
                                             tags.filter((tagsitem) => tagsitem.id === item.id).map(function (value) {
-                                                return (<div className='display-inline mt-1' ><label key={value.key} className='tag text-xs px-2 py-2 text-blue-mju-home mr-2'>{value.name}</label></div>)
+                                                return (<div className='display-inline mt-1' ><label key={value.key} className='tag text-sm px-2 py-2 text-blue-mju-home mr-2'>{value.name}</label></div>)
                                             })}
                                         </div>
                                     </footer>
@@ -199,7 +199,7 @@ export default function Curriculum() {
                                             <div className='mt-1'>
                                             {
                                                 tags.filter((tagsitem) => tagsitem.id === item.id).map(function (value) {
-                                                    return (<div className='display-inline mt-1' ><label key={value.key} className='tag text-xs px-2 py-1 text-blue-mju-home mr-2'>{value.name}</label></div>)
+                                                    return (<div className='display-inline mt-1' ><label key={value.key} className='tag text-sm px-2 py-1 text-blue-mju-home mr-2'>{value.name}</label></div>)
                                                 })}
                                             </div>
                                         </div>

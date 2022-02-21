@@ -45,7 +45,7 @@ export default function Register() {
         <input ref={ref}
         type="text"
         readOnly
-        className="datepicker-input cursor-pointer  mb-4  border-0 py-1-input px-1-input placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-xs shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" // a styling class
+        className="datepicker-input cursor-pointer  border-0 py-1 px-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" // a styling class
         value={selectedDay !== null ? `${selectedDay.day}/${selectedDay.month}/${selectedDay.year}` :  new Date().toLocaleDateString('en-GB')} />
       </span>
     </>
@@ -144,47 +144,47 @@ export default function Register() {
 
   return (
     <>
-      <div className="container mx-auto px-4 h-full">
-        <div className="flex content-center items-center justify-center h-full">
-        <div className="w-full lg:w-12/12 px-4">
+      <div className="container mx-auto px-4 h-full  ">
+        <div className={"flex content-center items-center justify-center h-full" + ((isMobile) ? ' py-6' : ' ')}>
+        <div className="w-full lg:w-12/12 px-4 vertical-center" >
           <div className="flex flex-wrap relative min-w-0 break-words w-full shadow-lg rounded-lg border-0">
-            <div className={"w-1/2 bg-darkgreen-mju  text-white rounded-t-l-lg rounded-b-l-lg  pt-12 pl-4 pr-4 pb-2" + ((isMobile) ? " hidden" : " block")}>
-                <h2 className="text-2xl text-bold THSarabunBold">INFORMATION</h2>
+            <div className={"w-1/2 bg-darkgreen-mju  text-white rounded-t-l-lg rounded-b-l-lg pt-6 pl-4 pr-4 pb-2" + ((isMobile) ? " hidden" : " block")}>
+                <h2 className="text-4xl text-bold THSarabunBold">INFORMATION</h2>
                 <br/>
                 <div className="text-indent">
-                  <span className="text-xs">
+                  <span className="text-sm">
                     Organic farming is an agricultural system that uses fertilizers of organic origin such as compost manure, green manure, and bone meal and places emphasis on techniques such as crop rotation and companion planting. It originated early in the 20th century in reaction to rapidly changing farming practices. Certified organic agriculture accounts for 70 million hectares globally, with over half of that total in Australia. Organic farming continues to be developed by various organizations today. Biological pest control, mixed cropping and the fostering of insect predators are encouraged. Organic standards are designed to allow the use of naturally-occurring substances while prohibiting or strictly limiting synthetic substances.
                   </span>
                 </div>
                 <br/>
                 <br/>
                 <div className="text-indent">
-                  <span  className="text-xs">
+                  <span  className="text-sm">
                     Since 1990, the market for organic food and other products has grown rapidly, reaching $63 billion worldwide in 2012. This demand has driven a similar increase in organically-managed farmland that grew from 2001 to 2011 at a compounding rate of 8.9% per annum.
                   </span>
                 </div>
                 <br/>
                 <br/>
                 <div className="text-indent">
-                  <span  className="text-xs">
+                  <span  className="text-sm">
                     As of 2019, approximately 72,300,000 hectares (179,000,000 acres) worldwide were farmed organically, representing approximately 1.5 percent of total world farmland.
                   </span>
                 </div>
             </div>
-            <div className={"bg-white  text-black  pt-12 pl-4 pr-4 pb-2"  + ((isMobile) ? " rounded-t-lg rounded-r-lg" : " w-1/2 rounded-t-r-lg rounded-b-r-lg")}>
+            <div className={"bg-white  text-black  pt-6 pl-4 pr-4 pb-2"  + ((isMobile) ? " rounded-t-lg rounded-b-lg" : " w-1/2 rounded-t-r-lg rounded-b-r-lg")}>
               <form onSubmit={formik.handleSubmit}>
-                <h2 className="text-2xl text-bold text-green-mju THSarabunBold">REGISTER FORM</h2>
+                <h2 className={"text-4xl text-bold text-green-mju THSarabunBold" + ((isMobile) ? " text-center" : "")}>REGISTER FORM</h2>
                 <div className="flex flex-wrap relative mt-5">
                   <div className="w-full lg:w-6/12">
                       <div className="relative w-full mb-3 px-2">
                         <label
-                          className="block  text-blueGray-600 text-xs font-bold mb-2"
+                          className="block  text-blueGray-600 text-sm font-bold mb-2"
                         >
                           First Name
                         </label>
                         <input
                           type="text"
-                          className="border-0 py-1-input px-1-input placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-xs shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                          className="border-0 py-1 px-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                           placeholder="First Name"
                           id="firstName"
                           name="firstName"
@@ -202,13 +202,13 @@ export default function Register() {
                     <div className="w-full lg:w-6/12">
                       <div className="relative w-full mb-3 px-2">
                         <label
-                          className="block  text-blueGray-600 text-xs font-bold mb-2"
+                          className="block  text-blueGray-600 text-sm font-bold mb-2"
                         >
                           Last Name
                         </label>
                         <input
                           type="text"
-                          className="border-0 py-1-input px-1-input placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-xs shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                          className="border-0 py-1 px-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                           placeholder="Last Name"
                           id="lastName"
                           name="lastName"
@@ -219,14 +219,14 @@ export default function Register() {
                           autoComplete="new-password"
                         />
                          {formik.touched.lastName && formik.errors.lastName ? (
-                              <div className="text-xs py-2 px-2 text-red-500">{formik.errors.lastName}</div>
+                              <div className="text-sm py-2 px-2 text-red-500">{formik.errors.lastName}</div>
                           ) : null}
                       </div>
                     </div>
                 </div>
                 <div className="relative w-full px-2 mt-2">
                     <label
-                      className="block text-blueGray-600 text-xs font-bold mb-2"
+                      className="block text-blueGray-600 text-sm font-bold mb-2"
                     >
                       Role
                     </label>
@@ -235,18 +235,18 @@ export default function Register() {
                         name="role"
                         onChange={value => {  formik.setFieldValue('role',value.value)}}
                         //value={formik.values.title}
-                        className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-xs-select shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" 
+                        className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" 
                         options={optionsRole} 
                         value={defaultValue(optionsRole, formik.values.role)}
                         />      
                 </div>
                 <div className="relative w-full px-2 mt-4">
-                  <label className="block text-blueGray-600 text-xs font-bold mb-2">
+                  <label className="block text-blueGray-600 text-sm font-bold mb-2">
                     Your Email
                   </label>
                   <input
                     type="text"
-                    className="border-0 py-1-input px-1-input placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-xs shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    className="border-0 py-1 px-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                     placeholder="Your Email"
                     id="email"
                     name="email"
@@ -257,14 +257,14 @@ export default function Register() {
                     autoComplete="new-password"
                   />
                    {formik.touched.email && formik.errors.email ? (
-                              <div className="text-xs py-2 px-2 text-red-500">{formik.errors.email}</div>
+                              <div className="text-sm py-2 px-2 text-red-500">{formik.errors.email}</div>
                           ) : null}
                 </div>
                 <div className="flex flex-wrap relative mt-4">
                   <div className="w-full lg:w-6/12">
                     <div className="relative w-full px-2">
                       <label
-                        className="block  text-blueGray-600 text-xs font-bold mb-2"
+                        className="block  text-blueGray-600 text-sm font-bold mb-2"
                       >
                         Date of Birth
                       </label>
@@ -279,14 +279,15 @@ export default function Register() {
                   <div className="w-full lg:w-6/12">
                     <div className="relative w-full px-2">
                       <label
-                        className="block  text-blueGray-600 text-xs font-bold mb-2"
-                      >Gender
+                        className={ "block text-blueGray-600 text-sm font-bold mb-2" + ((isMobile) ? " mt-4" : "")}
+                      >
+                        Gender
                       </label>
                       <Select
                         id="gender"
                         name="gender"
                         onChange={value => {formik.setFieldValue('gender',value.value)}}
-                        className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-xs shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" 
+                        className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" 
                         options={optionsGender}
                         value={defaultValue(optionsGender, formik.values.gender)}
                         />
@@ -295,11 +296,11 @@ export default function Register() {
                 </div>
                 <div className="relative w-full px-2 mt-4">
                   <label
-                    className="block text-blueGray-600 text-xs font-bold mb-2"
+                    className="block text-blueGray-600 text-sm font-bold mb-2"
                   >
                     Interesting Learning Path
                   </label>
-                  {/* <select className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-xs shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                  {/* <select className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                     id="learningPathId"
                     name="learningPathId"
                     onChange={formik.handleChange}
@@ -314,24 +315,24 @@ export default function Register() {
                       name="learningPathId"
                       onChange={value => {  formik.setFieldValue('learningPathId',value.value)}}
                       //value={formik.values.title}
-                      className="border-0 p-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-xs-select shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" 
+                      className="border-0 p-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" 
                       options={optionsLearning} 
                       value={defaultValue(optionsLearning, formik.values.learningPathId)}
                       />
-                  {/* <Select  className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-xs shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" options={options} /> */}
+                  {/* <Select  className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" options={options} /> */}
 
                 </div>
                 <div className="flex flex-wrap relative mt-4">
                   <div className="w-full lg:w-6/12">
                     <div className="relative w-full mb-3 px-2">
                       <label
-                        className="block  text-blueGray-600 text-xs font-bold mb-2"
+                        className="block  text-blueGray-600 text-sm font-bold mb-2"
                       >
                         Password
                       </label>
                       <input
                         type="password"
-                        className="border-0 py-1-input px-1-input placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-xs shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="border-0 py-1 px-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         placeholder="Password"
                         maxLength={255}
                         id="password"
@@ -351,21 +352,21 @@ export default function Register() {
                         value={formik.values.password}
                       />
                        {formik.touched.password && formik.errors.password ? (
-                              <div className="text-xs py-2 px-2 text-red-500">{formik.errors.password}</div>
+                              <div className="text-sm py-2 px-2 text-red-500">{formik.errors.password}</div>
                           ) : null}
                     </div>
                   </div>
                   <div className="w-full lg:w-6/12">
                     <div className="relative w-full mb-3 px-2">
                       <label
-                        className="block  text-blueGray-600 text-xs font-bold mb-2"
+                        className="block  text-blueGray-600 text-sm font-bold mb-2"
                         
                       >Confirm Password
                       </label>
                       <input
                         type="password"
                         maxLength={255}
-                        className="border-0 py-1-input px-1-input placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-xs shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="border-0 py-1 px-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         placeholder="Confirm Password"
                         id="confirmPassword"
                         name="confirmPassword"
@@ -373,7 +374,7 @@ export default function Register() {
                         value={valueConfirm}
                       />
                       {confirmPassword ? (
-                              <div className="text-xs py-2 px-2 text-red-500">* Passwords do not match</div>
+                              <div className="text-sm py-2 px-2 text-red-500">* Passwords do not match</div>
                           ) : null}
                     </div>
                   </div>
@@ -386,7 +387,7 @@ export default function Register() {
                         className="form-checkbox  rounded text-green-200-mju ml-1 w-5 h-5 ease-linear transition-all duration-150"
                         onClick={(e) => {setIsTerm(e.target.checked)}}
                       />
-                      <span className="ml-2 text-xs font-semibold text-blueGray-600">
+                      <span className="ml-2 text-sm font-semibold text-blueGray-600">
                         I agree to the{" "}
                         <a
                           href="#pablo"
@@ -400,7 +401,7 @@ export default function Register() {
                   </div>
                   <div className="text-center px-2 mt-2">
                     <button
-                      className="bg-darkgreen-mju text-white active:bg-darkgreenactive-mju text-xs font-bold  px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150"
+                      className="bg-darkgreen-mju text-white active:bg-darkgreenactive-mju text-sm font-bold  px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150"
                       type="submit"
                     >
                       REGISTER

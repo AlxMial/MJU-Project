@@ -243,7 +243,7 @@ export default function LearningList() {
       <div className="flex flex-wrap mt-4 md:min-h-full ">
         <div className="w-full mb-12 px-4">
             <div className={"relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-2xl bg-white"}>
-                <div className="rounded-t mb-0 px-4 py-3 border-0">
+                <div className="rounded-t mb-0 px-3 py-3 border-0">
                     <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">
                         {/* Brand */}
                             <h3 className={"font-semibold text-lg text-blueGray-700"}>
@@ -263,13 +263,13 @@ export default function LearningList() {
                         {/* Form */}
                         <form className="md:flex hidden flex-row flex-wrap items-center lg:ml-auto mr-3">
                             <div className="relative flex w-full flex-wrap items-stretch">
-                                <span className="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center pl-3 py-2">
+                                <span className="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center pl-3 py-1">
                                     <i className="fas fa-search"></i>
                                 </span>
                                 <input
                                     type="text"
                                     placeholder="Search here..."
-                                    className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm shadow outline-none focus:outline-none focus:ring w-full pl-12"
+                                    className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm shadow outline-none focus:outline-none focus:ring w-full pl-12"
                                     onChange={(e)=>{InputSearch(e.target.value)}}
                                 />
                             </div>

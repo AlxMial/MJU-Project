@@ -23,7 +23,13 @@
   .publishDate{
     color: #787878;
     margin-left: 15px;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
+  }
+  .trash{
+    margin-left: 15px;
+    font-size: 1.2rem;
+    --tw-text-opacity: 1;
+    color: rgba(239, 68, 68, var(--tw-text-opacity));
   }
   .postDesc{
     margin-top: 15px;
@@ -62,11 +68,11 @@
   }
   .commentAuthor {
     font-weight: bold;
-    font-size: 1.5rem;    
+    font-size: 1.2rem;    
   }
 
   .commentContent{
-    font-size: 1.5rem;
+    font-size: 1.2rem;
   }
   /* h2{
     margin:0;
@@ -156,7 +162,7 @@
 
   .subjectName {
       color: #08aff3;
-      font-size: 1.5rem;
+      font-size: 1.2rem;
   }
 
   .subjectOfHour {

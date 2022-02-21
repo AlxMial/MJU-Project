@@ -7,6 +7,7 @@ import { useToasts } from 'react-toast-notifications';
 import { useFormik  } from "formik";
 import * as Yup from "yup";
 import urlPath from 'services/urlServer';
+import { isMobile } from 'react-device-detect';
 
 export default function ForgotReturn() {
   const { setAuthState } = useContext(AuthContext); 
@@ -43,13 +44,13 @@ export default function ForgotReturn() {
 
   return (
     <>
-      <div className="container pt-20 mx-auto px-4 h-full">
+      <div className={"container  px-4 h-full" + ((isMobile) ? ' ' : ' mx-auto')}>
         <div className="flex content-center items-center justify-center h-full">
-          <div className="w-full lg:w-8/12 px-4">
+          <div className="w-full lg:w-8/12 px-4 vertical-center">
             <div className="relative flex flex-col min-w-0 break-words w-full  mb-6 shadow-lg rounded-lg bg-white border-0">
               <div className="rounded-t mb-0 px-6 py-6">
                 <div className="text-left mb-3">
-                  <h6 className="text-green-mju text-3xl font-bold">
+                  <h6 className="text-green-mju text-4xl font-bold">
                     Reset your password
                   </h6>
                 </div>
@@ -60,7 +61,7 @@ export default function ForgotReturn() {
                   </span>
                 </div>
               </div>
-              <div className="flex-auto px-4 lg:w-9/12 lg:px-10 py-10 pt-0 mx-auto">
+              <div className={"flex-auto px-4 lg:w-9/12 lg:px-10 py-10 pt-0 " + ((isMobile) ? ' ' : ' mx-auto')}>
                 <form>
                   
                   <div className="">

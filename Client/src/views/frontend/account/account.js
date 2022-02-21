@@ -227,7 +227,7 @@ export default function Account() {
             <input ref={ref}
             type="text"
             readOnly
-            className="datepicker-input cursor-pointer w-80  mb-4 my-custom-input-class border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" // a styling class
+            className="datepicker-input cursor-pointer w-80  mb-4 my-custom-input-class border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" // a styling class
             disabled={enableControl}
             value={selectedDay !== null ? `${selectedDay.day}/${selectedDay.month}/${selectedDay.year}` :  new Date().toLocaleDateString('en-GB')} />
         </span>
@@ -384,14 +384,14 @@ export default function Account() {
                             <>
                             <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-2xl bg-blueGray-100 border-0">
                                 <form onSubmit={formik.handleSubmit}> 
-                                <div className="rounded-t-2xl bg-white mb-0 px-4 py-4">
+                                <div className="rounded-t-2xl bg-white mb-0 px-3 py-3">
                                 <div className="text-center flex justify-between ">
                                     <div>
                                     <h3 className="text-blueGray-700 text-lg font-bold mt-2">{locale.t("Menu.lblAccount")}</h3>
                                     </div>
                                     <div>
                                     {(enableControl && !isNew) ? <button
-                                        className="bg-green-mju text-white active:bg-lightBlue-600 font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                                        className="bg-green-mju text-white active:bg-lightBlue-600 font-bold  text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                                         type="button"
                                         onClick={ () => {EnableControl(false)}}
                                     >
@@ -399,14 +399,14 @@ export default function Account() {
                                     </button> :
                                     <>
                                         <button
-                                        className={"bg-rose-mju text-white active:bg-rose-mju font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" + ((isNew ? " hidden" : " "))}
+                                        className={"bg-rose-mju text-white active:bg-rose-mju font-bold  text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" + ((isNew ? " hidden" : " "))}
                                         type="button"
                                         onClick={() =>{EnableControl(true)}}
                                         >
                                             <i className="fas fa-pencil-alt"></i>&nbsp;{locale.t("Button.lblDrop")}
                                         </button>     
                                         <button
-                                        className="bg-blue-save-mju text-white active:bg-blueactive-mju font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" 
+                                        className="bg-blue-save-mju text-white active:bg-blueactive-mju font-bold  text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" 
                                         type="submit"
                                         >
                                             <i className="fas fa-save"></i>&nbsp;{locale.t("Button.lblSave")}
@@ -441,7 +441,7 @@ export default function Account() {
                                             </label>
                                             <input
                                                 type="text"
-                                                className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                                                className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                                                 autoComplete="off"
                                                 id="accountCode"
                                                 name="accountCode"
@@ -457,7 +457,7 @@ export default function Account() {
                                         </div>
                                         <div className="w-full lg:w-6/12 px-4">
                                             <div className="float-right">
-                                            <div className="relative w-full mb-3 text-center flex justify-between">
+                                            {/* <div className="relative w-full mb-3 text-center flex justify-between">
                                                 <span className="text-sm font-bold text-center flex justify-between"><span className="mt-2">{locale.t("Account.info.lblActive")}</span> &nbsp; 
                                                 <Switch 
                                                 isOn={value}
@@ -469,7 +469,7 @@ export default function Account() {
                                                 disble={enableControl}
                                                 />
                                                 </span>
-                                            </div>
+                                            </div> */}
                                             </div>
                                         </div>
                                         <div className="w-full lg:w-3-1/12 px-4 py-1">
@@ -497,7 +497,7 @@ export default function Account() {
                                             </label>
                                             <input
                                                 type="text"
-                                                className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                                                className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                                                 id="firstName"
                                                 name="firstName"
                                                 autoComplete="firstName"
@@ -520,7 +520,7 @@ export default function Account() {
                                             </label>
                                             <input
                                                 type="text"
-                                                className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                                                className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                                                 id="lastName"
                                                 name="lastName"
                                                 onChange={formik.handleChange}
@@ -550,7 +550,7 @@ export default function Account() {
                                         </label>
                                         <input
                                             type="text"
-                                            className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                                            className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                                             id="email"
                                             name="email"
                                             onChange={formik.handleChange}
@@ -573,7 +573,7 @@ export default function Account() {
                                         </label>
                                         <input
                                             type="text"
-                                            className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                                            className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                                             id="phoneNumber"
                                             name="phoneNumber"
                                             maxLength={10}
@@ -614,7 +614,7 @@ export default function Account() {
                                             </label>
                                             <input
                                                     type="text"
-                                                    className="border-0 px-2 py-2  w-80 mb-4 laceholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                                                    className="border-0 px-2 py-1  w-80 mb-4 laceholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                                                     id="NumOfHours"
                                                     name="NumOfHours"
                                                     value={dayBirth}
@@ -623,7 +623,7 @@ export default function Account() {
                                                     disabled={enableControl}
                                             
                                             />
-                                            <span className="text-xs font-bold"> &nbsp;ปี</span>
+                                            <span className="text-sm font-bold"> &nbsp;ปี</span>
                                         </div>
                                         <div className="w-full lg:w-4/12">
                                             <label
@@ -650,7 +650,7 @@ export default function Account() {
                                         </label>
                                         <input
                                             type="text"
-                                            className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                                            className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                                             id="groupMember"
                                             name="groupMember"
                                             onChange={formik.handleChange}
@@ -700,7 +700,7 @@ export default function Account() {
                                         </label>
                                         <input
                                             type="password"
-                                            className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                                            className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                                             id="password"
                                             name="password"
                                             onChange={(e) => {
@@ -730,7 +730,7 @@ export default function Account() {
                                         </label>
                                         <input
                                             type="password"
-                                            className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                                            className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                                             id="confirmPassword"
                                             name="confirmPassword"
                                             onChange={e=>{ validateConfirm(e.target.value); setValueConfirm(e.target.value); }}
@@ -749,7 +749,7 @@ export default function Account() {
                                         </label>
                                         <input
                                             type="text"
-                                            className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                                            className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                                             id="address"
                                             name="address"
                                             onChange={formik.handleChange}

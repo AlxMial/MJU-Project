@@ -140,7 +140,7 @@ export default  function Learning() {
         <>
           <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-2xl bg-blueGray-100 border-0">
           <form onSubmit={formik.handleSubmit}>
-            <div className="rounded-t-2xl bg-white mb-0 px-4 py-4">
+            <div className="rounded-t-2xl bg-white mb-0 px-2 py-2">
               <div className="text-center flex justify-between ">
                 <div>
                   <h3 className="text-blueGray-700 text-xl font-bold mt-2">{locale.t("Menu.lblLearning")}</h3>
@@ -148,7 +148,7 @@ export default  function Learning() {
                 <div>
                 {(enableControl && !isNew) ? 
                   <button
-                    className="bg-green-mju text-white active:bg-lightBlue-600 font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                    className="bg-green-mju text-white active:bg-lightBlue-600 font-bold  text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                     type="button"
                     onClick={ () => {EnableControl(false)}}
                   >
@@ -157,14 +157,14 @@ export default  function Learning() {
                   :
                   <>
                     <button
-                      className={"bg-rose-mju text-white active:bg-rose-mju font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" + ((isNew ? " hidden" : " "))}
+                      className={"bg-rose-mju text-white active:bg-rose-mju font-bold  text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" + ((isNew ? " hidden" : " "))}
                       type="button"
                       onClick={() =>{EnableControl(true)}}
                     >
                     <i className="far fa-times-circle"></i>&nbsp;{locale.t("Button.lblDrop")}
                     </button>     
                     <button
-                    className="bg-blue-save-mju text-white active:bg-blueactive-mju font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" 
+                    className="bg-blue-save-mju text-white active:bg-blueactive-mju font-bold  text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" 
                     type="submit"
                     >
                       <i className="fas fa-save"></i>&nbsp;{locale.t("Button.lblSave")}
@@ -183,7 +183,7 @@ export default  function Learning() {
                       </label>
                       <input
                         type="text"
-                        className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="LearningPathCode"
                         name="LearningPathCode"
                         onChange={formik.handleChange}
@@ -205,7 +205,7 @@ export default  function Learning() {
                       </label>
                       <input
                         type="text"
-                        className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="LearningPathNameTH"
                         name="LearningPathNameTH"
                         onChange={formik.handleChange}
@@ -225,7 +225,7 @@ export default  function Learning() {
                       </label>
                       <input
                         type="text"
-                        className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
 
                         id="LearningPathNameENG"
                         name="LearningPathNameENG"

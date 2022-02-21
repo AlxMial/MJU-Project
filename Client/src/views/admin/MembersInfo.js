@@ -16,6 +16,7 @@ import api_amphure from '../../assets/data/api_amphure.json'
 import api_tombon from '../../assets/data/api_tombon.json'
 import Spinner from '../../components/Loadings/spinner/Spinner'
 import * as Storage from "../../../src/services/Storage.service";
+import { isMobile } from 'react-device-detect';
 const locale = require("react-redux-i18n").I18n;
 // components
 
@@ -108,7 +109,7 @@ export default function Members() {
         <input ref={ref}
         type="text"
         readOnly
-        className="datepicker-input cursor-pointer  mb-4 my-custom-input-class border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" // a styling class
+        className="datepicker-input cursor-pointer  mb-4 my-custom-input-class border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" // a styling class
         disabled={enableControl}
         value={selectedDay !== null ? `${selectedDay.day}/${selectedDay.month}/${selectedDay.year}` :  new Date().toLocaleDateString('en-GB')} />
       </span>
@@ -417,14 +418,14 @@ export default function Members() {
         <>
           <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-2xl bg-blueGray-100 border-0">
             <form onSubmit={formik.handleSubmit}> 
-            <div className="rounded-t-2xl bg-white mb-0 px-4 py-4">
+            <div className="rounded-t-2xl bg-white mb-0 px-3 py-3">
               <div className="text-center flex justify-between ">
                 <div>
                   <h3 className="text-blueGray-700 text-lg font-bold mt-2">{locale.t("Menu.lblAccount")}</h3>
                 </div>
                 <div>
                   {(enableControl && !isNew) ? <button
-                    className="bg-green-mju text-white active:bg-lightBlue-600 font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                    className="bg-green-mju text-white active:bg-lightBlue-600 font-bold  text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                     type="button"
                     onClick={ () => {EnableControl(false)}}
                   >
@@ -432,14 +433,14 @@ export default function Members() {
                   </button> :
                   <>
                     <button
-                      className={"bg-rose-mju text-white active:bg-rose-mju font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" + ((isNew ? " hidden" : " "))}
+                      className={"bg-rose-mju text-white active:bg-rose-mju font-bold  text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" + ((isNew ? " hidden" : " "))}
                       type="button"
                       onClick={() =>{EnableControl(true)}}
                     >
                     <i className="far fa-times-circle"></i>&nbsp;{locale.t("Button.lblDrop")}
                     </button>     
                     <button
-                    className="bg-blue-save-mju text-white active:bg-blueactive-mju font-bold  text-xs px-4 py-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" 
+                    className="bg-blue-save-mju text-white active:bg-blueactive-mju font-bold  text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" 
                     type="submit"
                     >
                       <i className="fas fa-save"></i>&nbsp;{locale.t("Button.lblSave")}
@@ -451,13 +452,13 @@ export default function Members() {
             </div>
             <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
                 <div className="flex flex-wrap  mt-6">
-                  <div className="w-full lg:w-2/12 px-4">
+                  <div className="w-full lg:w-2/12">
                     <div className="relative w-full mb-3">
                       <div className="image-upload">
                         <label htmlFor="file-input" className="cursor-pointer">
                           <img
                             alt="..."
-                            className=" img-member  w-full rounded-full align-middle border-none shadow-lg"
+                            className={" img-member  w-full rounded-full align-middle border-none shadow-lg" + ((isMobile) ? ' mx-auto' : '')}
                             src={  ((postImage) ? postImage  :  require("assets/img/noimg.png").default) }
                           />
                         </label>
@@ -474,7 +475,7 @@ export default function Members() {
                           </label>
                           <input
                             type="text"
-                            className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                            className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                             autoComplete="off"
                             id="accountCode"
                             name="accountCode"
@@ -531,7 +532,7 @@ export default function Members() {
                           </label> 
                           <input
                             type="text"
-                            className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                            className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                             id="firstName"
                             name="firstName"
                             maxLength={255}
@@ -555,7 +556,7 @@ export default function Members() {
                           </label>
                           <input
                             type="text"
-                            className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                            className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                             id="lastName"
                             name="lastName"
                             maxLength={255}
@@ -586,7 +587,7 @@ export default function Members() {
                       </label>
                       <input
                         type="text"
-                        className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="email"
                         name="email"
                         maxLength={255}
@@ -610,7 +611,7 @@ export default function Members() {
                       </label>
                       <input
                         type="text"
-                        className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="phoneNumber"
                         name="phoneNumber"
                         maxLength={10}
@@ -654,7 +655,7 @@ export default function Members() {
                           </label>
                           <input
                               type="text"
-                              className="border-0 px-2 py-2  w-80 mb-4 laceholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                              className="border-0 px-2 py-1  w-80 mb-4 laceholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                               id="NumOfHours"
                               name="NumOfHours"
                               value={dayBirth}
@@ -663,7 +664,7 @@ export default function Members() {
                               maxLength={4}
                               disabled={enableControl}
                             />
-                          <span className="text-xs font-bold"> &nbsp;ปี</span>
+                          <span className="text-sm font-bold"> &nbsp;ปี</span>
                         </div>
                       </div>
                       <div className="w-full lg:w-4/12">
@@ -691,7 +692,7 @@ export default function Members() {
                       </label>
                       <input
                         type="text"
-                        className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="groupMember"
                         name="groupMember"
                         maxLength={255}
@@ -742,7 +743,7 @@ export default function Members() {
                       </label>
                       <input
                         type="password"
-                        className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="password"
                         name="password"
                         maxLength={255}
@@ -773,7 +774,7 @@ export default function Members() {
                       </label>
                       <input
                         type="password"
-                        className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="confirmPassword"
                         name="confirmPassword"
                         maxLength={255}
@@ -793,7 +794,7 @@ export default function Members() {
                       </label>
                       <input
                         type="text"
-                        className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="address"
                         name="address"
                         onChange={formik.handleChange}

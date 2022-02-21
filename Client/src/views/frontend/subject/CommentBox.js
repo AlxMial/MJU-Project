@@ -31,7 +31,7 @@ class Post extends React.Component {
     }
     render() {
         return (
-            <div className="post text-sm font-bold">
+            <div className="post text-xs font-bold">
                 <div className="desc"><i className="far fa-comment-alt"></i><span>&nbsp;&nbsp;{this.props.commentsNumber}</span>&nbsp;&nbsp;Comments</div>
                 {/* <div className="postBody">
                     <img src={this.props.userPic} className="postPic" alt="user Pic" />
@@ -77,6 +77,7 @@ const Comment = props =>
             <div className="commentHeader">
                 <h3 className="commentAuthor">{props.user}</h3>
                 <span className="publishDate">{props.publishDate}</span>
+                <span className="trash"><i className="fas fa-trash"></i></span>
             </div>
             <span className="commentContent">{props.content}</span>
         </div>
@@ -122,8 +123,8 @@ class CreateComment extends React.Component {
     render() {
         return (
             <form onSubmit={this.handleSubmit} className="createComment p-2 rounded-lg">
-                <label htmlFor="comment" className='text-sm font-bold mt-2'>{locale.t("Main.lblComment")}</label>
-                <textarea className='textComment rounded-lg text-sm px-2 py-2'
+                <label htmlFor="comment" className='text-xs font-bold mt-2'>{locale.t("Main.lblComment")}</label>
+                <textarea className='textComment rounded-lg text-xs px-2 py-2'
                     id="comment"
                     type="text"
                     placeholder={locale.t("Main.lblYourComment")}
@@ -131,8 +132,8 @@ class CreateComment extends React.Component {
                     onChange={this.handleTextChange}
                     required />
                 <div className='btnComment w-full text-right'>
-                    <button className='btn-cancel lg:w-2/12 py-1 text-sm buttonOutlineNone font-bold' type="button">{locale.t("Button.lblCancel")}</button>
-                    <button className='btn-comment lg:w-2/12 py-1 text-sm px-2 py-2  font-bold' type="submit">{locale.t("Main.lblPost")}</button>
+                    <button className='btn-cancel lg:w-2/12 py-1 text-xs buttonOutlineNone font-bold' type="button">{locale.t("Button.lblCancel")}</button>
+                    <button className='btn-comment lg:w-2/12 py-1 text-xs px-2 py-2  font-bold' type="submit">{locale.t("Main.lblPost")}</button>
                 </div>
             </form>
         );

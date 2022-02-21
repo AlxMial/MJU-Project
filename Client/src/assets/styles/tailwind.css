@@ -1749,6 +1749,11 @@ select {
   line-height: 1rem;
 }
 
+.text-2xs {
+  font-size:1rem;
+  line-height: 1.25rem;
+}
+
 .text-xs {
   font-size:1.2rem;
   line-height: 1rem;
@@ -1898,6 +1903,14 @@ select {
   margin-left: auto;
   margin-right: auto;
 }
+
+.vertical-center{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+}
+
 
 .mt-0 {
   margin-top: 0px;
@@ -2227,11 +2240,17 @@ select {
   padding-right: 0px;
 }
 
-.py-1 {
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
+
+.px-1 {
+  padding-left: 0.3px;
+  padding-right: 0.3px;
 }
 
+.py-1 {
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
+}
+/* 
 .py-1-input {
   padding-top: 0.3rem;
   padding-bottom: 0.3rem;
@@ -2240,7 +2259,7 @@ select {
 .px-1-input {
   padding-top: 0.3rem;
   padding-bottom: 0.3rem;
-}
+} */
 
 
 
@@ -4063,8 +4082,8 @@ input[type=text]:disabled,input[type=password]:disabled,textarea:disabled {
 }
 
 .img-member {
-  width: 120px;
-  height: 120px;
+  width: 140px;
+  height: 140px;
   background-image: cover;
 }
 
@@ -4074,8 +4093,23 @@ input[type=text]:disabled,input[type=password]:disabled,textarea:disabled {
   background-image: cover;
 }
 
-.css-319lph-ValueContainer .css-6j8wv5-Input .css-319lph-ValueContainer{
-  padding-top: 0;
-  padding-bottom: 0;
+.css-319lph-ValueContainer{
+  padding: 0px 8px !important;
   margin: 0;
+}
+
+.css-1s2u09g-control{
+  max-height: 36px !important;
+  min-height: 36px !important;
+}
+
+.css-1pahdxg-control{
+  max-height: 36px !important;
+  min-height: 36px !important;
+}
+
+.css-6j8wv5-Input{
+  margin: 0px  !important;
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
 }

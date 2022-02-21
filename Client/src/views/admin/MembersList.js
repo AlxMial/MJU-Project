@@ -220,7 +220,7 @@ export default function MembersList() {
                             <div className="w-full ">
                                 <>
                                 <div className="relative flex flex-col min-w-0 break-words w-full  rounded-lg  border-0">
-                                <div className="rounded-t bg-white mb-0 px-4 py-4">
+                                <div className="rounded-t bg-white mb-0 px-2 py-2">
                                     <div className="text-center flex justify-between">
                                     <div className="">
                                         <h6 className="text-blueGray-700 text-base  font-bold mt-2"><i className="fas fa-exclamation-triangle"></i>&nbsp; {locale.t("Main.lblWarning")}</h6>
@@ -316,7 +316,7 @@ export default function MembersList() {
       <div className="flex flex-wrap mt-4 md:min-h-full ">
         <div className="w-full mb-12 px-4">
             <div className={"relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-2xl bg-white"}>
-                <div className="rounded-t mb-0 px-4 py-3 border-0">
+                <div className="rounded-t mb-0 px-3 py-3 border-0">
                     <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">
                         {/* Brand */}
                             <h3 className={"font-semibold text-lg text-blueGray-700"}>
@@ -336,13 +336,13 @@ export default function MembersList() {
                         {/* Form */}
                         <form className="md:flex hidden flex-row flex-wrap items-center lg:ml-auto mr-3">
                             <div className="relative flex w-full flex-wrap items-stretch">
-                                <span className="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center pl-3 py-2">
+                                <span className="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center pl-3 py-1">
                                     <i className="fas fa-search"></i>
                                 </span>
                                 <input
                                     type="text"
                                     placeholder="Search here..."
-                                    className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm shadow outline-none focus:outline-none focus:ring w-full pl-12"
+                                    className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm shadow outline-none focus:outline-none focus:ring w-full pl-12"
                                     onChange={(e)=>{InputSearch(e.target.value)}}
                                 />
                             </div>
@@ -350,7 +350,7 @@ export default function MembersList() {
                         {/* User */}
                         <ul className="flex-col md:flex-row list-none items-center hidden md:flex">
                             <Link to="/admin/members"><button
-                            className="bg-white text-black active:bg-lightBlue-600 font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                            className="bg-white text-black active:bg-lightBlue-600 font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
                             type="button"
                             >
                             <i className="fas fa-plus text-green-mju"></i> {locale.t("Button.lblInsert")}
