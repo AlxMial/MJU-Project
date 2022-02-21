@@ -190,7 +190,7 @@ export default function MembersList() {
                     />
                 </th>
                 <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap cursor-pointer">
-                    <div className="TextWordWarpCode"><Link to={`/admin/members/${value.id}`}>{ ((Storage.GetLanguage() === "th") ? ChangeSelect(options,value.title,"title") : ChangeSelect(optionsEng,value.title,"title")) + ' ' + value.firstName + ' ' + value.lastName }</Link></div>
+                    <div className="TextWordWarp"><Link to={`/admin/members/${value.id}`}>{ ((Storage.GetLanguage() === "th") ? ChangeSelect(options,value.title,"title") : ChangeSelect(optionsEng,value.title,"title")) + ' ' + value.firstName + ' ' + value.lastName }</Link></div>
                 </td>
                 <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap  cursor-pointer">
                     <div className="TextWordWarp"><Link to={`/admin/members/${value.id}`} >{value.email}</Link></div>
@@ -199,7 +199,7 @@ export default function MembersList() {
                     <div className="TextWordWarpCode"><Link to={`/admin/members/${value.id}`} >{ ((Storage.GetLanguage() === "th") ? ChangeSelect(optionsRole,value.role,"role") : ChangeSelect(optionsRoleEng,value.role,"role")) }</Link></div>
                 </td>
                 <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap ">
-                    <div className="TextWordWarpPath">{ (Storage.GetLanguage() === "th") ? ChangeLearning(optionsLearning,value.learningPathId) :  ChangeLearning(optionsLearningEng,value.learningPathId) }</div>
+                    <div className="TextWordWarpCode">{ (Storage.GetLanguage() === "th") ? ChangeLearning(optionsLearning,value.learningPathId) :  ChangeLearning(optionsLearningEng,value.learningPathId) }</div>
                 </td>
                 <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap ">
                     { value.isActivated ? 

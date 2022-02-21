@@ -30,6 +30,7 @@
     font-size: 1.2rem;
     --tw-text-opacity: 1;
     color: rgba(239, 68, 68, var(--tw-text-opacity));
+    cursor: pointer;
   }
   .postDesc{
     margin-top: 15px;

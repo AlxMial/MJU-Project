@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component,useState } from 'react'
 import './subject.css'
 import propTypes from 'prop-types'
 import moment from 'moment';
@@ -6,12 +6,15 @@ import urlPath from 'services/urlServer';
 import axios from 'axios';
 import FilesService from 'services/files'
 import * as Storage from "../../../../src/services/Storage.service";
+import ConfirmDialog from 'components/ConfirmDialog/ConfirmDialog';
 const locale = require("react-redux-i18n").I18n;
+
 
 class Post extends React.Component {
     state = {
         like: false,
     };
+
 
     addLike = () => {
         let changeLike = this.state.like;
@@ -70,6 +73,18 @@ Post.propsTypes = {
     onAddLike: propTypes.func.isRequired,
 }
 
+
+// const deleteComment = (id) => {
+//     axios
+//     .delete(urlPath+`/comments/${id}`,{
+//         headers: {accessToken : localStorage.getItem("accessToken")}
+//     })
+//     .then(() => {
+//         CommentBox.fetchDataComment(1);
+//     });
+// }
+
+
 const Comment = props =>
     <div className="comment">
         <img src={props.userPic} className="commentPic" alt="user Pic" />
@@ -77,7 +92,8 @@ const Comment = props =>
             <div className="commentHeader">
                 <h3 className="commentAuthor">{props.user}</h3>
                 <span className="publishDate">{props.publishDate}</span>
-                <span className="trash"><i className="fas fa-trash"></i></span>
+                <span className={"trash" + ((props.AddBy === localStorage.getItem('email') || localStorage.getItem('roleUser') === "1") ? ' block' : ' hidden')} onClick={() => props.openModalSubject(props.id)}><i className="fas fa-trash"></i></span>
+                <ConfirmDialog showModal={props.modalIsOpenSubject} message={((Storage.GetLanguage() === "th") ? " Comment " : " Comment ") } hideModal={()=>{props.closeModalSubject()}} confirmModal={() => props.deleteComment(props.deleteId)}/>
             </div>
             <span className="commentContent">{props.content}</span>
         </div>
@@ -155,13 +171,14 @@ export default class CommentBox extends Component {
             comments: this.props.comments,
             likes: this.props.post.likes,
             commentsNumber: this.props.post.commentsNumber,
-            CourseId:this.props.CourseId
+            CourseId:this.props.CourseId,
+            showModel: false,
+            deleteId:''
         };
         this.fetchDataComment(this.state.CourseId);
     }
     
     fetchDataComment = (id) => {
-
         const defaultPicture = require("assets/img/noimg.png").default;
 
         axios.get(urlPath+`/comments/byCourse/${id}`,{
@@ -170,7 +187,7 @@ export default class CommentBox extends Component {
             if(response.data !== null) {
                 var JsonLearning = [];
                 response.data.forEach(val => {
-                    JsonLearning.push({id:val.id,user: val.UserName,content: val.TextComment,userPic:((val.UserImage.data.length === 0) ? defaultPicture : FilesService.buffer64(val.UserImage)),publishDate:moment(val.createdAt).fromNow() });
+                    JsonLearning.push({id:val.id,user: val.UserName,content: val.TextComment,userPic:((val.UserImage.data.length === 0) ? defaultPicture : FilesService.buffer64(val.UserImage)),publishDate:moment(val.createdAt).fromNow(),AddBy:val.AddBy });
                 });
                 this.setState({comments:JsonLearning});
                 this.setState({commentsNumber:JsonLearning.length});
@@ -178,15 +195,26 @@ export default class CommentBox extends Component {
         });
     } 
 
+    deleteComment = (id) => {
+        axios
+        .delete(urlPath+`/comments/${id}`,{
+            headers: {accessToken : localStorage.getItem("accessToken")}
+        })
+        .then(() => {
+            this.setState({
+                showModel: false,
+            });
+            this.setState({comments:this.state.comments.filter(value => value.id !== id)});
+        });
+    }
+
     handleCommentSubmit = comment => {
         const comments = this.state.comments;
         comment.id = Date.now();
         const newComments = [comment].concat(comments);
         const defaultPicture = require("assets/img/noimg.png").default;
         const fullName = localStorage.getItem('fullName');
-        console.log(localStorage.getItem('profilePicture'))
         const profilePicture = ((localStorage.getItem('profilePicture') === "") ?  defaultPicture :  localStorage.getItem('profilePicture'));
-        console.log(profilePicture)
         const email = localStorage.getItem('email');
         const data = {
             TextComment: comment.content,
@@ -214,6 +242,18 @@ export default class CommentBox extends Component {
             {
                 console.log(response.data.error);
             }
+        });
+    }
+    openModalSubject = (id) => {
+        this.setState({
+            showModel: true,
+            deleteId:id
+        });
+    }
+
+    closeModalSubject = () => {
+        this.setState({
+            showModel: false,
         });
     }
 
@@ -245,13 +285,20 @@ export default class CommentBox extends Component {
                 />
                 {
                     this.state.comments.map((comment) =>
-                    <Comment
-                        publishDate={comment.publishDate}
-                        key={comment.id}
-                        id={comment.id}
-                        content={comment.content}
-                        user={comment.user}
-                        userPic={comment.userPic} />
+                        <Comment
+                            publishDate={comment.publishDate}
+                            key={comment.id}
+                            id={comment.id}
+                            content={comment.content}
+                            user={comment.user}
+                            userPic={comment.userPic} 
+                            deleteComment={this.deleteComment}
+                            modalIsOpenSubject={this.state.showModel}
+                            openModalSubject={this.openModalSubject}
+                            closeModalSubject={this.closeModalSubject}
+                            deleteId={this.state.deleteId}
+                            AddBy={comment.AddBy}
+                        />
                     )
                 }
             </div>

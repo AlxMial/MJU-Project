@@ -1,6 +1,7 @@
-/* .frmSearch {
-    margin-top: -1.75rem;
-} */
+.frmSearch {
+    /* margin-top: -1.75rem; */
+    z-index: 110000000;
+}
 .text-form {
     width: 80%;
 }
@@ -27,20 +28,30 @@
 }
 
 .blockquote {
- height: 220px;
+ height: 200px;
 }
 
-.blockquote p {
+.blockquote p ul li {
     display: -webkit-box;
     -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
-     overflow: hidden;
-       /*line-height: 1; */
+    overflow: hidden;
+    line-height: 1;
+}
+
+.dangerHTML{           
+    width:100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
 }
 
 footer {
     position: absolute;
-    bottom: 1rem;
+    /* bottom: 1rem; */
+    /* margin-top: 10px; */
 }
 
 .tag {
@@ -61,7 +72,7 @@ footer {
 }
 
 .backScreen-pb{
-    padding-bottom: 16rem !important;
+    padding-bottom: 14rem !important;
 }
 @media (min-width: 390px) {
     .text-editor{
@@ -69,7 +80,7 @@ footer {
     }
     
     .backScreen-pb{
-        padding-bottom: 18rem !important;
+        padding-bottom: 16rem !important;
     }
     
     .Block-curriculum img {
@@ -82,7 +93,7 @@ footer {
         height: 39% !important;
     }
     .backScreen-pb{
-        padding-bottom: 16rem !important;
+        padding-bottom: 14rem !important;
     }
     .Block-curriculum img {
         max-height: 120px;
@@ -94,12 +105,33 @@ footer {
         height: 50% !important;
     }
     .backScreen-pb{
-        padding-bottom: 16rem !important;
+        padding-bottom: 14rem !important;
     }
     .Block-curriculum img {
         max-height: 150px;
     }
 }
 
+.react-tags {
+    position: relative;
+    padding: 6px 6px 0 6px;
+    border: 1px solid #D1D1D1;
+    border-radius: 0.25rem;
+    /* shared font styles */
+    font-size: 1em;
+    line-height: 1.2;
+    /* clicking anywhere will focus the input */
+    cursor: text;
+    background-color: #FFFFFF;
+    width: 80%;
+}
 
+.react-tags__search-input {
+    margin:0px;
+    padding: 4px 4px;
+    border: 2px solid #D1D1D1;
+}
 
+.react-tags__selected-tag {
+    padding: 0px 8px;
+}
