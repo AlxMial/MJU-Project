@@ -118,7 +118,9 @@
   "Menu" : {
     "lblAccount" : "Account Management",
     "lblLearning" : "Learning Path Management",
-    "lblCourse":"Curriculum Management"
+    "lblCourse":"Curriculum Management",
+    "lblHome":"Home Page",
+    "lblBackEnd":"Console"
   },
   "Button":{
     "lblInsert":"Add",

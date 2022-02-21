@@ -62,6 +62,14 @@ const UserDropdown = () => {
     history.push("/home/account");
   }
 
+  const linkHome = () => {
+    history.push("/home/index");
+  }
+
+  const linkBack = () => {
+    history.push("/admin/index");
+  }
+
   return (
     <>
       <div
@@ -99,22 +107,45 @@ const UserDropdown = () => {
           <i className="fas fa-user" id="accountx"></i> &nbsp;
           <span className="text-sm" id="accountx" >{locale.t("Menu.lblAccount")}</span>
         </div>
+        <div
+          className={
+            "text-xs py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700 cursor-pointer"
+            + ((localStorage.getItem('roleUser') === '1') ? ' block' : ' hidden')
+          }
+          id="accountx"
+          onClick={() => {linkHome()}}
+        >
+          <i class="fas fa-home" id="accountx"></i> &nbsp;
+          <span className="text-sm" id="accountx" >{locale.t("Menu.lblHome")}</span>
+        </div>
+        <div
+          className={
+            "text-xs py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700 cursor-pointer"
+            + ((localStorage.getItem('roleUser') === '1') ? ' block' : ' hidden')
+          }
+          id="accountx"
+          onClick={() => {linkBack()}}
+        >
+          <i class="fas fa-tools" id="accountx" ></i> &nbsp;
+          <span className="text-sm" id="accountx" >{locale.t("Menu.lblBackEnd")}</span>
+        </div>
 
         <div className="h-0 my-2 border border-solid border-blueGray-100" />
-        <Link to="/auth/login">
-          <div
-            href="#pablo"
-            className={
-              "text-xs py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700 logoutx"
-            }
-            id="logoutx"
-            onClick={logout}
-          >
-            <i className="fas fa-sign-out-alt text-red-500"  id="logoutx"></i> &nbsp;
-            <span className="text-sm"  id="logoutx" >{locale.t("Main.lblLogout")}</span>
-          </div>
-        </Link>
-      </div>
+
+          <Link to="/auth/login">
+            <div
+              href="#pablo"
+              className={
+                "text-xs py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700 logoutx"
+              }
+              id="logoutx"
+              onClick={logout}
+            >
+              <i className="fas fa-sign-out-alt text-red-500"  id="logoutx"></i> &nbsp;
+              <span className="text-sm"  id="logoutx" >{locale.t("Main.lblLogout")}</span>
+            </div>
+          </Link>
+        </div>
       </div>
     </>
   );

@@ -116,7 +116,9 @@
   "Menu" : {
     "lblAccount" : "จัดการบัญชีผู้ใช้",
     "lblLearning" : "จัดการเส้นทางการเรียนรู้",
-    "lblCourse":"จัดการหลักสูตร"
+    "lblCourse":"จัดการหลักสูตร",
+    "lblHome":"หน้าบ้าน",
+    "lblBackEnd":"หลังบ้าน"
   },
   "Button":{
     "lblInsert":"เพิ่ม",
