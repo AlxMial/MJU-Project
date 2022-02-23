@@ -910,7 +910,6 @@ export default function Courses() {
                     <div className="relative w-full mb-3">
                       <label
                         className="block  text-blueGray-600 text-sm font-bold mb-2"
-                        
                       >
                         {locale.t("Course.info.lblCourseImage")}
                       </label>
