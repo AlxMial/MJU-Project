@@ -72,10 +72,17 @@ export default function Courses() {
     const [imageCoursesName,setImageCourseName] = useState("");
     const [arrayAttach,setArrayAtteach] = useState([]);
     const [isHourCourse,setIsHourCourse] = useState(false);
+    const [optionsLearningEng, setOptionsLearningEng] = useState([])
     const options = [
       { value: '1', label: 'ปฏิทิน' },
       { value: '2', label: 'การปลูก' },
       { value: '3', label: 'การแปรรูป' }
+    ];
+
+    const optionsEng = [
+      { value: '1', label: 'Calendar' },
+      { value: '2', label: 'Production' },
+      { value: '3', label: 'Prosessing' }
     ];
   //#endregion
 
@@ -369,6 +376,9 @@ export default function Courses() {
       var JsonLearning = [];
       body.forEach(field => JsonLearning.push({value: field.id.toString(),label: field.LearningPathNameTH }))
       setOptionsLearning(JsonLearning);
+      JsonLearning = [];
+      body.forEach(field => JsonLearning.push({value: field.id.toString(), label:  field.LearningPathNameENG }))
+      setOptionsLearningEng(JsonLearning)
     }
 
   //#endregion 
@@ -765,7 +775,7 @@ export default function Courses() {
                           >
                             {locale.t("Course.info.lblLearning")}
                           </label>
-                          <Select
+                          {/* <Select
                               id="LearningId"
                               name="LearningId"
                               onChange={value => {formik.setFieldValue('LearningId',value.value)}}
@@ -773,7 +783,16 @@ export default function Courses() {
                               options={optionsLearning}
                               value={defaultValue(optionsLearning, formik.values.LearningId)}
                               isDisabled={enableControl}
-                          />
+                          /> */}
+                          <Select
+                            id="learningPathId"
+                            name="learningPathId"
+                            onChange={value => {  formik.setFieldValue('LearningId',value.value)}}
+                            //value={formik.values.title}
+                            className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-90 text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"  
+                            options={((Storage.GetLanguage() === "th") ? optionsLearning : optionsLearningEng)} 
+                            value={defaultValue(((Storage.GetLanguage() === "th") ? optionsLearning : optionsLearningEng), formik.values.LearningId)}
+                            isDisabled={enableControl}/>
                         </div>
                       </div>
                     </div>
@@ -790,8 +809,8 @@ export default function Courses() {
                               name="CurriculumType"
                               onChange={value => {formik.setFieldValue('CurriculumType',value.value)}}
                               className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-90 text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" 
-                              options={options}
-                              value={defaultValue(options, formik.values.CurriculumType)}
+                              options={(Storage.GetLanguage()==="th") ? options : optionsEng}
+                              value={defaultValue((Storage.GetLanguage()==="th") ? options : optionsEng, formik.values.CurriculumType)}
                               isDisabled={enableControl}
                           />
                         </div>

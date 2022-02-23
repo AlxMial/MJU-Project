@@ -22,7 +22,11 @@ export default function Subject() {
     const [listSubject,setListSubject] = useState([]);
     let { id } = useParams();
     const [isLoading, setIsLoading] = useState(false);
-
+    const [windowWidth, setWindowWidth] = useState(0);
+    let resizeWindow = () => {
+        setWindowWidth(window.innerWidth);
+    };
+    
     const history = useHistory();
 
     async function fetchData() {
@@ -59,7 +63,9 @@ export default function Subject() {
     useEffect (  ()  =>  {
         fetchData();
         fetchDataSubject();
-  
+        setWindowWidth(window.innerWidth);
+        window.addEventListener("resize", resizeWindow);
+        return () => { window.removeEventListener("resize", resizeWindow); };
     },[]);
 
     return (
@@ -169,7 +175,7 @@ export default function Subject() {
                             //     'code-block'
                             //     ]}
                             // />
-                                    <SunEditor
+                                <SunEditor
                                     disable={true}
                                     hideToolbar={true} 
                                     width="100%"
@@ -226,7 +232,7 @@ export default function Subject() {
                                 })
                             }
                         </div>
-                        <div className='divComment'>
+                        <div className={'px-4' + ((windowWidth < 1024) ? ' divCommentMobile ' : ' divComment')}>
                             <hr className="mt-6 border-b-1 mb-6 border-blueGray-300" />
                             <CommentBox
                                 comments={[]}

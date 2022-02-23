@@ -24,6 +24,10 @@ export default function Content() {
     const [isLoading, setIsLoading] = useState(false);
     const history = useHistory();
     const ref = useRef();
+    const [windowWidth, setWindowWidth] = useState(0);
+    let resizeWindow = () => {
+        setWindowWidth(window.innerWidth);
+      };
     
     const pageStyle = `
     @media print {
@@ -52,6 +56,9 @@ export default function Content() {
 
     useEffect(() => {
         fetchSubject();
+        setWindowWidth(window.innerWidth);
+        window.addEventListener("resize", resizeWindow);
+        return () => { window.removeEventListener("resize", resizeWindow); };
     }, []);
 
     
@@ -86,7 +93,9 @@ export default function Content() {
     
                 var pdfResult = FilesService.buffer64(e);      
                 let pdfWindow = window.open("")
-                pdfWindow.document.write("<embed width='100%' height='100%' src='" + encodeURI(pdfResult) + "' />")
+                if(type === 'application/pdf')
+                    pdfWindow.document.write("<embed width='100%' height='100%' src='" + encodeURI(pdfResult) + "' />")
+                else   pdfWindow.document.write("<embed src='" + encodeURI(pdfResult) + "' />")
     
             }, 1000);
             setTimeout(() => {
@@ -188,7 +197,7 @@ export default function Content() {
     return (
         <>
             {isLoading ? ( <> <Spinner  customText={"Loading"}/></>) : (<></>)}
-            <div className="container pt-20 px-12 relative mx-auto lg:w-10/12 flex flex-wrap">
+            <div className="container pt-20 px-4 relative mx-auto lg:w-10/12 flex flex-wrap">
                 <div className='mx-auto w-full header-bar'>
                     <div className=" flex flex-wrap items-center justify-between w-3">
                         <div>
@@ -350,21 +359,21 @@ export default function Content() {
                         </div>
                         
                         <div className={((attachData.length > 0) ? ' block' : ' hidden')}>   
-                            <div className='font-bold w-full lg:w-10/12 mx-auto mt-6 text-sm'>{locale.t("Main.lblListAttach")}</div>
-                                <div className='file-content lg:w-10/12 mx-auto mb-3 mt-3 text-xs'>
+                            <div className='font-bold w-full lg:w-9/12 mx-auto mt-2 text-sm'>{locale.t("Main.lblListAttach")}</div>
+                                <div className='file-content lg:w-9/12 mx-auto mb-3 text-xs'>
                                     {
                                         attachData.map(item => {
                                             return (
                                                 <div className='flex flex-wrap mb-2 py-2  attach-list' key={item.id}>
-                                                        <span className='pt-1 text-blue-mju-front text-sm cursor-pointer' onClick={() => {DownloadFile(item.FileData,item.FileName)}}><i className="fas fa-download"></i>&nbsp;&nbsp;{locale.t("Main.lblDownload")}&nbsp;&nbsp;</span> 
-                                                        <span><img src={require("assets/img/"+FilesService.changeImageType(item.FileType)).default} className="CourseFilePic"/></span><span className={'mt-2 pt-1 text-sm ' + ((item.FileType === 'application/pdf' || item.FileType === 'image/jpeg' || item.FileType === 'image/png') ? ' cursor-pointer' : ' ')} onClick={() => {PDFFile(item.FileData,item.FileType)}} >&nbsp;&nbsp;{item.FileName}</span>
+                                                        <span className='pt-1 text-blue-mju-front text-xs cursor-pointer' onClick={() => {DownloadFile(item.FileData,item.FileName)}}><i className="fas fa-download"></i>&nbsp;&nbsp;{locale.t("Main.lblDownload")}&nbsp;&nbsp;</span> 
+                                                        <span><img src={require("assets/img/"+FilesService.changeImageType(item.FileType)).default} className="CourseFilePic"/></span><span className={'pt-2 text-xs ' + ((item.FileType === 'application/pdf' || item.FileType === 'image/jpeg' || item.FileType === 'image/png') ? ' cursor-pointer' : ' ')} onClick={() => {PDFFile(item.FileData,item.FileType)}} >&nbsp;&nbsp;{item.FileName}</span>
                                                 </div>
                                             )
                                         })
                                     }
                             </div>
                         </div>
-                        <div className='divComment'>
+                        <div className={ ((windowWidth < 1024) ? ' divCommentMobile ' : ' divComment')}>
                                     <div className={((attachData.length > 0) ? ' ' : ' mt-4')}></div>
                             <CommentBox
                                 comments={[]}

@@ -151,10 +151,10 @@ export default function LearningList() {
                     />
                 </th>
                 <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap cursor-pointer">
-                    <div className="TextWordWarpCode"><Link to={`/admin/learning/${value.id}`}>{ value.LearningPathNameTH }</Link></div>
+                    <div className="TextWordWarpLearning"><Link to={`/admin/learning/${value.id}`}>{ value.LearningPathNameTH }</Link></div>
                 </td>
                 <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap  cursor-pointer">
-                    <div className="TextWordWarp"><Link to={`/admin/learning/${value.id}`} >{value.LearningPathNameENG}</Link></div>
+                    <div className="TextWordWarpLearning"><Link to={`/admin/learning/${value.id}`} >{value.LearningPathNameENG}</Link></div>
                 </td>
                 <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap cursor-pointer">
                     {value.CoursesCount}

@@ -1765,8 +1765,8 @@ select {
 }
 
 .text-xs {
-  font-size:1.2rem;
-  line-height: 1.2rem;
+  font-size:1.1rem;
+  line-height: 1.1rem;
 }
 
 .text-sm {
@@ -4025,8 +4025,8 @@ input[type=text]:disabled,input[type=password]:disabled,textarea:disabled {
 }
 
 .CourseFilePic{
-  max-width: 30px;
-  max-height: 30px;
+  max-width: 20px;
+  max-height: 20px;
 }
 
 .custom-calendar {
@@ -4125,6 +4125,15 @@ input[type=text]:disabled,input[type=password]:disabled,textarea:disabled {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100px;
+  /* width:100px; */
+}
+
+
+.TextWordWarpLearning{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 420px;
   /* width:100px; */
 }
 

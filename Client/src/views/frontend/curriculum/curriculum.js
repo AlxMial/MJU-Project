@@ -115,6 +115,8 @@ export default function Curriculum() {
     // }
 
     const SearchCurriculum = async (searchText,tagsSearch) => {
+
+    
         setListCourses(listCoursesSearch);
         setValueSearch(searchText)
 
