@@ -4,7 +4,7 @@ const { Subjects } = require('../../models');
 
 
 router.get("/", async (req, res) => {
-  const listOfSubjects = await Subjects.findAll();
+  const listOfSubjects = await Subjects.findAll({where : {IsDeleted:false}});
   res.json({listOfSubjects : listOfSubjects});
 });
 
@@ -22,31 +22,34 @@ router.get('/byId/:id', async (req,res) =>{
 
 router.get('/byCoursesId/:id', async (req,res) =>{
   const id = req.params.id;
-  const Course = await Subjects.findAll({ where : { CourseId: id}});
+  const Course = await Subjects.findAll({ where : { CourseId: id, IsDeleted:false}});
   res.json(Course);
 });
 
 router.get('/bySubjectCode/:code', async (req,res) =>{
   const id = req.params.code;
-  const Course = await Subjects.findAll({ where : { SubjectCode: id}});
+  const Course = await Subjects.findAll({ where : { SubjectCode: id , IsDeleted:false}});
   res.json(Course);
 });
 
 
 router.put("/" , async (req,res) =>{
   await Subjects.update(req.body,{where : {id: req.body.id }})
-  const subject = await Subjects.findOne({ where : { SubjectCode: req.body.SubjectCode,CourseId: req.body.CourseId}});
+  const subject = await Subjects.findOne({ where : { SubjectCode: req.body.SubjectCode,CourseId: req.body.CourseId ,IsDeleted:false }});
   res.json(subject);
 });
 
 router.delete("/:SubjectId", async (req, res) => {
   const subjectId = req.params.SubjectId;
-  await Subjects.destroy({
-    where: {
-      id: subjectId,
-    },
-  });
-  res.json("DELETED SUCCESSFULLY");
+  req.body.IsDeleted = true;
+  await Subjects.update(req.body,{where : {id: subjectId }})
+  res.json("SUCCESS");
+  // await Subjects.destroy({
+  //   where: {
+  //     id: subjectId,
+  //   },
+  // });
+  // res.json("DELETED SUCCESSFULLY");
 });
 
 

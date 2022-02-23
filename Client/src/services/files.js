@@ -38,6 +38,10 @@ class FilesService {
             return "jpg.png"
         else if (type.includes("png"))
             return "png.png"
+        else if (type.includes("mp4"))
+            return "mp4.png"
+        else if (type.includes("mp3"))
+            return "mp3.png"
         else
             return "pdf.png"
     };

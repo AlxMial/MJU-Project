@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react'
+import React, { useEffect,useState } from 'react'
 import axios from 'axios';
-import { useHistory } from 'react-router-dom';
+import { useHistory,Link } from 'react-router-dom';
 import { useToasts } from 'react-toast-notifications';
 import { useFormik  } from "formik";
 import * as Yup from "yup";
@@ -11,7 +11,11 @@ import { isMobile } from 'react-device-detect';
 export default function ForgotPassword() {
   const { addToast } = useToasts();
   let history = useHistory();
+  const [windowWidth, setWindowWidth] = useState(0);
 
+  let resizeWindow = () => {
+    setWindowWidth(window.innerWidth);
+  };
   const formik = useFormik({
     initialValues : {
       email:''
@@ -43,12 +47,14 @@ export default function ForgotPassword() {
     history.push("/auth/forgotreturn");
   }
   useEffect( ()=>  {
-
+    setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", resizeWindow);
+    return () => { window.removeEventListener("resize", resizeWindow); };
   },[]);
 
   return (
     <>
-      <div className={"container px-4 h-full" + ((isMobile) ? ' ' : ' mx-auto')}>
+      <div className={"container px-4 h-full" + ((windowWidth > 911) ? " mx-auto" : " ")}>
         <div className="flex content-center items-center justify-center h-full">
           <div className="w-full lg:w-8/12 px-4 vertical-center">
             <div className="relative flex flex-col min-w-0 break-words w-full  mb-6 shadow-lg rounded-lg bg-white border-0">
@@ -65,7 +71,7 @@ export default function ForgotPassword() {
                   </span>
                 </div>
               </div>
-              <div className={"flex-auto px-4 lg:w-9/12 lg:px-10 py-10 pt-0" + ((isMobile) ? ' ' : ' mx-auto')}>
+              <div className={"flex-auto px-4 lg:w-9/12 lg:px-10 py-10 pt-0" + ((windowWidth > 911) ? " mx-auto" : " ")}>
                 <form onSubmit={formik.handleSubmit}>
                   <div className="relative w-full mb-3">
                     <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">

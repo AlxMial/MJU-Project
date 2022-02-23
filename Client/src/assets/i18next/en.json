@@ -129,7 +129,8 @@
     "lblDrop":"Cancel",
     "lblSave":"Save",
     "lblCancel":"Cancel",
-    "lblBack":"Back"
+    "lblBack":"Close",
+    "lblPrint":"Print"
   },
   "Warning":{
     "lblDelete":"Do you want to delete the data?"

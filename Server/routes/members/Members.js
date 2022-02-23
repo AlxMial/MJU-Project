@@ -15,14 +15,14 @@ router.post("/",async (req, res) => {
 });
 
 router.get("/" , validateToken , async (req, res) => {
-    const listMembers = await Members.findAll();
+    const listMembers = await Members.findAll({where:{IsDeleted:false}});
     res.json({listMembers : listMembers});
 });
 
 router.get("/getid/:id" , async (req, res) => {
   const id = req.params.id;
   const member = await Members.findOne({
-     where: {  id: id  },
+     where: {  id: id , IsDeleted:false   },
     });
   res.json(member); 
 });
@@ -31,7 +31,7 @@ router.get("/getid/:id" , async (req, res) => {
 router.get("/getemail/:email" ,async (req, res) => {
   const email = req.params.email;
   const member = await Members.findOne({
-     where: {  email: email  },
+     where: {  email: email , IsDeleted:false  },
     });
   res.json(member);  
 });
@@ -39,7 +39,7 @@ router.get("/getemail/:email" ,async (req, res) => {
 router.get("/getAccountCode/:accountCode", validateToken ,async (req, res) => {
   const accountCode = req.params.accountCode;
   const member = await Members.findOne({
-     where: {  accountCode: accountCode  },
+     where: {  accountCode: accountCode, IsDeleted:false  },
     });
   res.json(member);  
 });
@@ -53,12 +53,15 @@ router.get('/byId/:id', validateToken , async (req,res) =>{
 
 router.delete("/:memberId", validateToken , async (req, res) => {
     const memberId = req.params.memberId;
-    await Members.destroy({
-      where: {
-        id: memberId,
-      },
-    });
+    req.body.IsDeleted = true;
+    Members.update(req.body,{where : {id: memberId }});
     res.json("DELETED SUCCESSFULLY");
+    // await Members.destroy({
+    //   where: {
+    //     id: memberId,
+    //   },
+    // });
+    // res.json("DELETED SUCCESSFULLY");
 });
 
 
@@ -66,11 +69,13 @@ router.delete("/multidelete/:memberId", validateToken , (req, res) => {
   const memberId = req.params.memberId;
   const words = memberId.split(',');
   for (const type of words) { 
-    Members.destroy({
-      where: {
-        id: type,
-      },
-    });
+    req.body.IsDeleted = true;
+    Members.update(req.body,{where : {id: type }})
+    // Members.destroy({
+    //   where: {
+    //     id: type,
+    //   },
+    // });
   }
   res.json("DELETED SUCCESSFULLY");
 });

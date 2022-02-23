@@ -65,7 +65,7 @@ export default function Subject() {
     return (
         <>
             {isLoading ? ( <> <Spinner  customText={"Loading"}/></>) : (<></>)} 
-            <div className="container pt-20 px-12 relative mx-auto lg:w-10/12 flex flex-wrap">
+            <div className="container pt-20 px-4 relative mx-auto lg:w-10/12 flex flex-wrap">
                 <div className='mx-auto w-full header-bar'>
                     <div className="w-full lg:w-3/12 mb-2 mt-2">
                         <i className="fas fa-arrow-left text-sm cursor-pointer " onClick={() => history.goBack()}>
@@ -73,7 +73,9 @@ export default function Subject() {
                         </i>
                     </div>
                 </div>
-                <h1 className='text-4xl px-2 py-2 THSarabunBold mt-4 font-bold'> {(Storage.GetLanguage() === "th") ? <span>{listCourse.CurriculumNameTH}</span> :  <span>{listCourse.CurriculumNameENG}</span> }</h1>
+                
+                    <h1 className='text-4xl px-2 py-2 THSarabunBold mt-4 font-bold'> {(Storage.GetLanguage() === "th") ? <span>{listCourse.CurriculumNameTH}</span> :  <span>{listCourse.CurriculumNameENG}</span> }</h1>
+
                 <div className='w-full'>
                     <div className=" min-h-screen-35 py-4 relative flex flex-col min-h-3 break-words bg-white w-full mb-6 rounded-lg shadow-lg">
                         <div className='ReactQuill-Editor'>
@@ -224,7 +226,6 @@ export default function Subject() {
                                 })
                             }
                         </div>
-
                         <div className='divComment'>
                             <hr className="mt-6 border-b-1 mb-6 border-blueGray-300" />
                             <CommentBox
@@ -232,8 +233,6 @@ export default function Subject() {
                                 post={[]} 
                                 CourseId={id.toString()}
                                 />
-                       
-
                         </div>
                     </div>
                 </div>

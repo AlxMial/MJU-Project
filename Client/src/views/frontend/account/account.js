@@ -168,6 +168,7 @@ export default function Account() {
           if(response.data === null || response.data.id === values.id) {
             insertAccount(values);
           } else {
+            formik.values.birthDate = selectedDay.toString();
             addToast('ไม่สามารถบันทึกข้อมูลได้ เนื่องจากรหัสบัญชีผู้ใช้ซ้ำ กรุณากรอกรหัสบัญชีผู้ใช้ใหม่', { appearance: 'warning', autoDismiss: true });
           }
         });
@@ -214,6 +215,7 @@ export default function Account() {
           }
         }
         else {
+          formik.values.birthDate = selectedDay.toString();
           addToast('ไม่สามารถบันทึกข้อมูลได้ เนื่องจากอีเมลที่ใช้งานมีการลงทะเบียนเรียบร้อยแล้ว', { appearance: 'warning', autoDismiss: true });
         }
       });
@@ -418,18 +420,18 @@ export default function Account() {
                                 </div>
                                 <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
                                     <div className="flex flex-wrap  mt-6">
-                                    <div className="w-full lg:w-2/12 px-4">
+                                    <div className="w-full lg:w-2/12 ">
                                         <div className="relative w-full mb-3">
-                                        <div className="image-upload">
-                                            <label htmlFor="file-input" className="cursor-pointer">
-                                            <img
-                                                alt="..."
-                                                className="img-member w-full rounded-full align-middle border-none shadow-lg"
-                                                src={  ((postImage) ? postImage  :  require("assets/img/noimg.png").default) }
-                                            />
-                                            </label>
-                                            <input id="file-input" type="file" accept="image/jpg, image/jpeg, image/png" onChange={(e) => handleFileUpload(e)}  disabled={enableControl} />
-                                        </div>
+                                            <div className="image-upload">
+                                                <label htmlFor="file-input" className="cursor-pointer">
+                                                <img
+                                                    alt="..."
+                                                    className="img-member w-full rounded-full align-middle border-none shadow-lg"
+                                                    src={  ((postImage) ? postImage  :  require("assets/img/noimg.png").default) }
+                                                />
+                                                </label>
+                                                <input id="file-input" type="file" accept="image/jpg, image/jpeg, image/png" onChange={(e) => handleFileUpload(e)}  disabled={enableControl} />
+                                            </div>
                                         </div>
                                     </div>
                                     <div className="w-full lg:w-10/12">

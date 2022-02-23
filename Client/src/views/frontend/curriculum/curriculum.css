@@ -1,3 +1,15 @@
+.divBlock {
+    /* height: 240px; */
+}
+
+.divBlock p ul li {
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1;
+}
+
 .frmSearch {
     /* margin-top: -1.75rem; */
     z-index: 110000000;
@@ -46,6 +58,11 @@
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
+    padding-bottom: 0px;
+}
+
+figure {
+    padding-bottom: 0px !important;
 }
 
 footer {
@@ -65,8 +82,9 @@ footer {
 .text-editor{
     /* white-space: nowrap !important; */
     overflow: hidden !important;
-    height: 40% !important;
+    /* height: 40% !important; */
     width: 100%;
+    height: 100px;
     text-overflow: ellipsis !important;
     
 }
@@ -76,11 +94,11 @@ footer {
 }
 @media (min-width: 390px) {
     .text-editor{
-        height: 50% !important;
+        height: 70px;
     }
     
     .backScreen-pb{
-        padding-bottom: 16rem !important;
+        padding-bottom: 17rem !important;
     }
     
     .Block-curriculum img {
@@ -90,7 +108,7 @@ footer {
 
 @media (min-width: 768px) {
     .text-editor{
-        height: 39% !important;
+        height: 80px;
     }
     .backScreen-pb{
         padding-bottom: 14rem !important;
@@ -102,7 +120,7 @@ footer {
 
 @media (min-width: 1024px) {
     .text-editor{
-        height: 50% !important;
+        height: 80px;
     }
     .backScreen-pb{
         padding-bottom: 14rem !important;
@@ -133,5 +151,5 @@ footer {
 }
 
 .react-tags__selected-tag {
-    padding: 0px 8px;
+    padding: 6px 8px;
 }

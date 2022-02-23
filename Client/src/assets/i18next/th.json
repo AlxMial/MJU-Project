@@ -1,7 +1,7 @@
 {
   "home": {
     "lblhome": "สวัสดี...",
-    "lblwelcome": "ยินดีต้อนรับสู่ห้องเรียนออแกนิค",
+    "lblwelcome": "ยินดีต้อนรับสู่ห้องเรียนออร์แกนิค",
     "lblCalendar" : "ปฏิทิน",
     "lblProduction" : "การปลูก",
     "lblProcessing" : "การแปรรูป"
@@ -127,7 +127,8 @@
     "lblDrop":"ละทิ้ง",
     "lblSave":"บันทึก",
     "lblCancel":"ยกเลิก",
-    "lblBack":"ย้อนกลับ"
+    "lblBack":"ปิด",
+    "lblPrint":"พิมพ์"
   },
   "Warning":{
     "lblDelete":"คุณต้องการทำการลบข้อมูลใช่หรือไม่"

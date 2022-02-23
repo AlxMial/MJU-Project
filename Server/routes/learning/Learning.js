@@ -11,7 +11,7 @@ router.post("/", async (req, res) => {
 });
 
 router.get("/", async (req, res) => {
-    const listLearning = await Learning.findAll();
+    const listLearning = await Learning.findAll({where:{IsDeleted:false}});
     res.json({listLearning : listLearning});
 });
 
@@ -25,7 +25,7 @@ router.get('/byId/:id', async (req,res) =>{
 router.get('/getCourses/:id', async (req,res) =>{
   const id = req.params.id;
   const courses = await Courses.findOne({
-    where: {  LearningId: id },
+    where: {  LearningId: id,IsDeleted:false },
    });
   res.json(courses);
 });
@@ -33,7 +33,7 @@ router.get('/getCourses/:id', async (req,res) =>{
 router.get('/getMembers/:id', async (req,res) =>{
   const id = req.params.id;
   const members = await Members.findOne({
-    where: {  learningPathId: id },
+    where: {  learningPathId: id,IsDeleted:false },
    });
   res.json(members);
 });
@@ -44,6 +44,7 @@ router.post("/byLearningCode", validateToken , async (req,res) =>{
   const name = req.body.name.toString("utf8");
   const learning = await Learning.findOne({
     where: { 
+      IsDeleted : false,
       [Op.or]: [
         { LearningPathCode: id },
         { LearningPathNameTH: name }
@@ -56,23 +57,29 @@ router.post("/byLearningCode", validateToken , async (req,res) =>{
 
 router.delete("/:learningId", async (req, res) => {
     const learningId = req.params.learningId;
-    await Learning.destroy({
-      where: {
-        id: learningId,
-      },
-    });
-    res.json("DELETED SUCCESSFULLY");
+    req.body.IsDeleted = true;
+    await Learning.update(req.body,{where : {id: learningId }})
+    res.json("SUCCESS");
+    // await Learning.destroy({
+    //   where: {
+    //     id: learningId,
+    //   },
+    // });
+    // res.json("DELETED SUCCESSFULLY");
 });
 
 router.delete("/multidelete/:learningId", validateToken , (req, res) => {
   const LearningId = req.params.learningId;
   const words = LearningId.split(',');
   for (const type of words) { 
-    Learning.destroy({
-      where: {
-        id: type,
-      },
-    });
+
+    req.body.IsDeleted = true;
+    Learning.update(req.body,{where : {id: type }})
+    // Learning.destroy({
+    //   where: {
+    //     id: type,
+    //   },
+    // });
   }
   res.json("DELETED SUCCESSFULLY");
 });

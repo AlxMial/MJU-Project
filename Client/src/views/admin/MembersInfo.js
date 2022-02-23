@@ -174,7 +174,6 @@ export default function Members() {
       formik.values.province = (formik.values.province === "") ? "1" : formik.values.province;
       formik.values.district = (formik.values.district === "") ? "1001" : formik.values.district;
       formik.values.subDistrict = (formik.values.subDistrict === "") ? "100101" : formik.values.subDistrict;
-      console.log(selectedDay)
       formik.values.birthDate = selectedDay;
       if(!isNew)
         if(values.id === undefined)
@@ -185,6 +184,7 @@ export default function Members() {
         if(response.data === null || response.data.id === values.id) {
           insertAccount(values);
         } else {
+          formik.values.birthDate = selectedDay.toString();
           addToast((Storage.GetLanguage() === "th") ? 'ไม่สามารถบันทึกข้อมูลได้ เนื่องจากรหัสบัญชีผู้ใช้ซ้ำ กรุณากรอกรหัสบัญชีผู้ใช้ใหม่' : 'Can not save data due to duplicate user account password Please enter a new user account password.' , { appearance: 'warning', autoDismiss: true });
         }
 
@@ -242,6 +242,7 @@ export default function Members() {
         }
       }
       else {
+        formik.values.birthDate = selectedDay.toString();
         addToast( (Storage.GetLanguage() === "th") ?  'ไม่สามารถบันทึกข้อมูลได้ เนื่องจากอีเมลที่ใช้งานมีการลงทะเบียนเรียบร้อยแล้ว' : 'Can not save data Because the email used is already registered.', { appearance: 'warning', autoDismiss: true });
       }
       setIsLoading(false);
@@ -282,10 +283,12 @@ export default function Members() {
             CalBirthDay(selectedDay);
             setSelectedDay(selectedDay);
             formik.setFieldValue(columns, selectedDay.toString(), false);
+            formik.values.birthDate = selectedDay.toString();
           } else {
             CalBirthDay(obj);
             setSelectedDay(obj);
             formik.setFieldValue(columns, obj.toString(), false);
+            formik.values.birthDate = selectedDay.toString();
           }
         }else if (columns === "district") {
           api_amphure.filter(e => e.province_id.toString() === ProvinceId.toString()).forEach(field => { 
@@ -450,7 +453,7 @@ export default function Members() {
                 </div>
               </div>
             </div>
-            <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
+            <div className="flex-auto px-4 lg:px-8 py-10 pt-0">
                 <div className="flex flex-wrap  mt-6">
                   <div className="w-full lg:w-2/12">
                     <div className="relative w-full mb-3">
@@ -458,7 +461,7 @@ export default function Members() {
                         <label htmlFor="file-input" className="cursor-pointer">
                           <img
                             alt="..."
-                            className={" img-member  w-full rounded-full align-middle border-none shadow-lg" + ((isMobile) ? ' mx-auto' : '')}
+                            className={"img-member-admin  w-full rounded-full align-middle border-none shadow-lg" + ((isMobile) ? ' mx-auto' : '')}
                             src={  ((postImage) ? postImage  :  require("assets/img/noimg.png").default) }
                           />
                         </label>

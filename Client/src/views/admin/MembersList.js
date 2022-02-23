@@ -130,9 +130,9 @@ export default function MembersList() {
             })
             .then(() => {
                 setListMembers(
-                listMembers.filter((val) => {
-                    return val.id !== e;
-                })
+                    listMembers.filter((val) => {
+                        return val.id !== e;
+                    })
                 );
                 closeModal();
             });

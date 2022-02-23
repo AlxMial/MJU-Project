@@ -1,25 +1,30 @@
-.header-bar {
-    border-bottom: 1px solid #ccc;
-}
-.commentBox{
+  .header-bar {
+      border-bottom: 1px solid #ccc;
+  }
+
+  .commentBox{
     /* margin-top: 40px; */
     /* max-width: 700px;
     padding: 0px 0px 20px 0px;
     border-radius: 20px;
     background: #1b212d; */
   }
+
   .post{
     background: #fff;
     /* padding: 20px; */
     border-radius: 20px;
   }
+
   .postBody{
     display: flex;
   }
+
   .postHeader{
     display: flex;
     align-items: center;
   }
+
   .publishDate{
     color: #787878;
     margin-left: 15px;
@@ -56,6 +61,8 @@
   .desc{
     margin-right: 20px;
   }
+
+  
   .comment{
     padding: 10px;
     margin: 10px 10px;
@@ -154,6 +161,9 @@
     overflow-wrap: break-word;
   }
 
+
+
+
   .subject-content {
       border: 1px solid #ccc;
       max-height: 250px;
@@ -191,4 +201,29 @@
   .divComment{
     width: 80%;
     margin: auto;
+  }
+
+  @media (min-width: 360px) {
+
+    
+    .commentBody{
+      max-width: 180px;
+      overflow-wrap: break-word;
+    }
+  }
+
+  
+  @media (min-width: 768px) {
+    .commentBody{
+      max-width: 85%;
+      overflow-wrap: break-word;
+    }
+  }
+
+
+  @media (min-width: 1024px) {
+    .commentBody{
+      max-width: 90%;
+      overflow-wrap: break-word;
+    }
   }

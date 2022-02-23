@@ -1,5 +1,5 @@
-import React, { Component,useState } from 'react'
-import './subject.css'
+import React, { Component } from 'react'
+import './content.css'
 import propTypes from 'prop-types'
 import moment from 'moment';
 import urlPath from 'services/urlServer';
@@ -14,7 +14,6 @@ class Post extends React.Component {
     state = {
         like: false,
     };
-
 
     addLike = () => {
         let changeLike = this.state.like;
@@ -131,7 +130,7 @@ class CreateComment extends React.Component {
             content: this.state.content.trim(),
             userPic: profilePicture,
             publishDate: timeago,
-            AddBy:email,
+            AddBy: email
         });
         this.setState({
             content: "",
@@ -174,17 +173,17 @@ export default class CommentBox extends Component {
             comments: this.props.comments,
             likes: this.props.post.likes,
             commentsNumber: this.props.post.commentsNumber,
-            CourseId:this.props.CourseId,
+            SubjectId:this.props.SubjectId,
             showModel: false,
             deleteId:''
         };
-        this.fetchDataComment(this.state.CourseId);
+        this.fetchDataComment(this.state.SubjectId);
     }
     
     fetchDataComment = (id) => {
         const defaultPicture = require("assets/img/noimg.png").default;
 
-        axios.get(urlPath+`/comments/byCourse/${id}`,{
+        axios.get(urlPath+`/commentssubjects/bySubject/${id}`,{
             headers: {accessToken : localStorage.getItem("accessToken")}
           }).then((response) => {
             if(response.data !== null) {
@@ -200,7 +199,7 @@ export default class CommentBox extends Component {
 
     deleteComment = (id) => {
         axios
-        .delete(urlPath+`/comments/${id}`,{
+        .delete(urlPath+`/commentssubjects/${id}`,{
             headers: {accessToken : localStorage.getItem("accessToken")}
         })
         .then(() => {
@@ -211,7 +210,7 @@ export default class CommentBox extends Component {
         });
     }
 
-    handleCommentSubmit = comment => {
+     handleCommentSubmit = async comment => {
         const comments = this.state.comments;
         comment.id = Date.now();
         const newComments = [comment].concat(comments);
@@ -224,24 +223,25 @@ export default class CommentBox extends Component {
             UserName:fullName,
             UserImage:profilePicture,
             RelatedTable:"Courses",
-            RelatedId:this.state.CourseId,
-            CourseId:this.state.CourseId,
+            RelatedId:this.state.SubjectId,
+            SubjectId:this.state.SubjectId,
             IsDeleted:false,
             AddBy:email,
             EditBy:''
         }
         this.InsertComment(data,newComments);
-       
     }
 
     InsertComment = (value,newComments) => {
-        axios.post(urlPath+"/comments",value,{
+        axios.post(urlPath+"/commentssubjects",value,{
             headers: {accessToken : localStorage.getItem("accessToken")}
-          }).then((response)=>{
+          }).then((response)=> {
             if(response.data.error) 
             {
                 console.log(response.data.error);
-            } else {
+            }
+            else 
+            {
                 newComments[0].id = response.data.id;
                 this.setState({
                     comments: newComments,
@@ -315,6 +315,6 @@ export default class CommentBox extends Component {
 CommentBox.propTypes = {
     post: propTypes.arrayOf(propTypes.object),
     comments: propTypes.arrayOf(propTypes.object),
-    CourseId: propTypes.string
+    SubjectId: propTypes.string
 };
 

@@ -7,6 +7,7 @@ const { validateToken } = require("../../middlewares/AuthMiddleware");
 
 router.get("/", async (req, res) => {
   const listOfCourses = await Courses.findAll({
+    where: {IsDeleted : false},
     attributes: { 
       include: [[Sequelize.fn("COUNT", Sequelize.col("subjects.id")), "SubjectsCount"]] 
     },
@@ -26,21 +27,21 @@ router.post("/", async (req, res) => {
 
 router.get('/byId/:id', async (req,res) =>{
   const id = req.params.id;
-  const Course = await Courses.findOne({where: {id:id}});
+  const Course = await Courses.findOne({where: {id:id,IsDeleted:false}});
   res.json(Course);
 });
 
 router.get('/ByCurriculum/:code', validateToken , async (req,res) =>{
   const id = req.params.code.toString("utf8");
   const course = await Courses.findOne({
-    where: {  CurriculumCode: id },
+    where: {  CurriculumCode: id,IsDeleted:false },
    });
   res.json(course);
 });
 
 router.get('/byLearningId/:id', async (req,res) =>{
   const id = req.params.id;
-  const Course = await Courses.findAll({ where : { LearningId: id}});
+  const Course = await Courses.findAll({ where : { LearningId: id,IsDeleted:false}});
   res.json(Course);
 });
 
@@ -57,24 +58,29 @@ router.put("/" , async (req,res) =>{
 
 router.delete("/:CoursesId", async (req, res) => {
   const coursesId = req.params.CoursesId;
-  await Courses.destroy({
-    where: {
-      id: coursesId,
-    },
-  });
-  res.json("DELETED SUCCESSFULLY");
+  req.body.IsDeleted = true;
+  await Courses.update(req.body,{where : {id: coursesId }})
+  res.json("SUCCESS");
+  // await Courses.destroy({
+  //   where: {
+  //     id: coursesId,
+  //   },
+  // });
+  // res.json("DELETED SUCCESSFULLY");
 });
 
 
 router.delete("/multidelete/:coursesId", validateToken , (req, res) => {
   const CoursesId = req.params.coursesId;
   const words = CoursesId.split(',');
-  for (const type of words) { 
-    Courses.destroy({
-      where: {
-        id: type,
-      },
-    });
+  for (const type of words) {
+    // Courses.destroy({
+    //   where: {
+    //     id: type,
+    //   },
+    // });
+    req.body.IsDeleted = true;
+    Courses.update(req.body,{where : {id: type }})
   }
   res.json("DELETED SUCCESSFULLY");
 });

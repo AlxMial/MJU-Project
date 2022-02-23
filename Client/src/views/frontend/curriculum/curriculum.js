@@ -26,7 +26,12 @@ export default function Curriculum() {
     const [tags, setTags] = useState([]);
     const [tagsSearch, settagsSearch] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [windowWidth, setWindowWidth] = useState(0);
 
+    let resizeWindow = () => {
+        setWindowWidth(window.innerWidth)
+        
+      };
     const clearSearch = () => {
         setSearchText('');
         setTagText('');
@@ -82,6 +87,7 @@ export default function Curriculum() {
 
     function fetchCourse() {
         setIsLoading(true);
+        const defaultPicture = require("assets/img/no-img-2.jpg").default;
         const learningPathId = localStorage.getItem('learningPathId');
         const data = { learningPathId: learningPathId, Type: id };
         axios.post(urlPath + "/courses/getCourseByTypeAndLearning", data, {
@@ -93,6 +99,7 @@ export default function Curriculum() {
                     setTags(tags => [...tags, {key:i,id: value.id, name: JsonTags[i].name }]);
                 }
                 value.ImageCourses = FilesServices.buffer64(value.ImageCourses);
+                if(value.ImageCourses === '') value.ImageCourses = defaultPicture;
             }
             setListCoursesSearch(response.data);
             setListCourses(response.data);
@@ -116,7 +123,7 @@ export default function Curriculum() {
             var JsonLearning = [];
             tagsSearch.forEach(value => { 
                 listCoursesSearch.filter(valueSearch => { 
-                    if(valueSearch.CurriculumTag.toString().includes(value.name))
+                    if(valueSearch.CurriculumTag.toString().toLowerCase().includes(value.name.toLowerCase()))
                     { 
                         if(JsonLearning.filter(val => val.id === valueSearch.id ).length === 0)
                         {
@@ -133,12 +140,15 @@ export default function Curriculum() {
         fetchLearning();
         fetchLearningEng();
         fetchCourse();
+        setWindowWidth(window.innerWidth);
+        window.addEventListener("resize", resizeWindow);
+        return () => { window.removeEventListener("resize", resizeWindow); };
     }, []);
 
     return (
         <>
             {isLoading ? ( <> <Spinner  customText={"Loading"}/></>) : (<></>)}
-            <div className="relative pt-20 backScreen-pb flex max-h-screen-35 bg-darkgreen-mju">
+            <div className="relative pt-24 backScreen-pb flex max-h-screen-35 bg-darkgreen-mju">
                 <div className="container px-12 relative mx-auto lg:w-10/12 mt-2 flex flex-wrap">
                     <div className="w-full lg:w-3/12 mb-2 mt-2">
                         <i className="fas fa-arrow-left text-white text-sm cursor-pointer " onClick={() => history.goBack()}>
@@ -199,7 +209,7 @@ export default function Curriculum() {
             <div className="container relative mx-auto lg:w-10/12 mt-2 px-12 py-4">
                 {(Storage.GetLanguage() === "th") ? <div className='title text-xl font-bold px-4'>{ChangeLearning()}</div> :  <div className='title text-xl font-bold px-4'>{ChangeLearningEng()}</div> }
             </div>
-            <div className="container relative mx-auto lg:w-10/12 mt-2 px-12">
+            <div className="container relative mx-auto lg:w-10/12 mt-2 px-4">
                 <div className="w-full">
                     <div className='flex flex-wrap Block-curriculum'>
                         {listCourses.filter((item) => {
@@ -209,20 +219,46 @@ export default function Curriculum() {
                                 return true;
                             }
                         }).map((item) =>
-                            <Link to={`/home/subject/${item.id}`} key={item.CoursesID} className="card px-4 md:w-4/12 relative flex flex-col min-w-0 break-words bg-white  mb-6 rounded-lg">
-                                <img
+                            <Link to={`/home/subject/${item.id}`} key={item.CoursesID} className={"card px-4  relative flex flex-col min-w-0 break-words bg-white  mb-6 rounded-lg" + ((windowWidth < 1024) ? ' w-full ' : ' md:w-4/12') }>
+                                {/* <img
                                     alt="..."
                                     src={item.ImageCourses}
                                     className="w-full align-middle rounded-t-lg"
                                 />
                                 <blockquote className="blockquote relative p-4 mb-4 shadow-lg rounded-b-lg">
-                                    {(Storage.GetLanguage() === "th") ? <h4 className="text-sm font-bold mb-2">{item.CurriculumNameTH}</h4> :  <h4 className="text-base font-bold ">{item.CurriculumNameENG}</h4> }
-                                    <div className='text-editor THSarabunBold'>
-                                        <div>
-                                            {(Storage.GetLanguage() === "th") ? <div className='dangerHTML' dangerouslySetInnerHTML={{ __html: FilesServices.buffer64UTF8(item.DescriptionTH) }}></div> : <div className='dangerHTML' dangerouslySetInnerHTML={{ __html: FilesServices.buffer64UTF8(item.DescriptionENG) }}></div> }
+                                    <div>
+                                        {(Storage.GetLanguage() === "th") ? <h4 className="text-sm font-bold mb-2">{item.CurriculumNameTH}</h4> :  <h4 className="text-base font-bold ">{item.CurriculumNameENG}</h4> }
+                                        <div className='text-editor THSarabunBold'>
+                                            <div>
+                                                {(Storage.GetLanguage() === "th") ? <div className='dangerHTML' dangerouslySetInnerHTML={{ __html: FilesServices.buffer64UTF8(item.DescriptionTH) }}></div> : <div className='dangerHTML' dangerouslySetInnerHTML={{ __html: FilesServices.buffer64UTF8(item.DescriptionENG) }}></div> }
+                                            </div>
                                         </div>
+                                        <footer>
+                                            <div>
+                                                <TimeAgo datetime={item.createdAt} />
+                                            </div>
+                                            <div className=''>
+                                            {
+                                                tags.filter((tagsitem) => tagsitem.id === item.id).map(function (value) {
+                                                    return (<div className='display-inline mt-1' ><label key={value.key} className='tag text-sm px-2 py-2 text-blue-mju-home mr-2'>{value.name}</label></div>)
+                                                })}
+                                            </div>
+                                        </footer>
                                     </div>
-                                    <footer>
+                                </blockquote> */}
+                                <img
+                                        alt="..."
+                                        src={item.ImageCourses}
+                                        className="w-full align-middle rounded-t-lg"
+                                    />
+                                <div className='divBlock p-4 shadow-lg rounded-b-lg'>
+                                    
+                                    {(Storage.GetLanguage() === "th") ? <h4 className="text-sm font-bold mb-2">{item.CurriculumNameTH}</h4> :  <h4 className="text-base font-bold ">{item.CurriculumNameENG}</h4> }
+                                        <div className='text-editor THSarabunBold'>
+                                            <div>
+                                                {(Storage.GetLanguage() === "th") ? <div className='dangerHTML' dangerouslySetInnerHTML={{ __html: FilesServices.buffer64UTF8(item.DescriptionTH) }}></div> : <div className='dangerHTML' dangerouslySetInnerHTML={{ __html: FilesServices.buffer64UTF8(item.DescriptionENG) }}></div> }
+                                            </div>
+                                        </div>
                                         <div>
                                             <TimeAgo datetime={item.createdAt} />
                                         </div>
@@ -232,8 +268,7 @@ export default function Curriculum() {
                                                 return (<div className='display-inline mt-1' ><label key={value.key} className='tag text-sm px-2 py-2 text-blue-mju-home mr-2'>{value.name}</label></div>)
                                             })}
                                         </div>
-                                    </footer>
-                                </blockquote>
+                                </div>
                             </Link>
                         )}
                     </div>

@@ -1171,6 +1171,11 @@ select {
   background-color: #f77170;
 }
 
+.bg-orange-mju {
+  --tw-bg-opacity: 1;
+  background-color: #FF6624;
+}
+
 
 .bg-yello-mju {
   --tw-bg-opacity: 1;
@@ -1201,6 +1206,11 @@ select {
 .active\:bg-rose-mju:active {
   --tw-bg-opacity: 1;
   background-color: #DDADAC;
+}
+
+.active\:bg-orange-mju:active {
+  --tw-bg-opacity: 1;
+  background-color: #FF6624;
 }
 
 .active\:bg-yello-mju:active {
@@ -1756,17 +1766,17 @@ select {
 
 .text-xs {
   font-size:1.2rem;
-  line-height: 1rem;
+  line-height: 1.2rem;
 }
 
 .text-sm {
   font-size: 1.25rem;
-  line-height: 1rem;
+  line-height: 1.25rem;
 }
 
 .text-sm-select {
   font-size: 1.4rem;
-  line-height: 1.5rem;
+  line-height: 1.4rem;
 }
 
 .text-sm-texteditor {
@@ -3488,6 +3498,8 @@ text-blue-mju-home {
   .lg\:w-10-1\/12 {
     width: 43%;
   }
+
+
 }
 
 @media (min-width: 1280px) {
@@ -3513,8 +3525,50 @@ text-blue-mju-home {
   }
 }
 
-@media (min-width: 1536px) {
+@media (min-width: 375px) {
+  .img-member {
+    width: 140px;
+    height: 140px;
+    margin:auto;
+    background-image: cover;
+  }
+  
+  .img-member-admin {
+    width: 140px ;
+    height: 140px ;
+    margin:auto;
+    background-image: cover;
+  }
+}
 
+@media (min-width: 1180px) {
+  .img-member {
+    width: 140px ;
+    height: 120px ;
+    margin-top: 10px;
+    background-image: cover;
+  }
+  .img-member-admin {
+    width: 140px ;
+    height: 100px ;
+    margin-top: 10px;
+    background-image: cover;
+  }
+}
+
+@media (min-width: 1536px) {
+  .img-member {
+    width: 140px ;
+    height: 140px ;
+    margin-top: 0px;
+    background-image: cover;
+  }
+  .img-member-admin {
+    width: 140px ;
+    height: 140px ;
+    margin-top: 0px;
+    background-image: cover;
+  }
 }
 
 
@@ -4080,12 +4134,13 @@ input[type=text]:disabled,input[type=password]:disabled,textarea:disabled {
   text-overflow: ellipsis;
   max-width:50px;
 }
-
+/* 
 .img-member {
   width: 140px;
   height: 140px;
+  margin-top: 0px;
   background-image: cover;
-}
+} */
 
 .img-member-login {
   width: 48px;
@@ -4103,6 +4158,11 @@ input[type=text]:disabled,input[type=password]:disabled,textarea:disabled {
   min-height: 36px !important;
 }
 
+.css-1insrsq-control {
+  max-height: 36px !important;
+  min-height: 36px !important;
+}
+
 .css-1pahdxg-control{
   max-height: 36px !important;
   min-height: 36px !important;
@@ -4112,4 +4172,41 @@ input[type=text]:disabled,input[type=password]:disabled,textarea:disabled {
   margin: 0px  !important;
   padding-top: 0px !important;
   padding-bottom: 0px !important;
+}
+
+.textElipes{
+  white-space: nowrap; 
+  width: 250px; 
+  overflow: hidden;
+  text-overflow: ellipsis; 
+  display: inline-block;
+  /* border: 1px solid #000000; */
+}
+
+.text-div {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width:250px;
+}
+.text-default {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  /* max-width: 50px; */
+}
+
+.parent-div {
+  display: inline-flex;
+}
+.image-logo{
+  width: 150px;
+}
+
+.css-1okebmr-indicatorSeparator{
+  margin-top:4px !important;
+}
+
+.css-109onse-indicatorSeparator{
+  margin-top:4px !important;
 }

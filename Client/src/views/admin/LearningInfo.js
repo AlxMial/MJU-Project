@@ -42,9 +42,9 @@ export default  function Learning() {
       IsDeleted:false
    },
    validationSchema: Yup.object({
-    LearningPathCode:Yup.string().required('* กรุณากรอก รหัสเส้นทางการเรียนรู้'),
-    LearningPathNameTH: Yup.string().required('* กรุณากรอก ชื่อเส้นทางการเรียนรู้ (ไทย)'),
-    DescriptionTH: Yup.string().required('* กรุณากรอก รายละเอียดเส้นทางการเรียนรู้ (ไทย)'),
+    LearningPathCode:Yup.string().required((Storage.GetLanguage() === "th") ? '* กรุณากรอก รหัสเส้นทางการเรียนรู้' : '* Please enter learning path code'),
+    LearningPathNameTH: Yup.string().required((Storage.GetLanguage() === "th") ?'* กรุณากรอก ชื่อเส้นทางการเรียนรู้ (ไทย)' : '* Please enter learning path name (Thai)'),
+    DescriptionTH: Yup.string().required((Storage.GetLanguage() === "th") ?'* กรุณากรอก รายละเอียดเส้นทางการเรียนรู้ (ไทย)' : '* Please fill in the details of the learning path (Thai)'),
    }),
    onSubmit: values => {
      console.log(values)
@@ -81,7 +81,7 @@ export default  function Learning() {
           });
         }
       } else {
-        addToast('ไม่สามารถบันทึกข้อมูลได้ เนื่องจากรหัสเส้นทางการเรียนรู้หรือชื่อเส้นทางการเรียนรู้ซ้ำ กรุณากรอกรหัสเส้นทางการเรียนรู้หรือชื่อเส้นทางการเรียนรู้ใหม่', { appearance: 'warning', autoDismiss: true });
+        addToast((Storage.GetLanguage() === "th") ? 'ไม่สามารถบันทึกข้อมูลได้ เนื่องจากรหัสเส้นทางการเรียนรู้หรือชื่อเส้นทางการเรียนรู้ซ้ำ กรุณากรอกรหัสเส้นทางการเรียนรู้หรือชื่อเส้นทางการเรียนรู้ใหม่' : 'Cannot save data Because the learning path code or the learning path name is repeated. Please enter the learning path code or the name of the new learning path.', { appearance: 'warning', autoDismiss: true });
       }
     });
     setIsLoading(false);
@@ -174,7 +174,7 @@ export default  function Learning() {
                   </div>
               </div>
             </div>
-            <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
+            <div className="flex-auto px-4 lg:px-8 py-10 pt-0">
                 <div className="flex flex-wrap  mt-6">
                   <div className="w-full px-4 py-1">
                     <div className="relative w-full mb-3">
@@ -186,6 +186,7 @@ export default  function Learning() {
                         className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="LearningPathCode"
                         name="LearningPathCode"
+                        maxLength="100"
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         value={formik.values.LearningPathCode}
@@ -212,6 +213,7 @@ export default  function Learning() {
                         onBlur={formik.handleBlur}
                         value={formik.values.LearningPathNameTH}
                         disabled={enableControl}
+                        maxLength="250"
                       />
                       {formik.touched.LearningPathNameTH && formik.errors.LearningPathNameTH ? (
                             <div className="text-sm py-2 px-2 text-red-500">{formik.errors.LearningPathNameTH}</div>
@@ -226,7 +228,7 @@ export default  function Learning() {
                       <input
                         type="text"
                         className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-
+                        maxLength="250"
                         id="LearningPathNameENG"
                         name="LearningPathNameENG"
                         onChange={formik.handleChange}

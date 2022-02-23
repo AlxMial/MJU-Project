@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       ContentENG: {
         type: DataTypes.BLOB('long'),
-        allowNull: false,
+        allowNull: true,
       },
       IsDeleted: {
         type: DataTypes.BOOLEAN,
@@ -40,6 +40,10 @@ module.exports = (sequelize, DataTypes) => {
 
     Subjects.associate = (models) => {
       Subjects.hasMany(models.Attachs, {
+        onDelete: "cascade",
+      });
+
+      Subjects.hasMany(models.CommentsSubjects, {
         onDelete: "cascade",
       });
     };

@@ -6,7 +6,7 @@ const { validateToken } = require("../../middlewares/AuthMiddleware");
 
 router.get('/bySubjectsId/:id',validateToken, async (req,res) => {
     const id = req.params.id;
-    const Attach = await Attachs.findAll({ where : { SubjectId: id}});
+    const Attach = await Attachs.findAll({ where : { SubjectId: id,IsDeleted:false}});
     res.json(Attach);
   });
 
@@ -17,12 +17,9 @@ router.post("/",validateToken, async (req, res) => {
 
 router.delete("/:AttachsId",validateToken, async (req, res) => {
     const attachid = req.params.AttachsId;
-    await Attachs.destroy({
-      where: {
-        id: attachid,
-      },
-    });
-    res.json("DELETED SUCCESSFULLY");
+    req.body.IsDeleted = true;
+    await Attachs.update(req.body,{where : {id: attachid }})
+    res.json("SUCCESS");
 });
 
 module.exports = router

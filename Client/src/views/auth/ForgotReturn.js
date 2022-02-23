@@ -13,6 +13,12 @@ export default function ForgotReturn() {
   const { setAuthState } = useContext(AuthContext); 
   const { addToast } = useToasts();
   let history = useHistory();
+  const [windowWidth, setWindowWidth] = useState(0);
+
+  let resizeWindow = () => {
+    setWindowWidth(window.innerWidth);
+  };
+
 
   const formik = useFormik({
     initialValues : {
@@ -39,12 +45,14 @@ export default function ForgotReturn() {
   }
   
   useEffect( ()=>  {
-
+    setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", resizeWindow);
+    return () => { window.removeEventListener("resize", resizeWindow); };
   },[]);
 
   return (
     <>
-      <div className={"container  px-4 h-full" + ((isMobile) ? ' ' : ' mx-auto')}>
+      <div className={"container  px-4 h-full" + ((windowWidth > 911) ? " mx-auto" : " ")}>
         <div className="flex content-center items-center justify-center h-full">
           <div className="w-full lg:w-8/12 px-4 vertical-center">
             <div className="relative flex flex-col min-w-0 break-words w-full  mb-6 shadow-lg rounded-lg bg-white border-0">
@@ -61,7 +69,7 @@ export default function ForgotReturn() {
                   </span>
                 </div>
               </div>
-              <div className={"flex-auto px-4 lg:w-9/12 lg:px-10 py-10 pt-0 " + ((isMobile) ? ' ' : ' mx-auto')}>
+              <div className={"flex-auto px-4 lg:w-9/12 lg:px-10 py-10 pt-0 " + ((windowWidth > 911) ? " mx-auto" : " ")}>
                 <form>
                   
                   <div className="">

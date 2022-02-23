@@ -217,6 +217,7 @@ export default function Courses() {
   };
 
   const UploadFile = (data) => {
+      console.log(data)
       axios.post(urlPath+"/attachs",data ,{
         headers: {accessToken : localStorage.getItem("accessToken")}
       }).then((response)=>{
@@ -329,7 +330,7 @@ export default function Courses() {
       let response = await axios(urlPath+`/attachs/bySubjectsId/${SubjectId}`,{
         headers: {accessToken : localStorage.getItem("accessToken")}
       });
-      let attach = await response.data;
+      let attach = response.data;
       if(attach !== null) {
         // for(var columns in response.data) {
         //   if(columns === "FileData")
@@ -343,6 +344,7 @@ export default function Courses() {
   
     async function fetchDetailSubject(SubjectId) {
       setIsLoading(true);
+      setListAttach([]);
       let response = await axios(urlPath+`/subjects/byId/${SubjectId}`);
       let subjects = response.data;
       if(subjects !== null) {
@@ -354,7 +356,7 @@ export default function Courses() {
           else 
             formikSubject.setFieldValue(columns, response.data[columns], false)
         }
-        fetchAttach(response.data.id);
+        await fetchAttach(response.data.id);
         setIsNewSubject(false);
         setIsEnableSubjectControl(true);
       }
@@ -409,12 +411,13 @@ export default function Courses() {
     formik.values.CurriculumTag = tags;
     formik.values.ImageCourses = imageCourses;
     formik.values.ImageName = imageCoursesName;
-
+    if(values.DescriptionENG === null) values.DescriptionENG="";
     if(formik.values.NumOfHours > 0 || formik.values.NumOfMin > 0)
     {
       axios.get(urlPath+`/courses/ByCurriculum/${values.CurriculumCode}`,{
         headers: {accessToken : localStorage.getItem("accessToken")}
       }).then((response) => {
+
         if(response.data === null || response.data.id === values.id) {
           if(isNew) {
             axios.post(urlPath+"/courses",values).then((response)=>{
@@ -475,40 +478,51 @@ export default function Courses() {
     SubjectCode:Yup.string().required((Storage.GetLanguage() === "th") ? '* กรุณากรอก รหัสหัวข้อการเรียนรู้' : 'Please enter the Subject code'),
     SubjectNameTH:Yup.string().required((Storage.GetLanguage() === "th") ?'* กรุณากรอก ชื่อหัวข้อการเรียนรู้' : 'Please enter the Subject name'),
     ContentTH:Yup.string().required((Storage.GetLanguage() === "th") ?'* กรุณากรอก เนื้อหา (ไทย)' : 'Please enter the Content (thai)'),
-    // SubjectOfHour: Yup.number().min(1, ((Storage.GetLanguage() === "th") ? '* จำนวนชั่วโมงหลักสูตรต้องมากกว่า 0' : '* The number of course hours must be greater than 0.'))
   }),
   onSubmit: values => {      
-      setIsLoading(true);
-      values.CourseId = (id === undefined) ? listCourse.filter(x => x.CurriculumCode === formik.values.CurriculumCode )[0].id : id;
-
+    setIsLoading(true);
+    values.CourseId = (id === undefined) ? listCourse.id : id;
+    console.log('2')
+    if(values.ContentENG === null) values.ContentENG="";
+    if(values.SubjectOfHour === null || values.SubjectOfHour === '' ) values.SubjectOfHour=0;
+    console.log(values)
     axios.get(urlPath+`/subjects/bySubjectCode/${values.SubjectCode}`,{
         headers: {accessToken : localStorage.getItem("accessToken")}
       }).then((response) => {
-        console.log(response.data)
-        if(response.data === null || response.data.id === values.id || response.data.length === 0) {
 
+        var SaveSubject = false;
+        console.log(values)
+        if(response.data === null || response.data.length === 0) {
+          SaveSubject = true;
+        } else if (response.data !== null  && response.data[0].id === values.id && values.id !== undefined) { 
+          SaveSubject = true;
+        } else {
+          addToast( (Storage.GetLanguage() === "th") ? 'ไม่สามารถบันทึกข้อมูลได้ เนื่องจากรหัสหัวข้อการเรียนรู้ซ้ำ กรุณากรอกรหัสหัวข้อการเรียนรู้ใหม่' : 'Failed to save data. due to duplicate Subject code Please enter a new Subject code' , { appearance: 'warning', autoDismiss: true });
+        } 
+
+        if(SaveSubject){
           if(isNewSubject){
             axios.post(urlPath+"/subjects",values).then((response)=>{
             if(response.data === null) 
             {
               //addToast(response.data.error, { appearance: 'error', autoDismiss: true });
             } else {
-              arrayAttach.forEach(value => {
-                const data = {FileName:value.FileName,FileType:value.FileType,FileData:value.FileData,IsDeleted:false,SubjectId:response.data.id}
-                UploadFile(data);
-              });
-              setArrayAtteach([]);
               addToast((Storage.GetLanguage() === "th") ? 'บันทึกข้อมูลสำเร็จ' : 'Save data successfully', { appearance: 'success', autoDismiss: true });
               setIsNewSubject(false)
               setIsEnableSubjectControl(true);
               formikSubject.setFieldValue('id',response.data.listOfSubjects.id);
-              setListsubject(response.data.listOfSubjects);
+              setListsubject([...listSubject,response.data.listOfSubjects]);
+              arrayAttach.forEach(value =>  {
+                const data = {FileName:value.FileName,FileType:value.FileType,FileData:value.FileData,IsDeleted:false,SubjectId:response.data.listOfSubjects.id}
+                UploadFile(data);
+              });
+              setArrayAtteach([]);
               // axios.get(urlPath+`/subjects/byCoursesId/${values.CourseId}`).then((response) =>   {
               //   setListsubject(response.data);
               // });
             }
           });
-        } else {
+          } else {
             if(values.id === undefined)
               values.id = listSubject.filter(x => x.SubjectCode === formikSubject.values.SubjectCode )[0].id;
             axios.put(urlPath+"/subjects",values).then((response) => {
@@ -522,18 +536,15 @@ export default function Courses() {
                     UploadFile(data);
                   })
                   setArrayAtteach([]);
-                addToast((Storage.GetLanguage() === "th") ? 'บันทึกข้อมูลสำเร็จ' : 'Save data successfully', { appearance: 'success', autoDismiss: true });
-                setIsEnableSubjectControl(true);
+                  addToast((Storage.GetLanguage() === "th") ? 'บันทึกข้อมูลสำเร็จ' : 'Save data successfully', { appearance: 'success', autoDismiss: true });
+                  setIsEnableSubjectControl(true);
               }
             });
+          }
         }
-        } else {
-          addToast( (Storage.GetLanguage() === "th") ? 'ไม่สามารถบันทึกข้อมูลได้ เนื่องจากรหัสหัวข้อการเรียนรู้ซ้ำ กรุณากรอกรหัสหัวข้อการเรียนรู้ใหม่' : 'Failed to save data. due to duplicate Subject code Please enter a new Subject code' , { appearance: 'warning', autoDismiss: true });
-        } 
-      });
 
-    
-      setIsLoading(false);
+      });
+    setIsLoading(false);
     },
   });
   //#endregion
@@ -720,7 +731,7 @@ export default function Courses() {
                 </div>
               </div>
             </div>
-            <div className={"flex-auto px-4 lg:px-10 py-10 pt-4 " + ((headName === "หลักสูตร") ? "block" : "hidden") }>
+            <div className={"flex-auto px-4 lg:px-8 py-10 pt-4 " + ((headName === "หลักสูตร") ? "block" : "hidden") }>
                 <div className="flex flex-wrap">
                   <div className="w-full lg:w-6/12 px-4 py-1">
                   <div className="flex flex-wrap">
@@ -953,7 +964,7 @@ export default function Courses() {
                           height="300px"
                           onKeyDown={handleKeyDown} 
                           setContents={formik.values.DescriptionTH}
-                          // onChange={v =>  formik.setFieldValue('DescriptionTH', v)} 
+                          //onChange={v =>  formik.setFieldValue('DescriptionTH', v)} 
                           onChange={onChangeEventCourseTH}
                           setOptions={{
                           buttonList: [
@@ -1042,7 +1053,7 @@ export default function Courses() {
                           height="300px"
                           onKeyDown={handleKeyDown} 
                           setContents={formik.values.DescriptionENG}
-                          // onChange={v =>  formik.setFieldValue('DescriptionENG', v)} 
+                          //onChange={v =>  formik.setFieldValue('DescriptionENG', v)} 
                           onChange={onChangeEventCourseENG}
                           setOptions={{
                           buttonList: [
@@ -1173,15 +1184,23 @@ export default function Courses() {
             </form>
             <div className={"flex-auto px-2 py-2 pt-4 "   + ((headName === "หลักสูตร") ? "hidden" : "block") }>
               <div className="text-center flex justify-between">
-                <div className="py-2">
-                  <span className="text-blueGray-700 text-base font-bold py-2">{locale.t("Course.info.lblCourse")} : <label className="text-blue-mju "> {(Storage.GetLanguage() === "th") ? formik.values.CurriculumNameTH : formik.values.CurriculumNameENG} ( {formik.values.NumOfHours} {locale.t("Course.info.lblHour")} {formik.values.NumOfMin} {locale.t("Course.info.lblMin")} ) </label></span>
+                <div className="parent-div text-blueGray-700 text-base font-bold py-2 pt-2">
+                    <div className="text-blue-mju text-div-default">
+                     {locale.t("Course.info.lblCourse")} : 
+                    </div>
+                    <div className="text-blue-mju text-div">
+                      &nbsp;{(Storage.GetLanguage() === "th") ? formik.values.CurriculumNameTH : formik.values.CurriculumNameENG} 
+                    </div>
+                    <div className="text-blue-mju text-div-default">
+                    &nbsp;({formik.values.NumOfHours} {locale.t("Course.info.lblHour")}{formik.values.NumOfMin} {locale.t("Course.info.lblMin")} ) 
+                    </div>
                 </div>
                 <div>
                   <button
                     className="bg-blue-mju text-white active:bg-lightBlue-600 font-bold text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none ease-linear transition-all duration-150"
                     type="button"
                     onClick={() => { setIsNewSubject(true); setIsEnableSubjectControl(false); setListAttach([]); formikSubject.resetForm(); formikSubject.setFieldValue('ContentTH',null); formikSubject.setFieldValue('ContentENG',null);  openModal(); }}>
-                    <i class="fas fa-plus"></i>&nbsp;&nbsp;{locale.t("Subject.list.lblAddSubject")}
+                    <i className="fas fa-plus"></i>&nbsp;&nbsp;{locale.t("Subject.list.lblAddSubject")}
                   </button>
                     <Modal
                       isOpen={modalIsOpen}
@@ -1250,6 +1269,7 @@ export default function Courses() {
                                           className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                                           id="SubjectCode"
                                           name="SubjectCode"
+                                          maxLength={100}
                                           onChange={formikSubject.handleChange}
                                           onBlur={formikSubject.handleBlur}
                                           value={formikSubject.values.SubjectCode}
@@ -1295,6 +1315,7 @@ export default function Courses() {
                                           className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                                           id="SubjectNameTH"
                                           name="SubjectNameTH"
+                                          maxLength={255}
                                           onChange={formikSubject.handleChange}
                                           onBlur={formikSubject.handleBlur}
                                           value={formikSubject.values.SubjectNameTH}
@@ -1317,6 +1338,7 @@ export default function Courses() {
                                           className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                                           id="SubjectNameENG"
                                           name="SubjectNameENG"
+                                          maxLength={255}
                                           onChange={formikSubject.handleChange}
                                           onBlur={formikSubject.handleBlur}
                                           value={formikSubject.values.SubjectNameENG}

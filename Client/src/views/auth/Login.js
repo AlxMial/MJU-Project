@@ -8,12 +8,16 @@ import { useFormik  } from "formik";
 import * as Yup from "yup";
 import urlPath from 'services/urlServer';
 import FilesService from 'services/files';
-import { isMobile } from 'react-device-detect';
 
 export default function Login() {
   const { setAuthState } = useContext(AuthContext); 
   const { addToast } = useToasts();
+  const [windowWidth, setWindowWidth] = useState(0);
   let history = useHistory();
+
+  let resizeWindow = () => {
+    setWindowWidth(window.innerWidth);
+  };
 
   const formik = useFormik({
     initialValues : {
@@ -27,13 +31,13 @@ export default function Login() {
    }),
    onSubmit: values => {
     const data = {email:values.email, password:values.password};
-    axios.post(urlPath+"/users/login",data).then((response)=>{
+    axios.post(urlPath+"/users/login",data).then((response) => {
     if(response.data.error) 
     {  
       addToast("Can't login because Invalid email or password", { appearance: 'error', autoDismiss: true });
     }
     /*ปรับการ Login Mobile ให้ตรวจสอบเฉพาะ Admin*/
-    else if (isMobile &&  response.data.role === 1)
+    else if ((windowWidth < 1180) && response.data.role === '1')
     {
       addToast("Can't open Adminstrator management page, must use on Computer only.", { appearance: 'error', autoDismiss: true });
     }
@@ -73,17 +77,20 @@ export default function Login() {
 
   useEffect( ()=>  {
     var retrievedObject = JSON.parse(localStorage.getItem('login'));
-
+    setWindowWidth(window.innerWidth);
     if(retrievedObject !== null) {
         formik.setFieldValue('email',retrievedObject.email);
         formik.setFieldValue('password',retrievedObject.password);
         formik.setFieldValue('isRemember',true);
     }
+
+    window.addEventListener("resize", resizeWindow);
+    return () => { window.removeEventListener("resize", resizeWindow); };
   },[]);
 
   return (
     <>
-      <div className={"container px-4 h-full" + ((isMobile) ? " " : " mx-auto")} >
+      <div className={"container px-4 h-full " + ((windowWidth > 911) ? " mx-auto" : " ")} >
         <div className="flex content-center items-center justify-center h-full">
           <div className="w-full lg:w-8/12 px-4 vertical-center">
             <div className="relative flex flex-col min-w-0 break-words w-full  mb-6 shadow-lg rounded-lg bg-white border-0">
@@ -95,7 +102,7 @@ export default function Login() {
                 </div>
               </div>
               <div className={
-                "flex-auto px-4 lg:w-9/12 lg:px-10 py-10 pt-0" + ((isMobile) ? " " : " mx-auto")}>
+                "flex-auto px-4 lg:w-9/12 lg:px-10 py-10 pt-0" + ((windowWidth > 911) ? " mx-auto" : " ")}>
                 <form onSubmit={formik.handleSubmit}>
                   <div className="relative w-full mb-3">
                     <label className="block uppercase text-blueGray-600 text-sm font-bold mb-2">

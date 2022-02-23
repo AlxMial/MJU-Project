@@ -115,7 +115,7 @@ const UserDropdown = () => {
           id="accountx"
           onClick={() => {linkHome()}}
         >
-          <i class="fas fa-home" id="accountx"></i> &nbsp;
+          <i className="fas fa-home" id="accountx"></i> &nbsp;
           <span className="text-sm" id="accountx" >{locale.t("Menu.lblHome")}</span>
         </div>
         <div
@@ -126,7 +126,7 @@ const UserDropdown = () => {
           id="accountx"
           onClick={() => {linkBack()}}
         >
-          <i class="fas fa-tools" id="accountx" ></i> &nbsp;
+          <i className="fas fa-tools" id="accountx" ></i> &nbsp;
           <span className="text-sm" id="accountx" >{locale.t("Menu.lblBackEnd")}</span>
         </div>
 

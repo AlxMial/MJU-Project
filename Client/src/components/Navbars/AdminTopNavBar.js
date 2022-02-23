@@ -90,7 +90,7 @@ const AdminTopNavBar = ({ setLocale }) => {
   return (
     <>
       <nav className="top-0 fixed z-50 w-full flex flex-wrap  justify-between px-2 py-2 navbar-expand-lg bg-green-mju">
-        <div className=" px-4 flex flex-wrap items-center justify-between">
+        <div className=" flex flex-wrap items-center justify-between">
           <div className="w-full relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
             <ul className="flex flex-col lg:flex-row list-none lg:ml-auto">
               <li className={"flex items-center text-lg font-bold text-white "  +  (windowWidth < 1024 ? " hidden" : "block")}>
@@ -104,14 +104,26 @@ const AdminTopNavBar = ({ setLocale }) => {
                 &nbsp;   | &nbsp;
               </li>
               <li className="flex items-center text-2xl font-bold text-white cursor-pointer THSarabun" onClick={()=>{ClickHome()}}>
-                Organic Masterclass
+                <span className={(windowWidth > 912) ? ' block' : ' hidden'} > Organic Masterclass </span>
+                <div className={"image-logo "  + ((windowWidth > 912) ? ' hidden' : ' block')}>
+                  <img
+                    alt="..."
+                    src={require("assets/img/Group_1.png").default}
+                    className={"  align-middle border-none max-w-100-px" }
+                  />
+                </div>
               </li>
             </ul>
           </div>
         </div>
-        <div className="px-4 flex flex-wrap items-center justify-between w-3">
-
-              <a
+        <div className="parent-div flex flex-wrap items-center justify-between w-3">
+          <div className="text-sm font-bold text-white"> <i className="fas fa-globe "></i>&nbsp;&nbsp; </div>
+          <div id="thaix" className={"text-sm font-bold text-white cursor-pointer " + (!isThai ? "opacity-75" : "textUnderline") } onClick={(e) => {ChangeTranslate(e)}}> ภาษาไทย </div>
+          <div className="text-sm font-bold text-white"> &nbsp;|&nbsp; </div>
+          <div id="engx"  className={"text-sm font-bold text-white cursor-pointer " + (isThai ? "opacity-75" : "textUnderline") } onClick={(e) => {ChangeTranslate(e)}}> English </div>
+          <div> &nbsp;&nbsp; </div>
+          <div> <UserDropdown /> </div>
+              {/* <a
                 className="text-blueGray-500"
                 href="#pablo"
                 ref={btnDropDownAdminRef}
@@ -162,17 +174,18 @@ const AdminTopNavBar = ({ setLocale }) => {
                 >
                   English
                 </a>
-              </div>
-
-
-              <div
+            </div> */}
+            {/* <div
                 className={
-                  "lg:flex flex-grow items-center lg:bg-opacity-0" +
-                  (navbarOpen ? " block" : " hidden")
+                  "lg:flex flex-grow items-center lg:bg-opacity-0"
+                  //  +
+                  // (navbarOpen ? " block" : " hidden")
                 }
                 id="example-navbar-warning"
               >
-              <ul className={"flex flex-col lg:flex-row list-none lg:ml-auto" + (windowWidth < 1024 ? " hidden" : "block") }>
+              <ul className={"flex flex-col lg:flex-row list-none lg:ml-auto" 
+              //+ (windowWidth < 1024 ? " hidden" : "block")
+               }>
                 <li className="flex items-center text-sm font-bold text-white cursor-pointer">
                   <i className="fas fa-globe"></i>&nbsp;&nbsp;
                 </li>
@@ -199,7 +212,7 @@ const AdminTopNavBar = ({ setLocale }) => {
                   <UserDropdown />
                 </li>
               </ul>
-            </div>
+            </div> */}
         </div>
       </nav>
     </>

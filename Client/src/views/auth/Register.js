@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory,Link } from "react-router-dom";
 import { useFormik  } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
@@ -8,7 +8,6 @@ import Select from 'react-select'
 import urlPath from 'services/urlServer';
 import 'react-modern-calendar-datepicker/lib/DatePicker.css';
 import DatePicker from 'react-modern-calendar-datepicker';
-import { isMobile } from 'react-device-detect';
 //import DatePicker from '@mui/lab/DatePicker';
 export default function Register() {
 
@@ -17,6 +16,7 @@ export default function Register() {
   const [isTerm,setIsTerm] = useState("");
   const { addToast } = useToasts();
   const [register,setRegister] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(0);
   const EmailRegExp = /^[A-Za-z0-9_.@]+$/;
   const defaultDate = {
     year:  new Date().getFullYear(),
@@ -25,6 +25,10 @@ export default function Register() {
   };
   const [selectedDay, setSelectedDay] = useState(defaultDate);
   let history = useHistory();
+
+  let resizeWindow = () => {
+    setWindowWidth(window.innerWidth);
+  };
 
   const [optionsLearning, setOptionsLearning] = useState([])
   const optionsRole = [
@@ -137,18 +141,21 @@ export default function Register() {
   };
   
   useEffect( ()=>  {
+    setWindowWidth(window.innerWidth);
     setSelectedDay(selectedDay);
     fetchLearning();
+    window.addEventListener("resize", resizeWindow);
+    return () => { window.removeEventListener("resize", resizeWindow); };
   },[]);
 
 
   return (
     <>
       <div className="container mx-auto px-4 h-full  ">
-        <div className={"flex content-center items-center justify-center h-full" + ((isMobile) ? ' py-6' : ' ')}>
+        <div className={"flex content-center items-center justify-center h-full" + ((windowWidth < 911) ? ' py-6' : ' ')}>
         <div className="w-full lg:w-12/12 px-4 vertical-center" >
           <div className="flex flex-wrap relative min-w-0 break-words w-full shadow-lg rounded-lg border-0">
-            <div className={"w-1/2 bg-darkgreen-mju  text-white rounded-t-l-lg rounded-b-l-lg pt-6 pl-4 pr-4 pb-2" + ((isMobile) ? " hidden" : " block")}>
+            <div className={"w-1/2 bg-darkgreen-mju  text-white rounded-t-l-lg rounded-b-l-lg pt-6 pl-4 pr-4 pb-2" + ((windowWidth < 911) ? " hidden" : " block")}>
                 <h2 className="text-4xl text-bold THSarabunBold">INFORMATION</h2>
                 <br/>
                 <div className="text-indent">
@@ -171,9 +178,9 @@ export default function Register() {
                   </span>
                 </div>
             </div>
-            <div className={"bg-white  text-black  pt-6 pl-4 pr-4 pb-2"  + ((isMobile) ? " rounded-t-lg rounded-b-lg" : " w-1/2 rounded-t-r-lg rounded-b-r-lg")}>
+            <div className={"bg-white  text-black  pt-6 pl-4 pr-4 pb-2"  + ((windowWidth < 911) ? " rounded-t-lg rounded-b-lg" : " w-1/2 rounded-t-r-lg rounded-b-r-lg")}>
               <form onSubmit={formik.handleSubmit}>
-                <h2 className={"text-4xl text-bold text-green-mju THSarabunBold" + ((isMobile) ? " text-center" : "")}>REGISTER FORM</h2>
+                <h2 className={"text-4xl text-bold text-green-mju THSarabunBold" + ((windowWidth < 911) ? " text-center" : "")}>REGISTER FORM</h2>
                 <div className="flex flex-wrap relative mt-5">
                   <div className="w-full lg:w-6/12">
                       <div className="relative w-full mb-3 px-2">
@@ -279,7 +286,7 @@ export default function Register() {
                   <div className="w-full lg:w-6/12">
                     <div className="relative w-full px-2">
                       <label
-                        className={ "block text-blueGray-600 text-sm font-bold mb-2" + ((isMobile) ? " mt-4" : "")}
+                        className={ "block text-blueGray-600 text-sm font-bold mb-2" + ((windowWidth < 911) ? " mt-4" : "")}
                       >
                         Gender
                       </label>
@@ -406,6 +413,12 @@ export default function Register() {
                     >
                       REGISTER
                     </button>
+                  </div>
+                  <div className="text-center px-2 mt-2">
+                    <span className="ml-2 text-sm font-semibold text-blueGray-600 text-left">
+                      Already have an account? 
+                    </span>
+                    <Link className="cursor-pointer text-sm font-bold text-blue-mju" to="/auth/login"> Sign in</Link>
                   </div>
                 </form>
             </div>

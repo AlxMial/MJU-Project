@@ -12,6 +12,8 @@ const db = require('./models');
 // // Routers
 const SendMailRouter = require('./routes/sendmail/SendMail');
 app.use("/mails",SendMailRouter);
+const CommentSubjectsRouter = require('./routes/commentssubjects/CommentsSubjects');
+app.use("/commentssubjects",CommentSubjectsRouter);
 const CommentRouter = require('./routes/comments/Comments');
 app.use("/comments",CommentRouter);
 const AttachsRouter = require('./routes/courses/Attachs');
