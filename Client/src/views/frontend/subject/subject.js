@@ -79,11 +79,15 @@ export default function Subject() {
                         </i>
                     </div>
                 </div>
+                <div className='flex justify-between'>
+                                <div>xxxxxxxxxxxxx {(Storage.GetLanguage() === "th") ? <span>{listCourse.CurriculumNameTH}</span> :  <span>{listCourse.CurriculumNameENG}</span> }</div>
+                                <div>xxxxxxxxxxxxx</div>
+                </div> 
                 
-                    <h1 className='text-4xl px-2 py-2 THSarabunBold mt-4 font-bold'> {(Storage.GetLanguage() === "th") ? <span>{listCourse.CurriculumNameTH}</span> :  <span>{listCourse.CurriculumNameENG}</span> }</h1>
 
                 <div className='w-full'>
                     <div className=" min-h-screen-35 py-4 relative flex flex-col min-h-3 break-words bg-white w-full mb-6 rounded-lg shadow-lg">
+                    
                         <div className='ReactQuill-Editor'>
                             {/* <ReactQuill
                                 theme="snow"

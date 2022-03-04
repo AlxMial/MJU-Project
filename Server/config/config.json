@@ -2,7 +2,7 @@
   "development": {
     "username": "monty",
     "password": "undefined@090421",
-    "database": "mjuproject",
+    "database": "mjuuniversity",
     "host": "undefined.ddns.net",
     "dialect": "mysql"
     
@@ -10,14 +10,14 @@
   "test": {
     "username": "monty",
     "password": "undefined@090421",
-    "database": "mjuproject",
+    "database": "mjuuniversity",
     "host": "undefined.ddns.net",
     "dialect": "mysql"
   },
   "production": {
     "username": "monty",
     "password": "undefined@090421",
-    "database": "mjuproject",
+    "database": "mjuuniversity",
     "host": "undefined.ddns.net",
     "dialect": "mysql"
   }
